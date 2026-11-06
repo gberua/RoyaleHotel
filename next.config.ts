@@ -1,17 +1,39 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  poweredByHeader: false,
+  // admin photo uploads go one file per request; 25 MB leaves room for big phone JPEG/HEIC originals
+  experimental: { serverActions: { bodySizeLimit: "25mb" } },
+  images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [480, 640, 828, 1080, 1280, 1600, 1920, 2560],
+    imageSizes: [96, 160, 256, 384],
+    localPatterns: [{ pathname: "/media/**" }, { pathname: "/images/**" }],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+  },
   turbopack: {
     rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
+      "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+    ];
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

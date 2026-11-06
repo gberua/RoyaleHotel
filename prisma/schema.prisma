@@ -1,0 +1,655 @@
+// Royale Hotel — database schema
+//
+// Conventions
+// • Localized text is stored as JSON maps keyed by locale: {"ka": "...", "en": "...", "ru": "..."}.
+//   Adding a language (he / tr / hy) needs no migration — the admin simply fills the new key.
+// • Money is stored as integers in minor units (tetri / cents) in the hotel's base currency (GEL).
+// • Dates of stay (checkIn/checkOut) are calendar dates (@db.Date); checkOut is exclusive.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── Staff & audit ─────────────────────────────
+
+enum Role {
+  OWNER
+  MANAGER
+  RECEPTION
+  HOUSEKEEPING
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String
+  passwordHash String
+  role         Role          @default(RECEPTION)
+  active       Boolean       @default(true)
+  phone        String?
+  /// Language of the admin interface for this user: ka | en | ru
+  adminLocale  String        @default("ka")
+  failedLogins Int           @default(0)
+  lockedUntil  DateTime?
+  /// Sessions issued before this moment are rejected (password change / reset / deactivation)
+  passwordChangedAt DateTime @default(now())
+  lastLoginAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  activity     ActivityLog[]
+  notes        BookingNote[]
+  resetTokens  PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String // e.g. "booking.cancel", "roomType.update"
+  entity    String // e.g. "Booking"
+  entityId  String?
+  summary   String?
+  before    Json?
+  after     Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+// ───────────────────────────── Settings ─────────────────────────────
+
+/// Key/value settings validated by zod in src/lib/settings.ts (hotel info, contacts,
+/// payments, deposit %, notifications, hero media, SEO defaults …)
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Currency {
+  code      String   @id // GEL, USD, EUR
+  symbol    String
+  /// How many units of this currency equal 1 GEL (GEL itself = 1)
+  rate      Decimal  @db.Decimal(12, 6)
+  isBase    Boolean  @default(false)
+  enabled   Boolean  @default(true)
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  key       String // booking.confirmation, booking.cancelled, review.request …
+  locale    String
+  subject   String
+  body      String // simple {{placeholders}}
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, locale])
+}
+
+// ───────────────────────────── Media ─────────────────────────────
+
+/// Every image on the site. Files come from assets/google-maps (npm run images)
+/// or from admin uploads; both go through the same sharp pipeline.
+model Media {
+  id            String         @id @default(cuid())
+  url           String // public URL of the optimized master (WebP)
+  avifUrl       String?
+  width         Int
+  height        Int
+  blurDataUrl   String? // tiny base64 placeholder
+  dominantColor String?
+  alt           Json? // localized alt text
+  category      String         @default("unsorted") // exterior, lobby, room, restaurant, pool, beach, view, …
+  inGallery     Boolean        @default(false)
+  galleryOrder  Int            @default(0)
+  /// Licensed stock photo used for the demo — shown in admin as "DEMO image – replace with real hotel photo"
+  isDemo        Boolean        @default(false)
+  credit        String? // e.g. "Photo by Andrew Vjivii on Unsplash"
+  creditUrl     String?
+  license       String? // e.g. "Unsplash License"
+  sourceFile    String? // original file name (for traceability)
+  checksum      String?        @unique
+  createdAt     DateTime       @default(now())
+  roomTypes     RoomTypePhoto[]
+
+  @@index([category, inGallery])
+}
+
+// ───────────────────────────── Rooms ─────────────────────────────
+
+model Amenity {
+  id        String            @id @default(cuid())
+  key       String            @unique // stable key, e.g. "wifi"
+  icon      String // lucide icon name, e.g. "Wifi"
+  name      Json
+  scope     String            @default("room") // room | hotel
+  sortOrder Int               @default(0)
+  roomTypes RoomTypeAmenity[]
+}
+
+model RoomType {
+  id            String            @id @default(cuid())
+  slug          String            @unique
+  name          Json
+  shortDescription Json?
+  description   Json?
+  sizeM2        Int?
+  beds          Json? // localized, e.g. {"en": "1 king bed"}
+  view          String? // sea | garden | city | pool
+  maxAdults     Int               @default(2)
+  maxChildren   Int               @default(0)
+  maxOccupancy  Int               @default(2)
+  extraBeds     Int               @default(0)
+  /// Guests included in the room price; extra adults / children above this pay the occupancy rules
+  baseOccupancy Int               @default(2)
+  /// Base nightly price in minor units (tetri)
+  basePrice     Int
+  weekendPrice  Int?
+  minStay       Int               @default(1)
+  sortOrder     Int               @default(0)
+  featured      Boolean           @default(false)
+  active        Boolean           @default(true)
+  seoTitle      Json?
+  seoDescription Json?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  rooms         Room[]
+  photos        RoomTypePhoto[]
+  amenities     RoomTypeAmenity[]
+  seasonRates   SeasonRate[]
+  overrides     RateOverride[]
+  icalFeeds     IcalFeed[]
+}
+
+model RoomTypePhoto {
+  roomTypeId String
+  mediaId    String
+  sortOrder  Int      @default(0)
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  media      Media    @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([roomTypeId, mediaId])
+}
+
+model RoomTypeAmenity {
+  roomTypeId String
+  amenityId  String
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@id([roomTypeId, amenityId])
+}
+
+enum HousekeepingStatus {
+  CLEAN
+  DIRTY
+  INSPECTED
+  OUT_OF_ORDER
+}
+
+model Room {
+  id                 String             @id @default(cuid())
+  number             String             @unique
+  floor              Int?
+  roomTypeId         String
+  roomType           RoomType           @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
+  housekeeping       HousekeepingStatus @default(CLEAN)
+  housekeepingNote   String?
+  notes              String?
+  active             Boolean            @default(true)
+  updatedAt          DateTime           @updatedAt
+  allocations        RoomAllocation[]
+  icalFeeds          IcalFeed[]
+}
+
+// ───────────────────────────── Pricing ─────────────────────────────
+
+model Season {
+  id        String       @id @default(cuid())
+  name      Json
+  startDate DateTime     @db.Date
+  endDate   DateTime     @db.Date // inclusive
+  color     String?
+  rates     SeasonRate[]
+}
+
+model SeasonRate {
+  id           String   @id @default(cuid())
+  seasonId     String
+  roomTypeId   String
+  price        Int
+  weekendPrice Int?
+  minStay      Int?
+  season       Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  roomType     RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, roomTypeId])
+}
+
+/// Date-specific overrides (price, min stay, closed to arrival / fully closed)
+model RateOverride {
+  id         String   @id @default(cuid())
+  roomTypeId String
+  date       DateTime @db.Date
+  price      Int?
+  minStay    Int?
+  closed     Boolean  @default(false)
+  closedToArrival Boolean @default(false)
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([roomTypeId, date])
+}
+
+/// Child / extra-bed pricing rules
+model OccupancyRule {
+  id          String  @id @default(cuid())
+  name        Json
+  kind        String // child | extra_adult | extra_bed
+  minAge      Int?
+  maxAge      Int?
+  /// per night, minor units (used when percentOfRoom is empty)
+  pricePerNight Int          @default(0)
+  /// e.g. 50 = half of that night's room price
+  percentOfRoom Int?
+  sortOrder   Int            @default(0)
+}
+
+enum ExtraUnit {
+  PER_STAY
+  PER_NIGHT
+  PER_GUEST
+  PER_GUEST_NIGHT
+}
+
+model Extra {
+  id          String        @id @default(cuid())
+  key         String        @unique
+  name        Json
+  description Json?
+  icon        String?
+  price       Int
+  unit        ExtraUnit     @default(PER_STAY)
+  active      Boolean       @default(true)
+  sortOrder   Int           @default(0)
+  bookings    BookingExtra[]
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+model PromoCode {
+  id          String       @id @default(cuid())
+  code        String       @unique
+  description String?
+  type        DiscountType @default(PERCENT)
+  value       Int // percent (e.g. 10) or minor units
+  validFrom   DateTime?    @db.Date
+  validTo     DateTime?    @db.Date
+  stayFrom    DateTime?    @db.Date
+  stayTo      DateTime?    @db.Date
+  minNights   Int?
+  /// Empty = valid for all room types
+  roomTypeIds String[]
+  maxUses     Int?
+  perGuestLimit Int?
+  usedCount   Int          @default(0)
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  bookings    Booking[]
+}
+
+// ───────────────────────────── Guests & bookings ─────────────────────────────
+
+model Guest {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  firstName        String
+  lastName         String
+  phone            String?
+  country          String?
+  locale           String?
+  marketingConsent Boolean   @default(false)
+  notes            String?
+  tags             String[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  bookings         Booking[]
+  reviews          Review[]
+}
+
+enum BookingStatus {
+  PENDING // pending_payment: room held, waiting for payment / confirmation
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+  EXPIRED // unpaid pending booking whose hold ran out — the room was released
+}
+
+enum PaymentStatus {
+  UNPAID
+  DEPOSIT_PAID
+  PAID
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum BookingSource {
+  DIRECT
+  PHONE
+  WALK_IN
+  WHATSAPP
+  BOOKING_COM
+  AIRBNB
+  EXPEDIA
+  OTHER
+}
+
+model Booking {
+  id             String         @id @default(cuid())
+  code           String         @unique // e.g. RH-7K4Q2X
+  status         BookingStatus  @default(PENDING)
+  paymentStatus  PaymentStatus  @default(UNPAID)
+  source         BookingSource  @default(DIRECT)
+  /// Empty while the guest is still in checkout (room held, details not yet entered)
+  guestId        String?
+  guest          Guest?         @relation(fields: [guestId], references: [id], onDelete: Restrict)
+  checkIn        DateTime       @db.Date
+  checkOut       DateTime       @db.Date
+  adults         Int
+  children       Int            @default(0)
+  childAges      Int[]
+  locale         String         @default("ka")
+  /// Currency the guest saw; amounts below are always stored in GEL minor units
+  displayCurrency String        @default("GEL")
+  roomsTotal     Int
+  extrasTotal    Int            @default(0)
+  discountTotal  Int            @default(0)
+  taxTotal       Int            @default(0)
+  grandTotal     Int
+  depositDue     Int            @default(0)
+  amountPaid     Int            @default(0)
+  promoCodeId    String?
+  promoCode      PromoCode?     @relation(fields: [promoCodeId], references: [id], onDelete: SetNull)
+  paymentMethod  String? // pay_at_hotel | mock | tbc | bog
+  /// pay_at_hotel | deposit | full
+  paymentPlan    String?
+  /// Pending bookings expire (and release their rooms) after this moment
+  holdExpiresAt  DateTime?
+  confirmedAt    DateTime?
+  refundAmount   Int            @default(0)
+  /// Late-cancellation or no-show fee charged under the policy
+  penaltyAmount  Int            @default(0)
+  /// Full price breakdown shown to the guest (per night, extra guests, extras, discount, tax)
+  priceBreakdown Json?
+  guestCount     Int            @default(0)
+  /// Snapshot of the cancellation policy at the moment of booking
+  cancellationPolicy Json?
+  specialRequests String?
+  arrivalTime    String?
+  cancelledAt    DateTime?
+  cancelReason   String?
+  externalRef    String? // OTA reservation id
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  rooms          RoomAllocation[]
+  extras         BookingExtra[]
+  payments       Payment[]
+  notes          BookingNote[]
+
+  @@index([checkIn, checkOut])
+  @@index([status])
+}
+
+enum AllocationKind {
+  BOOKING
+  HOLD // temporary hold while the guest pays
+  EXTERNAL // imported from Booking.com / Airbnb / Expedia iCal
+  MAINTENANCE
+}
+
+/// One physical room occupied for a date range. A PostgreSQL EXCLUDE constraint
+/// (see migration) makes overlapping active allocations for the same room impossible,
+/// which is what guarantees "no double bookings" even under concurrent requests.
+model RoomAllocation {
+  id            String         @id @default(cuid())
+  roomId        String
+  room          Room           @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  checkIn       DateTime       @db.Date
+  checkOut      DateTime       @db.Date
+  kind          AllocationKind @default(BOOKING)
+  active        Boolean        @default(true)
+  bookingId     String?
+  booking       Booking?       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  adults        Int            @default(0)
+  children      Int            @default(0)
+  childAges     Int[]
+  roomTypeId    String?
+  nightlyPrices Int[]
+  extraGuestTotal Int          @default(0)
+  holdExpiresAt DateTime?
+  icalFeedId    String?
+  icalFeed      IcalFeed?      @relation(fields: [icalFeedId], references: [id], onDelete: Cascade)
+  externalUid   String?
+  note          String?
+  createdAt     DateTime       @default(now())
+
+  @@index([roomId, checkIn, checkOut])
+  @@index([bookingId])
+}
+
+model BookingExtra {
+  id        String  @id @default(cuid())
+  bookingId String
+  extraId   String
+  quantity  Int     @default(1)
+  unitPrice Int
+  total     Int
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  extra     Extra   @relation(fields: [extraId], references: [id], onDelete: Restrict)
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  provider    String // tbc | bog | cash | card_terminal | bank_transfer
+  status      String // created | pending | succeeded | failed | refunded
+  amount      Int
+  currency    String   @default("GEL")
+  providerRef String?
+  raw         Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([providerRef])
+}
+
+model BookingNote {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+// ───────────────────────────── Channel sync ─────────────────────────────
+
+model IcalFeed {
+  id          String           @id @default(cuid())
+  name        String?
+  channel     String // booking_com | airbnb | expedia | other
+  roomId      String?
+  room        Room?            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomTypeId  String?
+  roomType    RoomType?        @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  importUrl   String?
+  exportToken String           @unique @default(cuid())
+  lastSyncAt  DateTime?
+  lastError   String?
+  lastCount   Int?
+  active      Boolean          @default(true)
+  allocations RoomAllocation[]
+}
+
+// ───────────────────────────── Content ─────────────────────────────
+
+/// Editable page content: one row per page (home, about, contact …).
+/// `sections` is a JSON object of localized fields validated per page in src/lib/content.ts.
+model Page {
+  key            String   @id // home | rooms | gallery | amenities | offers | kobuleti | reviews | contact | faq
+  sections       Json
+  /// Unpublished edits (previewable); published by copying into sections / seo fields
+  draft          Json?
+  publishedAt    DateTime?
+  seoTitle       Json?
+  seoDescription Json?
+  ogImageId      String?
+  updatedAt      DateTime @updatedAt
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  key         String  @unique
+  icon        String
+  title       Json
+  description Json
+  mediaId     String?
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model Offer {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       Json
+  summary     Json
+  body        Json?
+  mediaId     String?
+  badge       Json?
+  promoCode   String?
+  validFrom   DateTime? @db.Date
+  validTo     DateTime? @db.Date
+  sortOrder   Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+}
+
+model Attraction {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       Json
+  summary     Json
+  body        Json?
+  distanceKm  Decimal? @db.Decimal(6, 1)
+  driveMinutes Int?
+  mediaId     String?
+  mapUrl      String?
+  sortOrder   Int     @default(0)
+  active      Boolean @default(true)
+}
+
+model FaqItem {
+  id        String  @id @default(cuid())
+  question  Json
+  answer    Json
+  category  String  @default("general")
+  sortOrder Int     @default(0)
+  active    Boolean @default(true)
+}
+
+model Policy {
+  slug      String   @id // check-in | cancellation | children | pets | privacy | terms
+  title     Json
+  body      Json // markdown-lite per locale
+  /// Unpublished edits {title, body}; shown only in preview (Draft Mode) until published
+  draft     Json?
+  sortOrder Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────── Reviews & messages ─────────────────────────────
+
+enum ReviewSource {
+  GOOGLE
+  DIRECT
+  BOOKING_COM
+  OTHER
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Review {
+  id         String       @id @default(cuid())
+  source     ReviewSource @default(DIRECT)
+  status     ReviewStatus @default(PENDING)
+  authorName String
+  country    String?
+  rating     Int // 1–5
+  title      String?
+  body       String
+  locale     String?
+  stayMonth  String? // "2026-07"
+  reply      String?
+  externalId String?      @unique
+  guestId    String?
+  guest      Guest?       @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  publishedAt DateTime?
+  createdAt  DateTime     @default(now())
+
+  @@index([status, source])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  locale    String?
+  handled   Boolean  @default(false)
+  ip        String?
+  createdAt DateTime @default(now())
+}
+
+/// Fixed-window rate limiter (works on any host without Redis)
+model RateLimit {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+}
+
+/// Per-year counter for human-friendly booking codes: RH-2026-0001
+model BookingSequence {
+  year Int @id
+  last Int @default(0)
+}

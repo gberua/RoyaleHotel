@@ -1,26 +1,241 @@
 @import "tailwindcss";
+@import "../styles/display-font.generated.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ───────────────────────────── Design tokens ─────────────────────────────
+   White is the canvas. Turquoise (sea) is for accents, buttons and highlights.
+   Ink (deep teal-navy) carries text and contrast. Sand is an optional warm accent.
+   Contrast notes: sea-700 on white = 5.0:1 (AA for text/buttons). sea-500 is decorative only. */
+@theme {
+  --color-white: #ffffff;
+  --color-mist: #f3f8f7;
+  --color-foam: #e9f5f3;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Sea turquoise (hue ≈186°). 500 = brand accent (fills, lines, pills with navy text).
+     700+ = turquoise text on white (≥4.5:1). White text never sits on 400–600. */
+  --color-sea-50: #ecfbfc;
+  --color-sea-100: #cff4f7;
+  --color-sea-200: #a3e8ee;
+  --color-sea-300: #67d6e0;
+  --color-sea-400: #2fc5d1;
+  --color-sea-500: #14b8c4; /* brand turquoise */
+  --color-sea-600: #0e9aa6;
+  --color-sea-700: #0b7d88; /* links / accent text (4.9:1 on white) */
+  --color-sea-800: #0a636c;
+  --color-sea-900: #0b5159;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-ink-950: #071f27;
+  --color-ink-900: #0b2e3a; /* headings, footer */
+  --color-ink-800: #143b48;
+  --color-ink-700: #1d4652;
+  --color-ink-500: #4b6b75; /* secondary text (5.7:1) */
+  --color-ink-300: #9fb3b9;
+  --color-ink-100: #dfe8ea;
+
+  --color-sand-50: #fbf8f2;
+  --color-sand-100: #f6f0e6;
+  --color-sand-300: #e8dcc5;
+  --color-sand-500: #c9b48e;
+  --color-sand-700: #8a7350;
+
+  --color-star: #e6a817;
+  --color-danger: #b42318;
+  --color-success: #067647;
+
+  --font-display: "Royale Display", var(--font-display-ka), var(--font-display-latin), ui-serif, Georgia, serif;
+  --font-sans: var(--font-body-ka), var(--font-body-latin), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 1px 2px rgb(11 46 58 / 0.04), 0 8px 24px -8px rgb(11 46 58 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(11 46 58 / 0.05), 0 24px 48px -16px rgb(11 46 58 / 0.22);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 0.9s var(--ease-out-soft) both;
+  --animate-ken-burns: ken-burns 24s ease-out both;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes ken-burns {
+    from { transform: scale(1.08); }
+    to { transform: scale(1); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    --header-h: 5rem;
+    color-scheme: light;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+  html, body { overflow-x: clip; } /* safety net: nothing may widen the mobile layout viewport */
+  body {
+    background: var(--color-white);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    font-stretch: var(--display-stretch, normal);
+    font-weight: 400;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--color-sea-700);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection { background: var(--color-sea-100); }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) { .container-x { padding-inline: 1.5rem; } }
+  @media (min-width: 1024px) { .container-x { padding-inline: 2.5rem; } }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-sea-700);
+  }
+
+  :lang(ka) .eyebrow { letter-spacing: 0.06em; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.5rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--ease-out-soft);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  /* Primary = deep navy (strong, readable). Accent = turquoise pill with navy text (7:1). */
+  .btn-primary { background: var(--color-ink-900); color: #fff; }
+  .btn-primary:hover { background: var(--color-ink-800); }
+  .btn-accent { background: var(--color-sea-500); color: var(--color-ink-950); box-shadow: 0 10px 24px -12px rgb(20 184 196 / 0.9); }
+  .btn-accent:hover { background: var(--color-sea-400); }
+  .btn-ghost { border: 1px solid var(--color-ink-100); color: var(--color-ink-900); background: #fff; }
+  .btn-ghost:hover { border-color: var(--color-sea-500); color: var(--color-sea-800); }
+  .btn-light { background: rgb(255 255 255 / 0.95); color: var(--color-ink-900); }
+  .btn-light:hover { background: #fff; }
+  .btn-outline-light { border: 1px solid rgb(255 255 255 / 0.6); color: #fff; }
+  .btn-outline-light:hover { background: rgb(255 255 255 / 0.12); }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-out-soft);
+  }
+  .link-underline:hover { background-size: 100% 1px; }
+
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-ink-100);
+    background: #fff;
+    padding: 0.65rem 0.9rem;
+    font-size: 1rem; /* ≥16px prevents iOS zoom on focus */
+    color: var(--color-ink-900);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field:focus { outline: none; border-color: var(--color-sea-600); box-shadow: 0 0 0 4px rgb(20 184 196 / 0.18); }
+  .label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-ink-700); margin-bottom: 0.35rem; }
+
+  .prose-hotel { color: var(--color-ink-700); line-height: 1.75; }
+  .prose-hotel h2 { font-size: 1.75rem; color: var(--color-ink-900); margin: 2rem 0 0.75rem; }
+  .prose-hotel h3 { font-size: 1.35rem; color: var(--color-ink-900); margin: 1.5rem 0 0.5rem; }
+  .prose-hotel p { margin: 0 0 1rem; }
+  .prose-hotel ul { list-style: disc; padding-left: 1.25rem; margin: 0 0 1rem; }
+  .prose-hotel li { margin: 0.25rem 0; }
+  .prose-hotel a { color: var(--color-sea-700); text-decoration: underline; text-underline-offset: 3px; }
+  .prose-hotel strong { color: var(--color-ink-900); font-weight: 600; }
+
+  .placeholder-badge {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    background: #fff4d6; color: #7a5300; border: 1px dashed #d9a400; border-radius: 6px; padding: 0.1rem 0.4rem;
+  }
+}
+
+/* ───── Horizon hero ───── */
+@keyframes hero-letter {
+  from { opacity: 0; transform: translateY(0.18em); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes hero-horizon {
+  from { transform: scaleX(0); opacity: 0.4; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+@keyframes hero-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes scroll-dot {
+  0% { transform: translateY(-100%); }
+  70%, 100% { transform: translateY(300%); }
+}
+@keyframes kenburns {
+  from { transform: scale(1.12); }
+  to { transform: scale(1); }
+}
+.hero-letter { animation: hero-letter 0.9s var(--ease-out-soft) both; }
+.hero-horizon { transform-origin: center; animation: hero-horizon 1.4s var(--ease-out-soft) both; }
+.hero-fade { animation: hero-fade 1s var(--ease-out-soft) both; }
+.scroll-dot { animation: scroll-dot 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
+.hero-kenburns { animation: kenburns 26s ease-out both; will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-letter, .hero-horizon, .hero-fade, .hero-kenburns { animation: none !important; opacity: 1; transform: none; filter: none; }
+  .scroll-dot { animation: none !important; transform: translateY(100%); }
+}
+
+/* Reveal on scroll — pure CSS scroll-driven animation, zero JavaScript.
+   Browsers without support simply show the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

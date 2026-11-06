@@ -39,3 +39,38 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+!.env.example
+
+# generated
+/src/generated
+/src/styles/display-font.generated.css
+
+# uploaded / generated media (local storage driver)
+/storage
+
+# test artifacts
+/test-results
+/playwright-report
+
+# logs
+logs/
+*.log
+
+# local databases & dumps (never commit data)
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.backup
+*.bak
+/dumps
+/backups
+
+# editors & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.claude/

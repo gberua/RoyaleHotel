@@ -1,0 +1,789 @@
+{
+  "_about": "DEMO photo manifest. `npm run demo:photos` downloads each photo (Unsplash/Pexels only), optimizes it, imports it into the media library (flagged isDemo) and links it to its slot. Edit and re-run to swap a photo. All photos: free commercial use under the Unsplash License / Pexels License.",
+  "photos": [
+    {
+      "file": "room-standard-double-01.jpg",
+      "platform": "pexels",
+      "id": "18651506",
+      "url": "https://www.pexels.com/photo/modern-hotel-room-design-18651506/",
+      "photographer": "Real Estate 4k",
+      "profile": "https://www.pexels.com/@real-estate-4k-719913841/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "standard-double",
+          "order": 0
+        }
+      ],
+      "alt": {
+        "ka": "ნათელი ორადგილიანი ნომერი თეთრი თეთრეულით",
+        "en": "Bright double room with crisp white bedding",
+        "ru": "Светлый двухместный номер с белоснежным бельём"
+      }
+    },
+    {
+      "file": "room-standard-double-02.jpg",
+      "platform": "pexels",
+      "id": "18651505",
+      "url": "https://www.pexels.com/photo/view-of-a-modern-hotel-room-18651505/",
+      "photographer": "Real Estate 4k",
+      "profile": "https://www.pexels.com/@real-estate-4k-719913841/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "standard-double",
+          "order": 1
+        }
+      ],
+      "alt": {
+        "ka": "ნომრის სამუშაო კუთხე, სავარძელი და ტელევიზორი",
+        "en": "Desk, armchair and TV in the double room",
+        "ru": "Рабочий стол, кресло и телевизор в номере"
+      }
+    },
+    {
+      "file": "room-standard-double-03.jpg",
+      "platform": "pexels",
+      "id": "18651507",
+      "url": "https://www.pexels.com/photo/a-bedroom-interior-18651507/",
+      "photographer": "Real Estate 4k",
+      "profile": "https://www.pexels.com/@real-estate-4k-719913841/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "standard-double",
+          "order": 2
+        }
+      ],
+      "alt": {
+        "ka": "ორადგილიანი საწოლი და ნათელი ინტერიერი",
+        "en": "Double bed and light, calm interior",
+        "ru": "Двуспальная кровать и светлый спокойный интерьер"
+      }
+    },
+    {
+      "file": "room-twin-01.jpg",
+      "platform": "pexels",
+      "id": "29702286",
+      "url": "https://www.pexels.com/photo/modern-hotel-room-with-ocean-view-and-twin-beds-29702286/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "gallery": 12,
+      "uses": [
+        {
+          "type": "room",
+          "slug": "twin",
+          "order": 0
+        }
+      ],
+      "alt": {
+        "ka": "Twin ნომერი ორი საწოლით და ზღვის ხედით",
+        "en": "Twin room with two beds and a view of the sea",
+        "ru": "Номер Twin с двумя кроватями и видом на море"
+      }
+    },
+    {
+      "file": "room-twin-02.jpg",
+      "platform": "pexels",
+      "id": "29702285",
+      "url": "https://www.pexels.com/photo/cozy-modern-hotel-room-with-sea-view-29702285/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "twin",
+          "order": 1
+        }
+      ],
+      "alt": {
+        "ka": "Twin ნომერი ღია ფერის ხის დეტალებით",
+        "en": "Twin room with light wood details",
+        "ru": "Номер Twin со светлым деревом в отделке"
+      }
+    },
+    {
+      "file": "room-twin-03.jpg",
+      "platform": "pexels",
+      "id": "29702288",
+      "url": "https://www.pexels.com/photo/cozy-minimalist-bedroom-interior-design-29702288/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "twin",
+          "order": 2
+        }
+      ],
+      "alt": {
+        "ka": "საწოლის დეტალი და საკითხავი ნათურა",
+        "en": "Bed detail with a reading lamp",
+        "ru": "Кровать и лампа для чтения крупным планом"
+      }
+    },
+    {
+      "file": "room-twin-04-bathroom.jpg",
+      "platform": "pexels",
+      "id": "29702287",
+      "url": "https://www.pexels.com/photo/modern-minimalist-bathroom-with-glass-shower-29702287/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "twin",
+          "order": 3
+        }
+      ],
+      "alt": {
+        "ka": "თანამედროვე აბაზანა მინის შხაპით",
+        "en": "Modern bathroom with a glass shower",
+        "ru": "Современная ванная с душевой кабиной"
+      }
+    },
+    {
+      "file": "room-deluxe-sea-view-01.jpg",
+      "platform": "pexels",
+      "id": "27626182",
+      "url": "https://www.pexels.com/photo/a-bedroom-with-white-walls-and-wooden-floors-27626182/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "gallery": 3,
+      "uses": [
+        {
+          "type": "room",
+          "slug": "deluxe-sea-view",
+          "order": 0
+        }
+      ],
+      "alt": {
+        "ka": "დელუქს ნომერი თეთრ და ფირუზისფერ ტონებში",
+        "en": "Deluxe room in white and soft turquoise tones",
+        "ru": "Номер Делюкс в белых и мягких бирюзовых тонах"
+      }
+    },
+    {
+      "file": "room-deluxe-sea-view-02.jpg",
+      "platform": "pexels",
+      "id": "27626179",
+      "url": "https://www.pexels.com/photo/a-bedroom-with-a-large-tub-and-a-large-bed-27626179/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "deluxe-sea-view",
+          "order": 1
+        }
+      ],
+      "alt": {
+        "ka": "დიდი საწოლი და თავისუფლად მდგომი აბაზანა",
+        "en": "King-size bed and a freestanding bathtub",
+        "ru": "Большая кровать и отдельно стоящая ванна"
+      }
+    },
+    {
+      "file": "room-deluxe-sea-view-03.jpg",
+      "platform": "pexels",
+      "id": "27626180",
+      "url": "https://www.pexels.com/photo/a-large-bath-tub-in-a-bedroom-with-a-view-27626180/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "deluxe-sea-view",
+          "order": 2
+        }
+      ],
+      "alt": {
+        "ka": "აბაზანა ფანჯარასთან ზღვისა და მთების ხედით",
+        "en": "Bathtub by the window with a view of the sea and hills",
+        "ru": "Ванна у окна с видом на море и горы"
+      }
+    },
+    {
+      "file": "room-deluxe-sea-view-04-bathroom.jpg",
+      "platform": "pexels",
+      "id": "27626183",
+      "url": "https://www.pexels.com/photo/a-bathroom-with-a-large-window-and-a-sink-27626183/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "deluxe-sea-view",
+          "order": 3
+        }
+      ],
+      "alt": {
+        "ka": "ნათელი აბაზანა დიდი ფანჯრით",
+        "en": "Bright bathroom with a large window",
+        "ru": "Светлая ванная комната с большим окном"
+      }
+    },
+    {
+      "file": "room-family-01.jpg",
+      "platform": "pexels",
+      "id": "29000006",
+      "url": "https://www.pexels.com/photo/modern-hotel-room-with-two-beds-and-natural-light-29000006/",
+      "photographer": "Quang Nguyen Vinh",
+      "profile": "https://www.pexels.com/@quang-nguyen-vinh-222549/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "family-room",
+          "order": 0
+        }
+      ],
+      "alt": {
+        "ka": "ფართო საოჯახო ნომერი ორი დიდი საწოლით",
+        "en": "Spacious family room with two large beds",
+        "ru": "Просторный семейный номер с двумя большими кроватями"
+      }
+    },
+    {
+      "file": "room-family-02.jpg",
+      "platform": "pexels",
+      "id": "29000012",
+      "url": "https://www.pexels.com/photo/modern-hotel-room-with-twin-beds-and-elegant-decor-29000012/",
+      "photographer": "Quang Nguyen Vinh",
+      "profile": "https://www.pexels.com/@quang-nguyen-vinh-222549/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "family-room",
+          "order": 1
+        }
+      ],
+      "alt": {
+        "ka": "საოჯახო ნომერი სავარძლით და ნათელი ფანჯრით",
+        "en": "Family room with an armchair and a bright window",
+        "ru": "Семейный номер с креслом и светлым окном"
+      }
+    },
+    {
+      "file": "room-family-03.jpg",
+      "platform": "pexels",
+      "id": "29000007",
+      "url": "https://www.pexels.com/photo/29000007/",
+      "photographer": "Quang Nguyen Vinh",
+      "profile": "https://www.pexels.com/@quang-nguyen-vinh-222549/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "family-room",
+          "order": 2
+        }
+      ],
+      "alt": {
+        "ka": "ორი საწოლი გვერდიგვერდ საოჯახო ნომერში",
+        "en": "Two beds side by side in the family room",
+        "ru": "Две кровати рядом в семейном номере"
+      }
+    },
+    {
+      "file": "room-suite-01-living.jpg",
+      "platform": "pexels",
+      "id": "18801081",
+      "url": "https://www.pexels.com/photo/18801081/",
+      "photographer": "Stiven Rivera",
+      "profile": "https://www.pexels.com/@stiven-rivera-326722901/",
+      "category": "room",
+      "gallery": 11,
+      "uses": [
+        {
+          "type": "room",
+          "slug": "royale-suite",
+          "order": 0
+        }
+      ],
+      "alt": {
+        "ka": "სუიტის მისაღები დივნით და აივანი ზღვის ხედით",
+        "en": "Suite living area with a sofa and a sea-view balcony",
+        "ru": "Гостиная люкса с диваном и балконом с видом на море"
+      }
+    },
+    {
+      "file": "room-suite-02.jpg",
+      "platform": "pexels",
+      "id": "18801080",
+      "url": "https://www.pexels.com/photo/interior-design-of-a-hotel-room-18801080/",
+      "photographer": "Stiven Rivera",
+      "profile": "https://www.pexels.com/@stiven-rivera-326722901/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "royale-suite",
+          "order": 1
+        }
+      ],
+      "alt": {
+        "ka": "სუიტის ფართო ოთახი — მისაღები და საძინებელი",
+        "en": "The open-plan suite: living area and bedroom",
+        "ru": "Просторный люкс: гостиная и спальня"
+      }
+    },
+    {
+      "file": "room-suite-03.jpg",
+      "platform": "pexels",
+      "id": "18801079",
+      "url": "https://www.pexels.com/photo/couch-and-double-bed-in-hotel-suite-18801079/",
+      "photographer": "Stiven Rivera",
+      "profile": "https://www.pexels.com/@stiven-rivera-326722901/",
+      "category": "room",
+      "uses": [
+        {
+          "type": "room",
+          "slug": "royale-suite",
+          "order": 2
+        }
+      ],
+      "alt": {
+        "ka": "კუთხის დივანი და დიდი საწოლი სუიტაში",
+        "en": "Corner sofa and king-size bed in the suite",
+        "ru": "Угловой диван и большая кровать в люксе"
+      }
+    },
+    {
+      "file": "room-suite-04.jpg",
+      "platform": "pexels",
+      "id": "18801082",
+      "url": "https://www.pexels.com/photo/18801082/",
+      "photographer": "Stiven Rivera",
+      "profile": "https://www.pexels.com/@stiven-rivera-326722901/",
+      "category": "room",
+      "uses": [],
+      "alt": {
+        "ka": "სამუშაო მაგიდა სუიტაში",
+        "en": "Work desk in the suite",
+        "ru": "Рабочий стол в люксе"
+      }
+    },
+    {
+      "file": "pool-infinity-sunbeds.jpg",
+      "platform": "pexels",
+      "id": "29702291",
+      "url": "https://www.pexels.com/photo/luxury-mediterranean-villa-with-pool-and-sea-view-29702291/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "pool",
+      "gallery": 2,
+      "uses": [
+        {
+          "type": "service",
+          "key": "pool"
+        }
+      ],
+      "alt": {
+        "ka": "ღია აუზი მზის ლოგინებით და ზღვის ხედით",
+        "en": "Outdoor pool with sun loungers and a sea view",
+        "ru": "Открытый бассейн с шезлонгами и видом на море"
+      }
+    },
+    {
+      "file": "pool-turquoise-aerial.jpg",
+      "platform": "pexels",
+      "id": "29702280",
+      "url": "https://www.pexels.com/photo/refreshing-aerial-view-of-luxury-pool-29702280/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "pool",
+      "gallery": 9,
+      "alt": {
+        "ka": "ფირუზისფერი აუზი ზემოდან",
+        "en": "Turquoise pool water seen from above",
+        "ru": "Бирюзовая вода бассейна сверху"
+      }
+    },
+    {
+      "file": "pool-terrace-seafront.jpg",
+      "platform": "pexels",
+      "id": "12715502",
+      "url": "https://www.pexels.com/photo/patio-of-a-house-with-a-swimming-pool-on-seashore-12715502/",
+      "photographer": "Keegan Checks",
+      "profile": "https://www.pexels.com/@keeganjchecks/",
+      "category": "pool",
+      "gallery": 15,
+      "alt": {
+        "ka": "ტერასა აუზით ზღვის პირას",
+        "en": "Seafront terrace with a pool",
+        "ru": "Терраса с бассейном у моря"
+      }
+    },
+    {
+      "file": "pool-infinity-sea-cta.jpg",
+      "platform": "pexels",
+      "id": "29702290",
+      "url": "https://www.pexels.com/photo/luxurious-seaside-infinity-pool-with-scenic-view-29702290/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "view",
+      "gallery": 16,
+      "uses": [
+        {
+          "type": "cta"
+        }
+      ],
+      "alt": {
+        "ka": "უსასრულო აუზი, რომელიც ზღვას ერწყმის",
+        "en": "Infinity pool merging into the sea",
+        "ru": "Бассейн-инфинити, сливающийся с морем"
+      }
+    },
+    {
+      "file": "terrace-sea-view.jpg",
+      "platform": "pexels",
+      "id": "10611843",
+      "url": "https://www.pexels.com/photo/hotel-on-sea-coastline-10611843/",
+      "photographer": "alleksana",
+      "profile": "https://www.pexels.com/@alleksana/",
+      "category": "exterior",
+      "gallery": 1,
+      "alt": {
+        "ka": "თეთრი ტერასა ზღვის ხედით",
+        "en": "White terrace overlooking the sea",
+        "ru": "Белая терраса с видом на море"
+      }
+    },
+    {
+      "file": "balcony-sea-view-drinks.jpg",
+      "platform": "pexels",
+      "id": "29702283",
+      "url": "https://www.pexels.com/photo/scenic-seaside-balcony-with-refreshing-drinks-29702283/",
+      "photographer": "Ahmet ÇÖTÜR",
+      "profile": "https://www.pexels.com/@ahmetcotur/",
+      "category": "view",
+      "gallery": 7,
+      "alt": {
+        "ka": "აივანი ზღვის ხედით და გამაგრილებელი სასმელები",
+        "en": "Balcony with a sea view and cool drinks",
+        "ru": "Балкон с видом на море и прохладительными напитками"
+      }
+    },
+    {
+      "file": "lobby-lounge.jpg",
+      "platform": "pexels",
+      "id": "28999497",
+      "url": "https://www.pexels.com/photo/28999497/",
+      "photographer": "Quang Nguyen Vinh",
+      "profile": "https://www.pexels.com/@quang-nguyen-vinh-222549/",
+      "category": "lobby",
+      "gallery": 4,
+      "alt": {
+        "ka": "ნათელი ლობი ფირუზისფერი ბალიშებით",
+        "en": "Bright lobby lounge with turquoise cushions",
+        "ru": "Светлое лобби с бирюзовыми подушками"
+      },
+      "crop": {
+        "left": 0.24,
+        "right": 0.2
+      },
+      "note": "Cropped left 24 % and right 20 % to remove a directory sign and lettering on the glass."
+    },
+    {
+      "file": "restaurant-interior.jpg",
+      "platform": "pexels",
+      "id": "11405225",
+      "url": "https://www.pexels.com/photo/soft-interior-design-boutique-hotel-in-riga-11405225/",
+      "photographer": "Katrīne Skrebele",
+      "profile": "https://www.pexels.com/@katrineskrebele/",
+      "category": "restaurant",
+      "gallery": 5,
+      "uses": [
+        {
+          "type": "service",
+          "key": "restaurant"
+        }
+      ],
+      "alt": {
+        "ka": "ნათელი რესტორნის დარბაზი თეთრ ტონებში",
+        "en": "Light-filled restaurant in soft white tones",
+        "ru": "Светлый ресторан в мягких белых тонах"
+      }
+    },
+    {
+      "file": "breakfast-buffet.jpg",
+      "platform": "pexels",
+      "id": "29086305",
+      "url": "https://www.pexels.com/photo/assorted-breakfast-buffet-with-juices-and-cereals-29086305/",
+      "photographer": "Keegan Checks",
+      "profile": "https://www.pexels.com/@keeganjchecks/",
+      "category": "restaurant",
+      "gallery": 6,
+      "alt": {
+        "ka": "საუზმე — წვენები, მარცვლეული და ხილი",
+        "en": "Breakfast spread with juices, cereals and fruit",
+        "ru": "Завтрак: соки, хлопья и фрукты"
+      }
+    },
+    {
+      "file": "georgian-food-adjarian-khachapuri.jpg",
+      "platform": "pexels",
+      "id": "15913594",
+      "url": "https://www.pexels.com/photo/khachapuri-on-plate-15913594/",
+      "photographer": "Valeria Boltneva",
+      "profile": "https://www.pexels.com/@valeriya/",
+      "category": "restaurant",
+      "gallery": 10,
+      "alt": {
+        "ka": "აჭარული ხაჭაპური კვერცხით და კარაქით",
+        "en": "Adjarian khachapuri with egg and butter",
+        "ru": "Аджарский хачапури с яйцом и маслом"
+      }
+    },
+    {
+      "file": "beach-umbrellas-sunbeds.jpg",
+      "platform": "pexels",
+      "id": "16925918",
+      "url": "https://www.pexels.com/photo/sunbeds-on-a-beach-in-tropical-resort-16925918/",
+      "photographer": "Ayşegül Aytören",
+      "profile": "https://www.pexels.com/@aysegul-aytoren-46790226/",
+      "category": "beach",
+      "gallery": 8,
+      "uses": [
+        {
+          "type": "service",
+          "key": "beach"
+        }
+      ],
+      "alt": {
+        "ka": "კენჭოვანი პლაჟი ჩალის ქოლგებით და შეზლონგებით",
+        "en": "Pebble beach with straw umbrellas and sun loungers",
+        "ru": "Галечный пляж с соломенными зонтиками и шезлонгами"
+      }
+    },
+    {
+      "file": "beach-loungers-evening.jpg",
+      "platform": "pexels",
+      "id": "32814569",
+      "url": "https://www.pexels.com/photo/pebble-beach-with-sunbeds-and-umbrellas-at-sunset-32814569/",
+      "photographer": "Eyüpcan Timur",
+      "profile": "https://www.pexels.com/@eyupcan-timur-424989336/",
+      "category": "beach",
+      "gallery": 14,
+      "alt": {
+        "ka": "შეზლონგები კენჭოვან პლაჟზე საღამოს",
+        "en": "Sun loungers on a pebble beach in the evening",
+        "ru": "Шезлонги на галечном пляже вечером"
+      }
+    },
+    {
+      "file": "kobuleti-style-beach-pines.jpg",
+      "platform": "pexels",
+      "id": "36536401",
+      "url": "https://www.pexels.com/photo/tranquil-beach-scene-with-pine-forest-in-georgia-36536401/",
+      "photographer": "levan simonshvili",
+      "profile": "https://www.pexels.com/@levsi/",
+      "category": "beach",
+      "gallery": 13,
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "kobuleti-beach"
+        }
+      ],
+      "alt": {
+        "ka": "ფიჭვნარი და მშვიდი პლაჟი საქართველოს შავიზღვისპირეთში",
+        "en": "Pine trees and a quiet beach on Georgia's Black Sea coast",
+        "ru": "Сосны и тихий пляж на черноморском побережье Грузии"
+      }
+    },
+    {
+      "file": "offer-early-summer-pool.jpg",
+      "platform": "pexels",
+      "id": "7789353",
+      "url": "https://www.pexels.com/photo/sunbeds-on-swimming-pool-7789353/",
+      "photographer": "בקתות מול החורש",
+      "profile": "https://www.pexels.com/@54155445/",
+      "category": "pool",
+      "uses": [
+        {
+          "type": "offer",
+          "slug": "early-summer"
+        }
+      ],
+      "alt": {
+        "ka": "თეთრი შეზლონგები ფირუზისფერი აუზის პირას",
+        "en": "White sun loungers beside a turquoise pool",
+        "ru": "Белые шезлонги у бирюзового бассейна"
+      }
+    },
+    {
+      "file": "offer-family-summer-beach-bucket.jpg",
+      "platform": "pexels",
+      "id": "7797226",
+      "url": "https://www.pexels.com/photo/toy-fish-in-a-bucket-7797226/",
+      "photographer": "Susanne Jutzeler, suju-foto",
+      "profile": "https://www.pexels.com/@suju/",
+      "category": "beach",
+      "uses": [
+        {
+          "type": "offer",
+          "slug": "family-summer"
+        }
+      ],
+      "alt": {
+        "ka": "საბავშვო სათამაშო ვედრო და ნიჟარები ქვიშაზე",
+        "en": "A child's beach bucket and seashells on the sand",
+        "ru": "Детское ведёрко и ракушки на песке"
+      }
+    },
+    {
+      "file": "kobuleti-batumi-skyline.jpg",
+      "platform": "pexels",
+      "id": "33440840",
+      "url": "https://www.pexels.com/photo/batumi-skyline-with-ferris-wheel-on-sunny-day-33440840/",
+      "photographer": "Yakup Polat",
+      "profile": "https://www.pexels.com/@yakup-polat-420882786/",
+      "category": "kobuleti",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "batumi"
+        }
+      ],
+      "alt": {
+        "ka": "ბათუმის სანაპირო ეშმაკის ბორბლით მზიან დღეს",
+        "en": "Batumi waterfront with its Ferris wheel on a sunny day",
+        "ru": "Набережная Батуми с колесом обозрения в солнечный день"
+      }
+    },
+    {
+      "file": "kobuleti-batumi-botanical-garden-green-cape.jpg",
+      "platform": "unsplash",
+      "id": "6yvsdu1gwtA",
+      "path": "photo-1707765185643-a2c10b5e816a",
+      "url": "https://unsplash.com/photos/6yvsdu1gwtA",
+      "photographer": "Olga Bi",
+      "profile": "https://unsplash.com/@lookinout",
+      "category": "kobuleti",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "batumi-botanical-garden"
+        }
+      ],
+      "alt": {
+        "ka": "მწვანე კონცხი და შავი ზღვის სანაპირო ბათუმის ბოტანიკური ბაღის მხრიდან",
+        "en": "The Green Cape and the Black Sea shore near Batumi Botanical Garden",
+        "ru": "Зелёный мыс и берег Чёрного моря у Батумского ботанического сада"
+      }
+    },
+    {
+      "file": "kobuleti-green-cliffs-sea.jpg",
+      "platform": "pexels",
+      "id": "11268616",
+      "url": "https://www.pexels.com/photo/aerial-photography-of-green-trees-near-sea-under-the-cloudy-blue-sky-11268616/",
+      "photographer": "Anastasia Lashkevich",
+      "profile": "https://www.pexels.com/@immortelleana/",
+      "category": "kobuleti",
+      "substitute": "No free photo of Petra fortress exists on Unsplash/Pexels — green coastal cliffs used instead.",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "petra-fortress"
+        }
+      ],
+      "alt": {
+        "ka": "მწვანე კლდოვანი სანაპირო და ზღვა",
+        "en": "Green wooded cliffs above the sea",
+        "ru": "Зелёные лесистые скалы над морем"
+      }
+    },
+    {
+      "file": "kobuleti-batumi-coast-aerial.jpg",
+      "platform": "pexels",
+      "id": "32565384",
+      "url": "https://www.pexels.com/photo/aerial-view-of-batumi-skyline-and-coastline-32565384/",
+      "photographer": "Eslam Mohammed Abdelmaksoud",
+      "profile": "https://www.pexels.com/@eslames1/",
+      "category": "kobuleti",
+      "substitute": "No free photo of Gonio fortress exists on Unsplash/Pexels — Batumi coastline from above used instead.",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "gonio-fortress"
+        }
+      ],
+      "alt": {
+        "ka": "ბათუმის სანაპირო ზემოდან",
+        "en": "Batumi's coastline from above",
+        "ru": "Побережье Батуми с высоты"
+      }
+    },
+    {
+      "file": "kobuleti-colchic-forest-bridge.jpg",
+      "platform": "pexels",
+      "id": "32530827",
+      "url": "https://www.pexels.com/photo/scenic-wooden-bridge-in-lush-forest-landscape-32530827/",
+      "photographer": "Eren Ataselim",
+      "profile": "https://www.pexels.com/@eren/",
+      "category": "kobuleti",
+      "substitute": "No free photo of Mtirala National Park exists — a similar Colchic rainforest (Arhavi, just across the border) used instead.",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "mtirala-national-park"
+        }
+      ],
+      "alt": {
+        "ka": "ხის ხიდი ხშირ, მწვანე კოლხურ ტყეში",
+        "en": "Wooden footbridge in a lush Colchic rainforest",
+        "ru": "Деревянный мост в густом колхидском лесу"
+      }
+    },
+    {
+      "file": "kobuleti-georgian-wetland-mountains.jpg",
+      "platform": "pexels",
+      "id": "36536400",
+      "url": "https://www.pexels.com/photo/stunning-georgian-landscape-with-herdsman-and-cows-36536400/",
+      "photographer": "levan simonshvili",
+      "profile": "https://www.pexels.com/@levsi/",
+      "category": "kobuleti",
+      "substitute": "Georgian lowland with mountains; not confirmed to be the Kobuleti reserve itself.",
+      "uses": [
+        {
+          "type": "attraction",
+          "slug": "kobuleti-reserve"
+        }
+      ],
+      "alt": {
+        "ka": "ქართული დაბლობი, ძროხები და თოვლიანი მთები",
+        "en": "Georgian lowland with grazing cows and snowy mountains",
+        "ru": "Грузинская низменность, пасущиеся коровы и заснеженные горы"
+      }
+    },
+    {
+      "file": "kobuleti-adjara-highlands-didachara.jpg",
+      "platform": "pexels",
+      "id": "38781036",
+      "url": "https://www.pexels.com/photo/idyllic-rural-landscape-of-didachara-georgia-38781036/",
+      "photographer": "Nika Natchkebia",
+      "profile": "https://www.pexels.com/@nnatchk/",
+      "category": "kobuleti",
+      "gallery": 17,
+      "alt": {
+        "ka": "დიდაჭარა — მაღალმთიანი აჭარის მწვანე ველები",
+        "en": "Didachara — green meadows of highland Adjara",
+        "ru": "Дидачара — зелёные луга горной Аджарии"
+      }
+    }
+  ]
+}
