@@ -376,9 +376,9 @@ async function main() {
     {
       slug: "cancellation", title: t("გაუქმების პოლიტიკა", "Cancellation policy", "Правила отмены"),
       body: t(
-        "## უფასო გაუქმება\nჯავშნის გაუქმება უფასოა ჩამოსვლამდე **7 დღით ადრე**.\n\n## გვიანი გაუქმება\nჩამოსვლამდე 7 დღეზე ნაკლები დროით ადრე გაუქმებისას ან გამოუცხადებლობისას ჩამოიჭრება პირველი ღამის ღირებულება. ## როგორ გავაუქმო\nგვერდზე „ჯავშნის მართვა“ ან დაგვიკავშირდით.",
-        "## Free cancellation\nCancellation is free up to **7 days before arrival**.\n\n## Late cancellation\nFor cancellations within 7 days of arrival or no-shows, the first night is charged. ## How to cancel\nUse the “Manage booking” page or contact us.",
-        "## Бесплатная отмена\nОтмена бесплатна не позднее чем за **7 дней до заезда**.\n\n## Поздняя отмена\nПри отмене менее чем за 7 дней или неявке взимается стоимость первой ночи. ## Как отменить\nНа странице «Моё бронирование» или свяжитесь с нами.",
+        "## უფასო გაუქმება\nჯავშნის გაუქმება უფასოა ჩამოსვლამდე **7 დღით ადრე**.\n\n## გვიანი გაუქმება\nჩამოსვლამდე 7 დღეზე ნაკლები დროით ადრე გაუქმებისას ან გამოუცხადებლობისას ჩამოიჭრება პირველი ღამის ღირებულება.\n\n## როგორ გავაუქმო\nგვერდზე „ჯავშნის მართვა“ ან დაგვიკავშირდით.",
+        "## Free cancellation\nCancellation is free up to **7 days before arrival**.\n\n## Late cancellation\nFor cancellations within 7 days of arrival or no-shows, the first night is charged.\n\n## How to cancel\nUse the “Manage booking” page or contact us.",
+        "## Бесплатная отмена\nОтмена бесплатна не позднее чем за **7 дней до заезда**.\n\n## Поздняя отмена\nПри отмене менее чем за 7 дней или неявке взимается стоимость первой ночи.\n\n## Как отменить\nНа странице «Моё бронирование» или свяжитесь с нами.",
       ),
     },
     {

@@ -51,7 +51,7 @@ export function CookieConsent() {
             {t("text")}{" "}
             <Link href="/policies/privacy" className="text-sea-700 underline underline-offset-2">{t("policy")}</Link>
           </p>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <button type="button" onClick={() => save("all")} className="btn btn-primary !min-h-10 flex-1 !px-4 text-sm">{t("accept")}</button>
             <button type="button" onClick={() => save("essential")} className="btn btn-ghost !min-h-10 flex-1 !px-4 text-sm">{t("reject")}</button>
           </div>

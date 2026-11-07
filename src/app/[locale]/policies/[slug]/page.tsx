@@ -35,7 +35,7 @@ export default async function PolicyPage({ params }: PageProps<"/[locale]/polici
   if (!p) notFound();
   const t = await getTranslations({ locale });
   return (
-    <div className="container-x grid gap-10 pb-20 pt-[calc(var(--header-h)+3rem)] lg:grid-cols-[16rem_1fr] lg:gap-16">
+    <div className="container-x grid grid-cols-1 gap-10 pb-20 pt-[calc(var(--header-h)+3rem)] lg:grid-cols-[16rem_1fr] lg:gap-16">
       <nav aria-label={t("policies.title")} className="lg:sticky lg:top-[calc(var(--header-h)+2rem)] lg:self-start">
         <p className="eyebrow mb-4">{t("policies.title")}</p>
         <ul className="no-scrollbar flex gap-2 overflow-x-auto lg:flex-col lg:gap-1">
