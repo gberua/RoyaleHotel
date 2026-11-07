@@ -24,6 +24,7 @@ const GROUPS: { key: string; items: Item[] }[] = [
   { key: "website", items: [
     { href: "/admin/content", key: "content", icon: "FileText", perm: "content" },
     { href: "/admin/media", key: "media", icon: "ImageIcon", perm: "media" },
+    { href: "/admin/emails", key: "emails", icon: "Mail", perm: "content" },
     { href: "/admin/reviews", key: "reviews", icon: "Star", perm: "reviews" },
   ] },
   { key: "system", items: [
@@ -35,7 +36,7 @@ const GROUPS: { key: string; items: Item[] }[] = [
   ] },
 ];
 /** Sections not built yet are hidden from the menu until their phase ships. */
-const NOT_YET = new Set(["/admin", "/admin/housekeeping", "/admin/guests", "/admin/reviews", "/admin/reports"]);
+const NOT_YET = new Set(["/admin/guests", "/admin/reviews", "/admin/reports"]);
 
 export async function AdminFrame({ user, title, actions, children, wide = false }: {
   user: { name: string; role: string; adminLocale?: string }; active?: string; title: string; actions?: React.ReactNode; children: React.ReactNode; wide?: boolean;

@@ -1,11 +1,12 @@
 import { getImageProps } from "next/image";
 import type { Img } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
+import { HeroVideo } from "./HeroVideo";
 
 /**
  * "Horizon" hero — full-screen sea image (or video), the hotel name revealed letter by letter,
  * a turquoise horizon line drawn outward from the centre, the tagline and a scroll cue.
- * Pure CSS animation (no JS); prefers-reduced-motion shows the final state immediately.
+ * Pure CSS animation; with Reduce Motion the title simply fades in and the photo doesn't zoom.
  */
 /** Art-directed hero photo: portrait image on phones held upright, landscape everywhere else. */
 function HeroPicture({ image, mobile, locale }: { image: Img; mobile: Img | null; locale: string }) {
@@ -44,19 +45,7 @@ export function HorizonHero({ name, tagline, scrollLabel, image, mobileImage, vi
       >
         {image && <HeroPicture image={image} mobile={mobileImage ?? null} locale={locale} />}
       </div>
-      {videoUrl && (
-        <video
-          className="absolute inset-0 -z-20 h-full w-full object-cover motion-reduce:hidden"
-          src={videoUrl}
-          poster={image?.url}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden
-        />
-      )}
+      {videoUrl && <HeroVideo src={videoUrl} poster={image?.url} />}
       {/* readability: soft top/bottom gradient + gentle vignette */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-ink-950/45 via-ink-950/10 to-ink-950/55" />
       {/* phones: the portrait photo has bright clouds behind the title — a touch more tint */}
@@ -64,7 +53,7 @@ export function HorizonHero({ name, tagline, scrollLabel, image, mobileImage, vi
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgb(7_31_39/0.35)_100%)]" />
 
       <div className="px-4 text-center">
-        <h1 aria-label={name} className="font-display text-[clamp(3.4rem,17vw,7.5rem)] leading-[1] drop-shadow-[0_2px_24px_rgb(7_31_39/0.25)] lg:whitespace-nowrap lg:text-[min(10vw,10rem)]">
+        <h1 aria-label={name} className="hero-title font-display text-[clamp(3.4rem,17vw,7.5rem)] leading-[1] drop-shadow-[0_2px_24px_rgb(7_31_39/0.25)] lg:whitespace-nowrap lg:text-[min(10vw,10rem)]">
           {words.map((word, w) => (
             <span key={w} className="inline-block whitespace-nowrap" aria-hidden>
               {Array.from(word).map((ch) => {

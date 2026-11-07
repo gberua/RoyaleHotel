@@ -97,13 +97,10 @@
     border-radius: 4px;
   }
   ::selection { background: var(--color-sea-100); }
+  /* Reduce Motion: keep soft fades; big motion (zoom, letter-by-letter, large slides, smooth scrolling) is
+     switched off in the specific rules below — never everything at once. */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
   }
 }
 
@@ -194,10 +191,11 @@
   }
 }
 
-/* ───── Horizon hero ───── */
+/* ───── Horizon hero ─────
+   Only transform + opacity are animated (GPU-friendly on mid-range phones; no blur filters). */
 @keyframes hero-letter {
-  from { opacity: 0; transform: translateY(0.18em); filter: blur(8px); }
-  to { opacity: 1; transform: none; filter: blur(0); }
+  from { opacity: 0; transform: translateY(0.22em); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes hero-horizon {
   from { transform: scaleX(0); opacity: 0.4; }
@@ -206,6 +204,10 @@
 @keyframes hero-fade {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
+}
+@keyframes soft-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes scroll-dot {
   0% { transform: translateY(-100%); }
@@ -219,22 +221,32 @@
 .hero-horizon { transform-origin: center; animation: hero-horizon 1.4s var(--ease-out-soft) both; }
 .hero-fade { animation: hero-fade 1s var(--ease-out-soft) both; }
 .scroll-dot { animation: scroll-dot 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
-.hero-kenburns { animation: kenburns 26s ease-out both; will-change: transform; }
+.hero-kenburns { animation: kenburns 26s ease-out both; }
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-letter, .hero-horizon, .hero-fade, .hero-kenburns { animation: none !important; opacity: 1; transform: none; filter: none; }
-  .scroll-dot { animation: none !important; transform: translateY(100%); }
+  /* the title fades in as a whole instead of letter by letter; no zoom, no moving dot */
+  .hero-letter { animation: none; opacity: 1; transform: none; }
+  .hero-title { animation: soft-fade 1s ease-out 0.2s both; }
+  .hero-horizon { animation: soft-fade 1s ease-out both; transform: none; }
+  .hero-fade { animation-name: soft-fade; }
+  .hero-kenburns { animation: none; transform: none; }
+  .scroll-dot { animation: none; transform: translateY(100%); }
 }
 
-/* Reveal on scroll — pure CSS scroll-driven animation, zero JavaScript.
-   Browsers without support simply show the content. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: fade-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 35%;
-    }
-  }
+/* ───── Reveal on scroll ─────
+   Works in every browser (IntersectionObserver in RevealObserver.tsx). Content is hidden only while
+   <html> has .js-reveal, which the head script sets — and removes again if JavaScript never takes over. */
+.js-reveal .reveal {
+  transition: opacity 0.9s var(--ease-out-soft), transform 0.9s var(--ease-out-soft);
+}
+.js-reveal .reveal:not(.is-revealed) {
+  opacity: 0;
+  transform: translateY(24px);
+}
+@media (prefers-reduced-motion: reduce) {
+  /* gentle fade only */
+  .js-reveal .reveal { transition: opacity 0.7s ease-out; }
+  .js-reveal .reveal:not(.is-revealed) { transform: none; }
 }
 
 .no-scrollbar { scrollbar-width: none; }

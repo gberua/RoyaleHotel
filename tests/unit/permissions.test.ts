@@ -10,10 +10,11 @@ describe("role → permission matrix", () => {
   });
   it("receptionist: dashboard, bookings, calendar, guests, housekeeping view — no prices, reports, settings", () => {
     expect([...ROLE_PERMISSIONS.RECEPTION].sort()).toEqual(["bookings", "calendar", "dashboard", "guests", "housekeeping"]);
-    for (const p of ["prices", "rooms", "reports", "settings", "staff", "media", "content", "housekeeping.inspect"] as const) expect(can("RECEPTION", p)).toBe(false);
+    for (const p of ["prices", "rooms", "reports", "settings", "staff", "media", "content", "housekeeping.inspect", "housekeeping.update"] as const) expect(can("RECEPTION", p)).toBe(false);
   });
   it("housekeeping: only the housekeeping screen (and cannot mark rooms inspected)", () => {
-    expect([...ROLE_PERMISSIONS.HOUSEKEEPING]).toEqual(["housekeeping"]);
+    expect([...ROLE_PERMISSIONS.HOUSEKEEPING].sort()).toEqual(["housekeeping", "housekeeping.update"]);
+    expect(can("RECEPTION", "housekeeping.update")).toBe(false); // reception only views
     expect(can("HOUSEKEEPING", "housekeeping.inspect")).toBe(false);
     expect(can("MANAGER", "housekeeping.inspect")).toBe(true);
   });

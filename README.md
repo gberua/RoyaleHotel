@@ -14,7 +14,7 @@ pre-registered in `src/i18n/locales.ts` and can be switched on there.
 | a | Design system + all public pages | ✅ done |
 | b | Booking engine (availability, pricing, extras, holds, payments, emails, manage booking, admin bookings, iCal) | ✅ done |
 | c1 | Admin core: rooms & rates, media library, staff & roles, settings, website content (KA/EN/RU) | ✅ done |
-| c2 | Daily operations: dashboard, housekeeping, calendar drag & drop, booking helpers, automatic e-mails | |
+| c2 | Daily operations: dashboard, housekeeping, calendar drag & drop, booking helpers, automatic e-mails | ✅ done |
 | c3 | Guests & insights: reviews, guest CRM, reports | |
 | d | Payments (TBC / BOG adapters — need merchant keys), emails + PDF voucher, Telegram | ✅ built, needs credentials |
 | e | SEO polish, Lighthouse, tests | |
@@ -69,6 +69,11 @@ person picks their own language (My account; the login screen has a switch too).
 | Texts & SEO | Website content | drafts → *Preview* (shows the real site with your draft) → *Publish* |
 | Staff | Staff (owner only) | roles: Owner · Manager · Receptionist · Housekeeping; e-mail invite or one-time password; 5 wrong passwords lock an account for 15 min |
 | Hotel facts, booking rules, payments, alerts, currencies | Settings (owner only) | optional daily exchange-rate update from the National Bank of Georgia |
+| Today at a glance | Dashboard | arrivals / departures with one-click check-in / out, occupancy, revenue (owner & manager), unpaid, new & cancelled bookings, rooms to clean |
+| Cleaning | Housekeeping (phone-friendly) | housekeeping: clean / needs cleaning · manager & owner: also inspected / out of order; check-in into a room that isn't clean asks first |
+| Moving bookings | Calendar | drag to another room or dates → availability + price check → confirm; click an empty cell to book |
+| Paperwork | Booking page | registration card & invoice PDF (KA/EN/RU), re-send confirmation, WhatsApp with a ready message |
+| Guest e-mails | E-mails & messages | pre-arrival reminder and review request (daily job, on/off, days), editable templates with preview and test send |
 | Who changed what | Activity log | old → new values for prices, rooms, settings, bookings; failed logins with IP |
 
 Role checks happen on the server for every page and action (`src/lib/permissions.ts`), not just by hiding buttons.

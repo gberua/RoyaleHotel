@@ -99,6 +99,15 @@ export const settingsSchema = z.object({
       telegramChatId: z.string().default(""),
     })
     .prefault({}),
+  /** Automatic guest e-mails (sent by the daily job). Templates: Admin → E-mails & messages. */
+  automation: z
+    .object({
+      preArrivalEnabled: z.boolean().default(true),
+      preArrivalDays: z.number().int().min(1).max(30).default(3),
+      postStayEnabled: z.boolean().default(true),
+      postStayDays: z.number().int().min(0).max(30).default(1),
+    })
+    .prefault({}),
   currency: z
     .object({
       /** Update USD/EUR rates daily from the National Bank of Georgia */

@@ -20,7 +20,7 @@ async function adminLogin(page: Page) {
   await page.fill("#email", process.env.SEED_OWNER_EMAIL!);
   await page.fill("#password", process.env.SEED_OWNER_PASSWORD!);
   await page.click("button[type=submit]");
-  await page.waitForURL("**/admin/bookings");
+  await page.waitForURL((u) => !u.pathname.startsWith("/admin/login"));
 }
 
 test("guest books and pays, hotel sees it, guest cancels", async ({ page, browser, isMobile }) => {

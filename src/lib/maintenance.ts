@@ -5,11 +5,13 @@ import { syncPayment } from "@/lib/payments";
 import { syncAllIcalFeeds } from "@/lib/ical/sync";
 import { settingsSchema } from "@/lib/settings-schema";
 import { updateRatesFromNbg } from "@/lib/currency/nbg";
+import { sendAutomaticEmails } from "@/lib/notify/automatic";
 
 /**
  * Periodic job (every 15 minutes): releases expired holds / unpaid bookings, re-checks payments whose
  * callback never arrived, syncs iCal feeds from Booking.com / Airbnb and (if switched on) refreshes
- * exchange rates from the National Bank of Georgia once a day.
+ * exchange rates from the National Bank of Georgia once a day, and sends the automatic guest e-mails
+ * (pre-arrival reminder, review request).
  */
 export async function runMaintenance() {
   const started = Date.now();
@@ -19,7 +21,8 @@ export async function runMaintenance() {
   const released = await releaseExpired();
   const ical = await syncAllIcalFeeds().catch((e) => ({ error: String(e) }));
   const rates = await dailyRates().catch((e) => ({ error: String(e) }));
-  return { released, paymentsChecked: stale.length, ical, rates, ms: Date.now() - started };
+  const emails = await sendAutomaticEmails().catch((e) => ({ error: String(e) }));
+  return { released, paymentsChecked: stale.length, ical, rates, emails, ms: Date.now() - started };
 }
 
 async function dailyRates() {

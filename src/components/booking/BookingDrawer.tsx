@@ -38,7 +38,7 @@ export default function BookingDrawer({ open, preselect, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="booking-drawer-title"
-        className={`absolute inset-y-0 right-0 flex w-full flex-col bg-white shadow-[var(--shadow-lift)] transition-transform duration-500 ease-[var(--ease-out-soft)] sm:max-w-[42rem] ${open ? "translate-x-0" : "translate-x-full"}`}
+        className={`absolute inset-y-0 right-0 flex w-full flex-col bg-white shadow-[var(--shadow-lift)] transition-[transform,opacity] duration-500 ease-[var(--ease-out-soft)] motion-reduce:duration-300 sm:max-w-[42rem] ${open ? "translate-x-0 opacity-100" : "translate-x-full motion-reduce:translate-x-0 motion-reduce:opacity-0"}`}
       >
         <div className="flex items-center justify-between border-b border-ink-100 px-5 py-4 sm:px-8">
           <h2 id="booking-drawer-title" className="text-[2.1rem] leading-none">{t("drawer.title")}</h2>

@@ -10,7 +10,7 @@ import { can, type RoleName } from "@/lib/permissions";
 import { clientIp } from "@/lib/rate-limit";
 import { isIsoDate } from "@/lib/booking/dates";
 import {
-  BookingError, cancelBooking, cancellationPreview, changeDates, changeStatus, finalizeBooking, holdRooms, logActivity, moveAllocation, quoteCart, recordManualPayment,
+  BookingError, cancelBooking, cancellationPreview, changeDates, changeStatus, finalizeBooking, holdRooms, logActivity, moveAllocation, moveBooking, quoteCart, recordManualPayment, type MovePlan,
 } from "@/lib/booking/service";
 import { notifyBookingCancelled, notifyBookingConfirmed } from "@/lib/notify/booking-mail";
 import { refundBookingPayments } from "@/lib/payments";
@@ -32,6 +32,12 @@ export async function adminChangeStatus(_p: Result, form: FormData): Promise<Res
   return staffAction("bookings", async (user) => {
     const b = await bookingByCode(String(form.get("code")));
     const to = z.enum(["CONFIRMED", "CHECKED_IN", "CHECKED_OUT", "NO_SHOW"]).parse(form.get("to"));
+    if (to === "CHECKED_IN" && form.get("force") !== "1") {
+      // warn before checking a guest into a room that isn't clean (staff can still confirm "check in anyway")
+      const rooms = await db.roomAllocation.findMany({ where: { bookingId: b.id, active: true }, include: { room: { select: { number: true, housekeeping: true } } } });
+      const notReady = rooms.filter((r) => r.room.housekeeping !== "CLEAN" && r.room.housekeeping !== "INSPECTED");
+      if (notReady.length) return { ok: false, error: "room_not_clean", values: { rooms: notReady.map((r) => r.room.number).join(", ") } };
+    }
     const updated = await changeStatus(b.id, to);
     await logActivity({ userId: user.id, action: `booking.status.${to.toLowerCase()}`, entity: "Booking", entityId: b.id, summary: `${b.code}: ${b.status} → ${to}`, ip: await clientIp() });
     if (to === "CONFIRMED" && b.status === "PENDING") after(() => notifyBookingConfirmed(b.id));
@@ -180,4 +186,47 @@ export async function adminRemoveFeed(form: FormData) {
   await db.icalFeed.update({ where: { id }, data: { active: false } });
   await logActivity({ userId: user.id, action: "ical.remove", entity: "IcalFeed", entityId: id, summary: "Channel feed removed (its blocks released)" });
   revalidatePath("/admin/channels");
+}
+
+// ───────────────────────────── Calendar drag & drop ─────────────────────────────
+
+const moveSchema = z.object({ allocationId: z.string().min(1), roomId: z.string().min(1), checkIn: z.string().refine(isIsoDate) });
+
+/** Step 1 of a drag: check availability and price, change nothing. */
+export async function previewMove(_p: Result, form: FormData): Promise<ActionResult<MovePlan>> {
+  return staffAction("calendar", async () => {
+    const plan = await moveBooking(moveSchema.parse(Object.fromEntries(form)), { dryRun: true });
+    return { ok: true, data: plan };
+  });
+}
+
+/** Step 2, after the confirmation: do it (availability is checked again under locks) and log old → new. */
+export async function applyMove(_p: Result, form: FormData): Promise<ActionResult<MovePlan>> {
+  return staffAction("bookings", async (user) => {
+    const plan = await moveBooking(moveSchema.parse(Object.fromEntries(form)));
+    await logActivity({
+      userId: user.id, action: "booking.calendar_move", entity: "Booking", entityId: plan.bookingId,
+      summary: `${plan.code}: ${plan.rooms.map((r) => `room ${r.from} → ${r.to}`).join(", ") || "same room"}${plan.repriced ? `; ${plan.from.checkIn}→${plan.from.checkOut} moved to ${plan.to.checkIn}→${plan.to.checkOut}; total ${plan.oldTotal / 100} → ${plan.newTotal / 100} GEL` : ""}`,
+      before: { rooms: plan.rooms.map((r) => r.from), ...plan.from, total: plan.oldTotal }, after: { rooms: plan.rooms.map((r) => r.to), ...plan.to, total: plan.newTotal }, ip: await clientIp(),
+    });
+    done(plan.code);
+    revalidatePath("/admin/calendar");
+    return { ok: true, message: "booking_moved", data: plan };
+  });
+}
+
+// ───────────────────────────── Booking helpers ─────────────────────────────
+
+/** Sends the guest the confirmation e-mail + PDF voucher again (no new alert to the hotel). */
+export async function adminResendConfirmation(_p: Result, form: FormData): Promise<Result> {
+  return staffAction("bookings", async (user) => {
+    const b = await bookingByCode(String(form.get("code")));
+    if (!["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"].includes(b.status)) throw new BookingError("bad_transition");
+    const guest = b.guestId ? await db.guest.findUnique({ where: { id: b.guestId } }) : null;
+    if (!guest?.email || guest.email.endsWith("@guests.royalehotel.local")) throw new ActionError("no_guest_email");
+    const ok = await notifyBookingConfirmed(b.id, { hotel: false });
+    if (!ok) throw new ActionError("email_failed");
+    await logActivity({ userId: user.id, action: "booking.resend_confirmation", entity: "Booking", entityId: b.id, summary: `${b.code}: confirmation re-sent to ${guest.email}` });
+    return { ok: true, message: "confirmation_sent", values: { email: guest.email } };
+  });
 }

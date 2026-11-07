@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3, BedDouble, CalendarDays, CalendarRange, ClipboardList, FileText, Gift, History, ImageIcon, LayoutDashboard, LogOut, Menu,
+  BarChart3, BedDouble, CalendarDays, CalendarRange, ClipboardList, FileText, Gift, History, ImageIcon, LayoutDashboard, LogOut, Mail, Menu,
   Plus, RefreshCw, Settings, Sparkles, Star, Sun, Tag, User, Users, UserCog, X,
 } from "lucide-react";
 
-const ICONS = { BarChart3, BedDouble, CalendarDays, CalendarRange, ClipboardList, FileText, Gift, History, ImageIcon, LayoutDashboard, Plus, RefreshCw, Settings, Sparkles, Star, Sun, Tag, User, Users, UserCog };
+const ICONS = { BarChart3, BedDouble, CalendarDays, CalendarRange, ClipboardList, FileText, Gift, History, ImageIcon, LayoutDashboard, Mail, Plus, RefreshCw, Settings, Sparkles, Star, Sun, Tag, User, Users, UserCog };
 export type NavGroup = { label: string; items: { href: string; label: string; icon: keyof typeof ICONS }[] };
 
 export function AdminNav({ groups, user, accountLabel, logoutLabel, menuLabel, logout }: { groups: NavGroup[]; user: string; accountLabel: string; logoutLabel: string; menuLabel: string; logout: () => Promise<void> }) {

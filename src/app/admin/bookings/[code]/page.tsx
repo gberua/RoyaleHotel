@@ -3,18 +3,20 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileDown, MessageCircle } from "lucide-react";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/admin-auth";
 import { adminT } from "@/lib/admin-i18n";
 import { loadBooking } from "@/lib/booking/load";
-import { allowedTransitions, cancellationPreview } from "@/lib/booking/service";
+import { allowedTransitions, cancellationPreview, loadSettings } from "@/lib/booking/service";
+import { whatsappLink } from "@/lib/notify/templates";
 import { tr } from "@/lib/i18n-content";
 import { formatMoney } from "@/lib/money";
 import type { Quote } from "@/lib/booking/engine";
 import { AdminFrame, StatusChip } from "@/components/admin/AdminFrame";
 import { AdminForm } from "@/components/admin/ui";
-import { adminAddNote, adminCancel, adminChangeDates, adminChangeStatus, adminMoveRoom, adminRecordPayment } from "../../booking-actions";
+import { StatusButton } from "@/components/admin/StatusButton";
+import { adminAddNote, adminCancel, adminChangeDates, adminMoveRoom, adminRecordPayment, adminResendConfirmation } from "../../booking-actions";
 
 export const metadata: Metadata = { title: "Booking" };
 const money = (n: number) => formatMoney(n, undefined, "en", 2);
@@ -41,6 +43,7 @@ async function Detail({ params }: { params: PageProps<"/admin/bookings/[code]">[
   const active = b.rooms.filter((r) => r.active);
   const transitions = allowedTransitions(b.status).filter((s) => s !== "CANCELLED");
   const editable = ["PENDING", "CONFIRMED", "CHECKED_IN"].includes(b.status);
+  const wa = await whatsappLink(b, await loadSettings());
 
   return (
     <AdminFrame user={user} title={`${t("bk.booking")} ${b.code}`} actions={<Link href="/admin/bookings" className="btn btn-ghost !min-h-10 text-sm"><ArrowLeft size={15} aria-hidden /> {t("bk.all")}</Link>}>
@@ -63,9 +66,7 @@ async function Detail({ params }: { params: PageProps<"/admin/bookings/[code]">[
             {transitions.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 border-t border-ink-100 pt-4">
                 {transitions.map((to) => (
-                  <AdminForm key={to} action={adminChangeStatus} submit={t(`bk.to.${to}`)} tone={to === "NO_SHOW" ? "ghost" : "primary"} confirm={to === "NO_SHOW" ? t("bk.noShowConfirm") : undefined}>
-                    <input type="hidden" name="code" value={b.code} /><input type="hidden" name="to" value={to} />
-                  </AdminForm>
+                  <StatusButton key={to} code={b.code} to={to as "CONFIRMED" | "CHECKED_IN" | "CHECKED_OUT" | "NO_SHOW"} label={t(`bk.to.${to}`)} tone={to === "NO_SHOW" ? "ghost" : "primary"} confirmText={to === "NO_SHOW" ? t("bk.noShowConfirm") : undefined} />
                 ))}
               </div>
             )}
@@ -125,6 +126,27 @@ async function Detail({ params }: { params: PageProps<"/admin/bookings/[code]">[
         </div>
 
         <div className="space-y-5">
+          <section className={card} data-testid="booking-helpers">
+            <h2 className={h2}>{t("bk.helpers")}</h2>
+            <div className="space-y-2 text-sm">
+              {(["registration", "invoice"] as const).map((doc) => (
+                <p key={doc} className="flex flex-wrap items-center gap-2">
+                  <FileDown size={16} className="text-sea-700" aria-hidden /><span className="font-medium">{t(`bk.doc.${doc}`)}</span>
+                  {["ka", "en", "ru"].map((l) => <a key={l} href={`/admin/bookings/${encodeURIComponent(b.code)}/${doc}?lang=${l}`} target="_blank" rel="noopener" className="rounded-full px-2 py-0.5 text-xs font-semibold text-sea-700 ring-1 ring-ink-100 hover:bg-mist">{l.toUpperCase()}</a>)}
+                </p>
+              ))}
+            </div>
+            <div className="mt-3 flex flex-wrap items-start gap-2 border-t border-ink-100 pt-3">
+              {wa && <a href={wa} target="_blank" rel="noopener" className="btn !min-h-10 bg-[#25D366] text-sm text-ink-950"><MessageCircle size={16} aria-hidden /> WhatsApp</a>}
+              {["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"].includes(b.status) && <AdminForm action={adminResendConfirmation} submit={t("bk.resend")} tone="ghost"><input type="hidden" name="code" value={b.code} /></AdminForm>}
+            </div>
+            {(b.reminderSentAt || b.reviewRequestSentAt) && (
+              <p className="mt-2 text-xs text-ink-500">
+                {b.reminderSentAt && <>{t("bk.reminderSent", { at: stamp(b.reminderSentAt) })}<br /></>}
+                {b.reviewRequestSentAt && t("bk.reviewSent", { at: stamp(b.reviewRequestSentAt) })}
+              </p>
+            )}
+          </section>
           {terms && (
             <section className={card}>
               <h2 className={h2}>{t("bk.cancelTitle")}</h2>

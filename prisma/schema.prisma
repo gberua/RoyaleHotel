@@ -214,6 +214,9 @@ model Room {
   roomType           RoomType           @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
   housekeeping       HousekeepingStatus @default(CLEAN)
   housekeepingNote   String?
+  /// when / by whom the housekeeping status last changed (shown on the housekeeping screen)
+  housekeepingAt     DateTime?
+  housekeepingBy     String?
   notes              String?
   active             Boolean            @default(true)
   updatedAt          DateTime           @updatedAt
@@ -421,6 +424,9 @@ model Booking {
 
   @@index([checkIn, checkOut])
   @@index([status])
+  /// automatic e-mails (scheduled job) — set once sent so nothing is ever sent twice
+  reminderSentAt      DateTime?
+  reviewRequestSentAt DateTime?
 }
 
 enum AllocationKind {

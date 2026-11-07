@@ -15,7 +15,7 @@ import {
   amountDue, arrivalAllowed, buildQuote, penaltyAmount, cancellationTerms, checkRestrictions, nightlyPrices, occupancyFits,
   type ExtraDef, type OccupancyRuleDef, type PromoDef, type Quote, type RateOverride, type RateRoomType, type RateSeason,
 } from "./engine";
-import { isIsoDate, nightsBetween, nowInGeorgia, toDate } from "./dates";
+import { addDaysIso, isIsoDate, nightsBetween, nowInGeorgia, toDate } from "./dates";
 
 type Tx = Prisma.TransactionClient;
 const iso = (d: Date | null | undefined) => (d ? d.toISOString().slice(0, 10) : null);
@@ -494,6 +494,82 @@ export async function changeDates(bookingId: string, checkIn: string, checkOut: 
         where: { id: bookingId },
         data: { checkIn: toDate(checkIn), checkOut: toDate(checkOut), roomsTotal: quote.roomsTotal + quote.extraGuestsTotal, extrasTotal: quote.extrasTotal, taxTotal: quote.taxTotal, grandTotal, priceBreakdown: { ...quote, discountTotal: discount, grandTotal } as unknown as Prisma.InputJsonValue },
       });
+    }, TX);
+  } catch (e) {
+    if (isExclusionViolation(e)) throw new BookingError("room_busy");
+    throw e;
+  }
+}
+
+export type MovePlan = {
+  code: string; bookingId: string;
+  rooms: { allocationId: string; from: string; to: string }[];
+  from: { checkIn: string; checkOut: string }; to: { checkIn: string; checkOut: string };
+  oldTotal: number; newTotal: number; repriced: boolean; outOfOrder: string[];
+};
+
+/**
+ * Drag-and-drop on the calendar: move one room of a booking to another room and/or shift the whole booking
+ * to new dates (same length). Checks availability for every room of the booking on the new dates under row
+ * locks; the database EXCLUDE constraint is the final guard. New dates are re-priced (the guest keeps the room
+ * type they booked); a room change alone keeps the price. `dryRun` returns the plan without changing anything.
+ */
+export async function moveBooking(input: { allocationId: string; roomId: string; checkIn: string }, opts: { dryRun?: boolean } = {}): Promise<MovePlan> {
+  if (!isIsoDate(input.checkIn)) throw new BookingError("invalid_dates");
+  try {
+    return await db.$transaction(async (tx) => {
+      const a = await tx.roomAllocation.findUnique({ where: { id: input.allocationId } });
+      if (!a?.bookingId || a.kind !== "BOOKING" || !a.active) throw new BookingError("not_found");
+      await tx.$queryRaw`SELECT id FROM "Booking" WHERE id = ${a.bookingId} FOR UPDATE`;
+      const b = await tx.booking.findUniqueOrThrow({ where: { id: a.bookingId }, include: { rooms: { where: { active: true }, include: { room: { select: { number: true } } } }, extras: true } });
+      if (!["PENDING", "CONFIRMED", "CHECKED_IN"].includes(b.status)) throw new BookingError("bad_transition");
+      const oldIn = iso(b.checkIn)!, oldOut = iso(b.checkOut)!;
+      const checkOut = addDaysIso(input.checkIn, nightsBetween(oldIn, oldOut));
+      const shift = input.checkIn !== oldIn;
+      if (shift && b.status === "CHECKED_IN") throw new BookingError("checked_in_dates");
+      if (shift && input.checkIn < nowInGeorgia().date) throw new BookingError("past");
+      const target = b.rooms.map((r) => ({ r, roomId: r.id === a.id ? input.roomId : r.roomId }));
+      if (new Set(target.map((x) => x.roomId)).size !== target.length) throw new BookingError("room_busy");
+      const newRoom = await tx.room.findUnique({ where: { id: input.roomId }, select: { id: true, number: true, roomTypeId: true, active: true, housekeeping: true } });
+      if (!newRoom?.active) throw new BookingError("not_found");
+      await lockRooms(tx, [...new Set([...b.rooms.map((r) => r.roomId), input.roomId])].sort());
+      const busy = await busyRoomIds(tx, target.map((x) => x.roomId), input.checkIn, checkOut, b.id);
+      if (busy.size) throw new BookingError("room_busy");
+
+      let newTotal = b.grandTotal;
+      let quote: Quote | null = null;
+      if (shift) {
+        const cart = { checkIn: input.checkIn, checkOut, lines: b.rooms.map((r) => ({ roomTypeId: r.roomTypeId!, adults: r.adults, childAges: r.childAges })), extras: b.extras.map((e) => ({ extraId: e.extraId, quantity: e.quantity })) };
+        // staff may override min-stay / closed restrictions when moving an existing booking
+        quote = (await quoteCart(cart, tx).catch((e) => {
+          if (e instanceof BookingError && ["min_stay", "closed", "closed_to_arrival"].includes(e.code)) return quoteUnrestricted(tx, cart);
+          throw e;
+        })).quote;
+        newTotal = quote.roomsTotal + quote.extraGuestsTotal + quote.extrasTotal - b.discountTotal + quote.taxTotal;
+      }
+      const plan: MovePlan = {
+        code: b.code, bookingId: b.id,
+        rooms: target.filter((x) => x.roomId !== x.r.roomId).map((x) => ({ allocationId: x.r.id, from: x.r.room.number, to: newRoom.number })),
+        from: { checkIn: oldIn, checkOut: oldOut }, to: { checkIn: input.checkIn, checkOut },
+        oldTotal: b.grandTotal, newTotal, repriced: shift, outOfOrder: newRoom.housekeeping === "OUT_OF_ORDER" && input.roomId !== a.roomId ? [newRoom.number] : [],
+      };
+      if (opts.dryRun) return plan;
+      for (const [i, x] of target.entries()) {
+        await tx.roomAllocation.update({
+          where: { id: x.r.id },
+          data: {
+            roomId: x.roomId, ...(x.r.id === a.id && x.roomId !== x.r.roomId ? { roomTypeId: newRoom.roomTypeId } : {}),
+            ...(shift ? { checkIn: toDate(input.checkIn), checkOut: toDate(checkOut), nightlyPrices: quote!.rooms[i].nights.map((n) => n.price), extraGuestTotal: quote!.rooms[i].extraGuestTotal } : {}),
+          },
+        });
+      }
+      if (shift) {
+        await tx.booking.update({
+          where: { id: b.id },
+          data: { checkIn: toDate(input.checkIn), checkOut: toDate(checkOut), roomsTotal: quote!.roomsTotal + quote!.extraGuestsTotal, extrasTotal: quote!.extrasTotal, taxTotal: quote!.taxTotal, grandTotal: newTotal, priceBreakdown: { ...quote!, discountTotal: b.discountTotal, grandTotal: newTotal } as unknown as Prisma.InputJsonValue },
+        });
+      }
+      return plan;
     }, TX);
   } catch (e) {
     if (isExclusionViolation(e)) throw new BookingError("room_busy");

@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ContactDock } from "@/components/layout/ContactDock";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { PreviewBanner } from "@/components/layout/PreviewBanner";
+import { RevealObserver } from "@/components/layout/RevealObserver";
 import { CurrencyProvider } from "@/components/layout/CurrencyProvider";
 import { BookingDrawerProvider } from "@/components/booking/BookingDrawerProvider";
 
@@ -30,6 +31,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
 };
+
+const REVEAL_BOOT = `(function(d,w){if(!("IntersectionObserver" in w))return;d.classList.add("js-reveal");var off=function(){if(!w.__reveal)d.classList.remove("js-reveal")};w.addEventListener("load",function(){setTimeout(off,2500)});setTimeout(off,12000)})(document.documentElement,window)`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await rootLocale();
@@ -61,11 +64,17 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
 
   return (
     <html
+      suppressHydrationWarning
       lang={locale}
       dir={LOCALE_REGISTRY[locale].dir}
       className={fontVariables}
       style={{ ["--display-stretch" as string]: DISPLAY_FONT_STRETCH }}
     >
+      <head>
+        {/* Scroll reveals: hide-until-revealed is switched on only when the browser can reveal (IntersectionObserver);
+            if the page's JavaScript hasn't taken over 2.5 s after the page loaded (or 12 s at most), everything is shown. */}
+        <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOT }} />
+      </head>
       <body className="min-h-svh">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <CurrencyProvider currencies={currencies}>
@@ -81,6 +90,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
               <SiteFooter locale={locale} />
               <ContactDock links={links} />
               <CookieConsent />
+              <RevealObserver />
               <Suspense><PreviewBanner /></Suspense>
             </BookingDrawerProvider>
           </CurrencyProvider>

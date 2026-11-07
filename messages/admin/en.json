@@ -27,7 +27,8 @@
     "activity": "Activity log",
     "account": "My account",
     "logout": "Sign out",
-    "menu": "Menu"
+    "menu": "Menu",
+    "emails": "E-mails & messages"
   },
   "common": {
     "save": "Save",
@@ -94,7 +95,15 @@
     "dates_changed": "Dates changed · new total {total} GEL",
     "booking_cancelled": "Booking cancelled",
     "note_added": "Note added",
-    "channel_added": "Channel connected"
+    "channel_added": "Channel connected",
+    "hk_CLEAN": "Marked clean",
+    "hk_DIRTY": "Marked to clean",
+    "hk_INSPECTED": "Marked inspected",
+    "hk_OUT_OF_ORDER": "Marked out of order",
+    "booking_moved": "Booking moved",
+    "confirmation_sent": "Confirmation sent to {email}",
+    "template_reset": "Back to the built-in text",
+    "test_sent": "Test sent to {email}"
   },
   "errors": {
     "required": "This field is required.",
@@ -162,7 +171,19 @@
     "promo_unknown": "Promo code {code} doesn't exist — create it under Promo codes first.",
     "invalid_number": "Enter a valid number.",
     "manual_dates": "Check the dates and rooms.",
-    "manual_required": "Please fill in all required fields (name, surname, phone)."
+    "manual_required": "Please fill in all required fields (name, surname, phone).",
+    "room_not_clean": "Room {rooms} is not marked clean yet.",
+    "booking_checked_in_dates": "The guest is already checked in — you can move the room, but not the dates. Change the departure on the booking page.",
+    "booking_past": "Bookings can't be moved into the past.",
+    "no_guest_email": "This booking has no guest e-mail address.",
+    "email_failed": "The e-mail could not be sent. Check the e-mail settings (Resend key).",
+    "booking_too_far": "These dates are further ahead than bookings are allowed (Settings → Booking rules).",
+    "booking_too_long": "A stay can be at most 30 nights.",
+    "booking_same_day_cutoff": "Same-day bookings are closed for today.",
+    "booking_closed_to_arrival": "Arrival is not allowed on this date.",
+    "booking_too_many_rooms": "Too many rooms in one booking.",
+    "booking_promo_used_up": "This promo code has been used up.",
+    "booking_promo_guest_limit": "This guest has already used this promo code."
   },
   "roles": {
     "OWNER": "Owner",
@@ -867,7 +888,16 @@
     "addNote": "Add note",
     "notePlaceholder": "Visible to staff only",
     "system": "System",
-    "guestOrSystem": "Guest / system"
+    "guestOrSystem": "Guest / system",
+    "checkInAnyway": "Check in anyway",
+    "helpers": "Documents & messages",
+    "doc": {
+      "registration": "Registration card",
+      "invoice": "Invoice"
+    },
+    "resend": "Re-send confirmation",
+    "reminderSent": "Pre-arrival reminder sent {at}",
+    "reviewSent": "Review request sent {at}"
   },
   "nb": {
     "title": "New booking (phone / walk-in / WhatsApp)",
@@ -943,6 +973,98 @@
       "DIRTY": "Dirty",
       "INSPECTED": "Inspected",
       "OUT_OF_ORDER": "Out of order"
-    }
+    },
+    "help": "Drag a booking to another room or other dates (a confirmation shows availability and the new price). Click an empty cell to start a booking there.",
+    "newHere": "New booking in room",
+    "dragHint": "drag to move",
+    "moveTitle": "Move this booking?",
+    "checking": "Checking availability and price…",
+    "available": "The room is free for these dates.",
+    "oooWarning": "Room {rooms} is marked out of order.",
+    "confirmMove": "Move booking"
+  },
+  "hk": {
+    "today": "Today: {date}",
+    "s": {
+      "DIRTY": "To clean",
+      "CLEAN": "Clean",
+      "INSPECTED": "Inspected",
+      "OUT_OF_ORDER": "Out of order"
+    },
+    "filter": {
+      "todo": "To do",
+      "all": "All rooms"
+    },
+    "allDone": "All rooms are ready.",
+    "floor": "Floor {n}",
+    "noFloor": "No floor set",
+    "arriving": "Arriving: {guest} ({guests})",
+    "departing": "Leaving today: {guest}",
+    "occupied": "Occupied",
+    "priority": "Guest arrives today — clean first",
+    "changed": "{by}, {at}",
+    "markClean": "Clean",
+    "markInspected": "Inspected",
+    "markDirty": "Needs cleaning",
+    "markOoo": "Out of order",
+    "backInService": "Back in service"
+  },
+  "dash": {
+    "title": "Dashboard",
+    "today": "Today: {date}",
+    "occTonight": "Occupancy tonight",
+    "roomsOf": "{n} of {total} rooms",
+    "occWeek": "Next 7 nights",
+    "next7": "average occupancy",
+    "occSeason": "Season · {name}",
+    "occMonth": "This month",
+    "revToday": "Room revenue tonight",
+    "roomRevenue": "rooms, by night",
+    "revMonth": "Room revenue this month",
+    "revSeason": "season {amount}",
+    "unpaid": "Still to be paid",
+    "unpaidSub": "{count, plural, one {# booking} other {# bookings}} (confirmed / in house)",
+    "arrivals": "Arrivals today",
+    "departures": "Departures today",
+    "noArrivals": "No arrivals today.",
+    "noDepartures": "No departures today.",
+    "toPay": "to pay {amount}",
+    "newBookings": "New bookings since yesterday",
+    "cancellations": "Cancellations since yesterday",
+    "none": "None.",
+    "rooms": "Rooms",
+    "dirty": "{count, plural, one {# room} other {# rooms}} to clean",
+    "ooo": "{count, plural, one {# room} other {# rooms}} out of order"
+  },
+  "em": {
+    "title": "E-mails & messages",
+    "auto": "Automatic e-mails",
+    "autoHint": "Sent once a day by the scheduled job, in the guest's language. Last 7 days: {sent} sent · {upcoming} future stays still waiting for their reminder.",
+    "preArrival": "Pre-arrival reminder",
+    "preArrivalHint": "Practical info before the stay (not for bookings made in the last 24 hours).",
+    "daysBefore": "Days before check-in",
+    "postStay": "Review request after the stay",
+    "postStayHint": "Sent after check-out with a link to leave a review.",
+    "daysAfter": "Days after check-out",
+    "noResend": "No e-mail service is connected yet (RESEND_API_KEY). Until it is, e-mails are not delivered on the live site.",
+    "placeholders": "Placeholders",
+    "placeholdersHint": "Write these in a template — they are replaced with the booking's details:",
+    "tpl": {
+      "pre_arrival": "Pre-arrival reminder",
+      "post_stay": "Review request",
+      "whatsapp": "WhatsApp message"
+    },
+    "tplHint": {
+      "pre_arrival": "E-mail sent before the guest arrives.",
+      "post_stay": "E-mail sent after the guest leaves.",
+      "whatsapp": "Pre-filled text of the WhatsApp button on each booking."
+    },
+    "custom": "your text",
+    "builtIn": "built-in text",
+    "subject": "Subject",
+    "body": "Text",
+    "bodyHint": "Blank line = new paragraph. Leave the text empty and save to go back to the built-in version.",
+    "preview": "Preview (latest booking)",
+    "sendTest": "Send a test to {email}"
   }
 }

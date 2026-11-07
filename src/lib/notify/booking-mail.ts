@@ -55,7 +55,7 @@ ${kind === "confirmed" ? `<p style="color:#4b6b75;font-size:13px">${esc(t("vouch
 }
 
 /** Guest confirmation (with PDF voucher) + hotel alert. Never throws: notifications must not break bookings. */
-export async function notifyBookingConfirmed(bookingId: string) {
+export async function notifyBookingConfirmed(bookingId: string, opts: { hotel?: boolean } = {}) {
   try {
     const [b, settings] = await Promise.all([loadBooking({ id: bookingId }), loadSettings()]);
     if (!b?.guest) return;
@@ -66,9 +66,11 @@ export async function notifyBookingConfirmed(bookingId: string) {
       to: b.guest.email, subject: t("subjectConfirmed", { code: b.code }), html: emailHtml(b, "confirmed", t, settings, locale),
       attachments: [{ filename: `${b.code}.pdf`, content: voucher, contentType: "application/pdf" }], replyTo: settings.contact.bookingEmail,
     });
-    await notifyHotel(b, "NEW BOOKING", settings);
+    if (opts.hotel !== false) await notifyHotel(b, "NEW BOOKING", settings);
+    return true;
   } catch (e) {
     console.error("[notify] confirmation failed", e);
+    return false;
   }
 }
 

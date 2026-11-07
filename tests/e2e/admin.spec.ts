@@ -7,7 +7,7 @@ import sharp from "sharp";
  */
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 // far-future dates, different per project so desktop and mobile runs never edit the same nights
-const farStart = (project: string) => iso(new Date(Date.now() + (500 + (project === "mobile" ? 150 : 0) + (Math.floor(Date.now() / 60_000) % 100)) * 86_400_000));
+const farStart = (project: string) => iso(new Date(Date.now() + (500 + (project === "mobile" ? 150 : project.endsWith("-drag") ? -230 : 0) + (Math.floor(Date.now() / 60_000) % 100)) * 86_400_000));
 
 async function login(page: Page) {
   await page.goto("/admin/login");
@@ -24,6 +24,7 @@ test("rate calendar: select dates → preview old → new → apply → undo", a
   const row = grid.locator("tbody tr").first();
   const cells = row.locator("td");
   await page.waitForLoadState("networkidle"); // React must be hydrated before we drag
+  const firstOld = (await cells.nth(1).locator("span").first().textContent())?.trim(); // first night of the selection
   const before = (await cells.nth(2).locator("span").first().textContent())?.trim();
   if (isMobile) {
     await cells.nth(1).tap();
@@ -41,7 +42,7 @@ test("rate calendar: select dates → preview old → new → apply → undo", a
   const preview = page.getByTestId("rate-preview");
   await expect(preview).toContainText("3");
   await expect(preview.locator("tbody tr")).toHaveCount(3);
-  await expect(preview.locator("tbody tr").first()).toContainText(`${before}`);
+  await expect(preview.locator("tbody tr").first()).toContainText(`${firstOld}`);
   await expect(preview.locator("tbody tr").first()).toContainText("333");
   await preview.getByRole("button").click(); // Apply
   await expect(cells.nth(2).locator("span").first()).toHaveText("333");
@@ -106,4 +107,65 @@ test("website content: a draft is visible only in preview until published", asyn
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: /Discard draft|დრაფტის წაშლა|Удалить черновик/ }).click();
   await expect(page.getByText(/No unpublished changes|გამოუქვეყნებელი ცვლილებები არ არის|Неопубликованных изменений нет/)).toBeVisible();
+});
+
+test("calendar: drag a booking to another room, confirm, then documents download", async ({ page, isMobile }, info) => {
+  test.skip(isMobile, "dragging is a desktop interaction (phones tap to open)");
+  await login(page);
+  const ci = farStart(info.project.name + "-drag");
+  const co = iso(new Date(Date.parse(ci) + 2 * 86_400_000));
+  // a phone booking far in the future, created through the admin form
+  await page.goto(`/admin/bookings/new?checkIn=${ci}&checkOut=${co}`);
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("button", { name: /availability|თავისუფალი|наличие/i }).click();
+  await expect(page.locator("aside dl")).toBeVisible();
+  const inputs = page.locator("section").nth(1).locator("input");
+  await inputs.nth(0).fill("Drag");
+  await inputs.nth(1).fill("Test");
+  await inputs.nth(2).fill("+995 555 000 111");
+  await page.getByRole("button", { name: /Create confirmed|დადასტურებული ჯავშნის შექმნა|Создать подтверждённую/ }).click();
+  await page.waitForURL(/\/admin\/bookings\/RH-/);
+  const code = decodeURIComponent(page.url().split("/").pop()!);
+
+  // documents
+  for (const doc of ["registration", "invoice"]) {
+    const res = await page.request.get(`/admin/bookings/${code}/${doc}?lang=ka`);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("application/pdf");
+    expect((await res.body()).subarray(0, 4).toString()).toBe("%PDF");
+  }
+
+  await page.goto(`/admin/calendar?start=${ci}&days=14`);
+  await page.waitForLoadState("networkidle");
+  const bar = page.getByTestId("timeline-bar").filter({ hasText: code });
+  const fromRow = bar.locator("xpath=ancestor::*[@data-room-row][1]");
+  const fromRoom = await fromRow.getAttribute("data-room-row");
+  const rows = page.locator("[data-room-row]");
+  const count = await rows.count();
+  // drag into the first other room row that has nothing booked in this window
+  let target = -1;
+  for (let i = 0; i < count && target < 0; i++) {
+    if ((await rows.nth(i).getAttribute("data-room-row")) !== fromRoom && (await rows.nth(i).getByTestId("timeline-bar").count()) === 0) target = i;
+  }
+  const box = (await bar.boundingBox())!;
+  const tBox = (await rows.nth(target).boundingBox())!;
+  await page.mouse.move(box.x + 10, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 14, tBox.y + tBox.height / 2, { steps: 8 });
+  await page.mouse.up();
+  const dialog = page.getByTestId("move-dialog");
+  await expect(dialog).toContainText(code);
+  await dialog.getByRole("button").last().click();
+  await expect(dialog).toHaveCount(0);
+  const targetRoom = await rows.nth(target).getAttribute("data-room-row");
+  await expect.poll(() => page.getByTestId("timeline-bar").filter({ hasText: code }).locator("xpath=ancestor::*[@data-room-row][1]").getAttribute("data-room-row")).toBe(targetRoom);
+
+  // clean up: cancel the test booking
+  await page.goto(`/admin/bookings/${code}`);
+  await page.waitForLoadState("networkidle");
+  page.once("dialog", (d) => d.accept());
+  await page.locator('input[name="refundMode"][value="none"]').check();
+  await page.locator('input[name="notifyGuest"]').uncheck();
+  await page.locator("form").filter({ has: page.locator('input[name="refundMode"]') }).getByRole("button").click();
+  await expect(page.locator("[data-status]").first()).toHaveAttribute("data-status", "CANCELLED");
 });
