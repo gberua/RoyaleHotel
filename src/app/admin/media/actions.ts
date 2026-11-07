@@ -27,7 +27,7 @@ const baseName = (f: File) => f.name.replace(/\.[^.]+$/, "");
 
 async function removeFiles(urls: (string | null | undefined)[]) {
   const storage = getStorage();
-  for (const u of urls) if (u?.startsWith("/media/")) await storage.remove(u.slice("/media/".length));
+  for (const u of urls) if (u) await storage.removeUrl(u);
 }
 
 /** One file per call (the client loops), so a big batch never hits the request size limit. */

@@ -10,6 +10,7 @@ import { getFromPrices, getRoomType, getRoomTypes, getSettings } from "@/lib/dat
 import { tr } from "@/lib/i18n-content";
 import { Markdown } from "@/lib/markdown";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
+import { absoluteUrl } from "@/lib/site-url";
 import { contactLinks } from "@/lib/contact";
 import { Icon } from "@/components/ui/Icon";
 import { JsonLd } from "@/components/ui/JsonLd";
@@ -72,7 +73,7 @@ export default async function RoomPage({ params }: PageProps<"/[locale]/rooms/[s
           name,
           description: tr(room.shortDescription, locale),
           url: SITE_URL + getPathname({ href: `/rooms/${slug}`, locale }),
-          image: room.photos.map((p) => SITE_URL + p.url),
+          image: room.photos.map((p) => absoluteUrl(p.url)),
           floorSize: room.sizeM2 ? { "@type": "QuantitativeValue", value: room.sizeM2, unitCode: "MTK" } : undefined,
           occupancy: { "@type": "QuantitativeValue", maxValue: room.maxOccupancy },
           bed: tr(room.beds, "en"),

@@ -1,6 +1,7 @@
 import type { Settings } from "./settings-schema";
 import { tr } from "./i18n-content";
 import { SITE_URL } from "./seo";
+import { absoluteUrl } from "./site-url";
 
 export function hotelSchema(s: Settings, locale: string, opts: { image?: string; amenities?: string[]; priceRange?: string; url: string }) {
   return {
@@ -10,7 +11,7 @@ export function hotelSchema(s: Settings, locale: string, opts: { image?: string;
     name: tr(s.hotel.name, locale) || "Royale Hotel",
     alternateName: "Royale Hotel Kobuleti",
     url: opts.url,
-    image: opts.image ? [SITE_URL + opts.image] : undefined,
+    image: opts.image ? [absoluteUrl(opts.image)] : undefined,
     telephone: s.contact.phone,
     email: s.contact.email,
     starRating: { "@type": "Rating", ratingValue: s.hotel.stars },

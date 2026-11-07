@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // the PDF voucher reads its fonts from disk at runtime — ship them with the serverless functions
+  outputFileTracingIncludes: { "/**": ["./src/fonts/pdf/**"] },
   // admin photo uploads go one file per request; 25 MB leaves room for big phone JPEG/HEIC originals
   experimental: { serverActions: { bodySizeLimit: "25mb" } },
   images: {
@@ -14,6 +16,8 @@ const nextConfig: NextConfig = {
     deviceSizes: [480, 640, 828, 1080, 1280, 1600, 1920, 2560],
     imageSizes: [96, 160, 256, 384],
     localPatterns: [{ pathname: "/media/**" }, { pathname: "/images/**" }],
+    // Vercel Blob (STORAGE_DRIVER=blob)
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com", pathname: "/media/**" }],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   turbopack: {
