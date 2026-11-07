@@ -97,10 +97,14 @@ Telegram username (button hidden until set) · Instagram/Facebook links.
 **VPS / Docker** (simplest with local media storage): `npm ci && npx prisma migrate deploy && npm run build && npm start`
 behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up together with the database.
 
-**Vercel**: set the env vars, use a hosted Postgres (Neon or a *new* Supabase project), and `STORAGE_DRIVER=s3` with an
-R2/S3 bucket (Vercel's filesystem is read-only). **Not built yet:** the S3 storage driver — until it is, deploy to a
-VPS/Docker host so admin photo uploads work.
-Build command: `prisma migrate deploy && next build`.
+**Vercel** (live: https://royale-hotel-eta.vercel.app) — Hobby plan, functions in Frankfurt (`fra1`):
+- Database: Neon (Vercel Marketplace, Frankfurt) → `DATABASE_URL` / `DATABASE_URL_UNPOOLED` are set by the integration.
+- Photos: Vercel Blob store (public) → `STORAGE_DRIVER=blob` + `BLOB_READ_WRITE_TOKEN`.
+- Build command `node scripts/vercel-build.mjs` (vercel.json): runs migrations on every deploy. The first deploy ran with
+  `SETUP_DATA=1` (seed + DEMO photos to Blob + pay-at-hotel only); that flag was removed afterwards — never set it again on a live site.
+- Background job: once a day on Hobby (`vercel.json` cron). Expired holds are also released on every booking search.
+- Online payments are off until TBC / Bank of Georgia keys are added (then Admin → Settings → Payment options).
+- E-mails need `RESEND_API_KEY` (and a verified sending domain) — without it no e-mail is sent on Vercel.
 
 ## Useful commands
 
