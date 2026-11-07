@@ -36,7 +36,7 @@ const GROUPS: { key: string; items: Item[] }[] = [
   ] },
 ];
 /** Sections not built yet are hidden from the menu until their phase ships. */
-const NOT_YET = new Set(["/admin/guests", "/admin/reviews", "/admin/reports"]);
+const NOT_YET = new Set(["/admin/guests", "/admin/reports"]);
 
 export async function AdminFrame({ user, title, actions, children, wide = false }: {
   user: { name: string; role: string; adminLocale?: string }; active?: string; title: string; actions?: React.ReactNode; children: React.ReactNode; wide?: boolean;
@@ -71,6 +71,8 @@ export const STATUS_STYLE: Record<string, string> = {
   CANCELLED: "bg-red-50 text-red-800",
   NO_SHOW: "bg-red-100 text-red-900",
   EXPIRED: "bg-ink-100 text-ink-500",
+  APPROVED: "bg-sea-100 text-sea-900",
+  REJECTED: "bg-red-50 text-red-800",
 };
 
 export function StatusChip({ status, label }: { status: string; label?: string }) {

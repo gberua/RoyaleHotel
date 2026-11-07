@@ -625,6 +625,8 @@ model Review {
   locale     String?
   stayMonth  String? // "2026-07"
   reply      String?
+  /// Shown first on the website (the home page shows the top 4)
+  featured   Boolean      @default(false)
   externalId String?      @unique
   guestId    String?
   guest      Guest?       @relation(fields: [guestId], references: [id], onDelete: SetNull)

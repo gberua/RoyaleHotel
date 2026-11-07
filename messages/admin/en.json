@@ -1066,5 +1066,48 @@
     "bodyHint": "Blank line = new paragraph. Leave the text empty and save to go back to the built-in version.",
     "preview": "Preview (latest booking)",
     "sendTest": "Send a test to {email}"
+  },
+  "rv": {
+    "title": "Reviews",
+    "hint": "Reviews sent from the website wait here until you approve them. You can also add reviews from Google by hand. Featured reviews are shown first — the home page shows the top four.",
+    "tabs": {
+      "all": "All",
+      "PENDING": "Waiting",
+      "APPROVED": "Published",
+      "REJECTED": "Hidden"
+    },
+    "status": {
+      "PENDING": "Waiting for approval",
+      "APPROVED": "Published",
+      "REJECTED": "Hidden"
+    },
+    "source": {
+      "GOOGLE": "Google",
+      "DIRECT": "Website",
+      "BOOKING_COM": "Booking.com",
+      "OTHER": "Other"
+    },
+    "approve": "Approve & publish",
+    "reject": "Hide",
+    "feature": "Feature",
+    "unfeature": "Remove from featured",
+    "featured": "Featured",
+    "featuredHint": "Shown first; the home page shows the top 4",
+    "deleteConfirm": "Delete this review for good?",
+    "editReply": "Edit / reply",
+    "add": "Add a review",
+    "addHint": "For example a review from Google — copy the text exactly as the guest wrote it.",
+    "author": "Guest name",
+    "country": "Country",
+    "rating": "Rating",
+    "reviewTitle": "Title",
+    "body": "Review text",
+    "reply": "Hotel's reply (shown on the website)",
+    "date": "Date",
+    "language": "Language of the review",
+    "empty": "No reviews here yet.",
+    "sourceLabel": "Source",
+    "statusLabel": "Status",
+    "replyLabel": "Reply from the hotel"
   }
 }

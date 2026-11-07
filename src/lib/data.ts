@@ -312,7 +312,7 @@ export async function getApprovedReviews(take = 30) {
   cacheTag(TAGS.reviews);
   const rows = await db.review.findMany({
     where: { status: "APPROVED" },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ featured: "desc" }, { publishedAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
     take,
   });
   return rows.map((r) => ({

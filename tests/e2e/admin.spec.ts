@@ -113,7 +113,7 @@ test("calendar: drag a booking to another room, confirm, then documents download
   test.skip(isMobile, "dragging is a desktop interaction (phones tap to open)");
   await login(page);
   const ci = farStart(info.project.name + "-drag");
-  const co = iso(new Date(Date.parse(ci) + 2 * 86_400_000));
+  const co = iso(new Date(Date.parse(ci) + 3 * 86_400_000)); // 3 nights: the high season has a 3-night minimum stay
   // a phone booking far in the future, created through the admin form
   await page.goto(`/admin/bookings/new?checkIn=${ci}&checkOut=${co}`);
   await page.waitForLoadState("networkidle");
@@ -168,4 +168,47 @@ test("calendar: drag a booking to another room, confirm, then documents download
   await page.locator('input[name="notifyGuest"]').uncheck();
   await page.locator("form").filter({ has: page.locator('input[name="refundMode"]') }).getByRole("button").click();
   await expect(page.locator("[data-status]").first()).toHaveAttribute("data-status", "CANCELLED");
+});
+
+// The public review form → PENDING path is covered by tests/integration/reviews.test.ts; here the waiting review is
+// added in the admin, because the public form allows only 3 submissions per hour per visitor (re-runs would fail).
+test("reviews: a waiting review shows on the website only after approval, and the owner can delete it", async ({ page, isMobile }) => {
+  test.skip(isMobile, "covered on desktop");
+  const name = `E2E Guest ${Date.now() % 1_000_000}`;
+  await page.goto("/en/reviews");
+  await expect(page.getByText("Nino M").first()).toBeVisible(); // the real Google reviews are on the page
+
+  await login(page);
+  await page.goto("/admin/reviews");
+  const add = page.locator("form:has(select[name=status]):not(:has(input[name=id]))");
+  await add.locator("input[name=authorName]").fill(name);
+  await add.locator("textarea[name=body]").fill("A calm hotel two minutes from the sea — the pool and breakfast were great.");
+  await add.locator("select[name=source]").selectOption("DIRECT");
+  await add.locator("select[name=status]").selectOption("PENDING");
+  await add.locator("button").click();
+  await expect(add.locator("[role=status]")).toBeVisible();
+
+  await page.goto("/en/reviews");
+  await expect(page.getByText("Nino M").first()).toBeVisible();
+  await expect(page.getByText(name)).toHaveCount(0); // not public before approval
+
+  await page.goto("/admin/reviews?status=PENDING");
+  const card = page.locator("section").filter({ has: page.getByTestId("review") }).filter({ hasText: name });
+  await expect(card).toHaveCount(1);
+  await expect(card).toBeVisible(); // streamed in, not just in the DOM behind the loading fallback
+  await page.screenshot({ path: "test-results/admin-reviews.png", fullPage: true });
+  await card.locator("form:has(input[name=status][value=APPROVED]) button").click();
+  await expect(page.locator("section").filter({ hasText: name })).toHaveCount(0); // left the "waiting" list
+
+  await page.goto("/en/reviews");
+  await expect(page.getByText(name)).toBeVisible();
+  await page.screenshot({ path: "test-results/public-reviews.png", fullPage: true });
+
+  // clean up: delete it again
+  await page.goto("/admin/reviews?status=APPROVED");
+  page.once("dialog", (d) => d.accept());
+  await page.locator("section").filter({ has: page.getByTestId("review") }).filter({ hasText: name }).locator("form:has(input[name=id]):not(:has(input[name=status])):not(:has(input[name=featured])) button").first().click();
+  await expect(page.locator("section").filter({ hasText: name })).toHaveCount(0);
+  await page.goto("/en/reviews");
+  await expect(page.getByText(name)).toHaveCount(0);
 });
