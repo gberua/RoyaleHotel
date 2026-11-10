@@ -86,7 +86,7 @@ export function templateHtml(body: string, settings: Settings, locale: string) {
   return `<!doctype html><html lang="${lang(locale)}"><body style="margin:0;background:#f3f8f7;font-family:'Noto Sans Georgian','Noto Sans',Arial,sans-serif">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
 <table width="100%" style="max-width:560px;background:#fff;border-radius:16px;overflow:hidden" cellpadding="0" cellspacing="0">
-<tr><td style="background:#0b2e3a;padding:24px 28px;color:#fff;font-family:Georgia,serif;font-size:26px;letter-spacing:4px">ROYALE<div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#a3e8ee;margin-top:4px">HOTEL · KOBULETI</div></td></tr>
+<tr><td align="left" style="background:#0b2e3a;padding:24px 28px;text-align:left"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="text-align:center;padding:0;color:#fff;font-family:Georgia,serif;font-size:26px;letter-spacing:4px">ROYALE</td></tr><tr><td align="center" style="text-align:center;padding:4px 0 0;font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#a3e8ee">HOTEL · KOBULETI</td></tr></table></td></tr>
 <tr><td style="padding:28px">${paras}</td></tr>
 <tr><td style="background:#f3f8f7;padding:16px 28px;font-size:12px;color:#4b6b75">${esc(tr(settings.hotel.address, lang(locale)))} · ${esc(settings.contact.phone)} · ${esc(settings.contact.email)}</td></tr>
 </table></td></tr></table></body></html>`;

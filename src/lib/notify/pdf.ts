@@ -71,8 +71,12 @@ export function wrap(fonts: Fonts, text: string, size: number, maxWidth: number)
 export function header(page: PDFPage, fonts: Fonts, title: string) {
   const W = page.getWidth();
   page.drawRectangle({ x: 0, y: 760, width: W, height: 82, color: INK });
-  draw(page, fonts, "ROYALE", 48, 800, 26, false, rgb(1, 1, 1));
-  draw(page, fonts, "HOTEL · KOBULETI · GEORGIA", 48, 782, 8, true, rgb(0.64, 0.91, 0.93));
+  // Logo lockup: both lines centred on one axis; the wider line keeps the left edge at x = 48.
+  const brand = "ROYALE", sub = "HOTEL · KOBULETI · GEORGIA";
+  const brandW = textWidth(fonts, brand, 26), subW = textWidth(fonts, sub, 8, true);
+  const lockupW = Math.max(brandW, subW);
+  draw(page, fonts, brand, 48 + (lockupW - brandW) / 2, 800, 26, false, rgb(1, 1, 1));
+  draw(page, fonts, sub, 48 + (lockupW - subW) / 2, 782, 8, true, rgb(0.64, 0.91, 0.93));
   draw(page, fonts, title, W - 48 - textWidth(fonts, title, 12, true), 796, 12, true, rgb(1, 1, 1));
 }
 
