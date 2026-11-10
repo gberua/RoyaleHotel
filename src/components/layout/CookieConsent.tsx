@@ -63,7 +63,7 @@ export function CookieConsent() {
 
 export function CookieSettingsButton({ label }: { label: string }) {
   return (
-    <button type="button" onClick={() => writeConsent(null)} className="hover:text-white">
+    <button type="button" onClick={() => writeConsent(null)} className="inline-flex min-h-10 items-center hover:text-white md:min-h-0">
       {label}
     </button>
   );

@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { Phone, X } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { BrandIcon } from "@/components/ui/BrandIcon";
-import { BookButton } from "@/components/booking/BookButton";
 import { isOverlayRoute } from "./SiteHeader";
 
 type Links = { tel: string; whatsapp: string | null; viber: string | null; telegram: string | null };
@@ -16,9 +15,8 @@ const channels = [
 ] as const;
 
 /**
- * Floating actions.
- * • Chat (WhatsApp / Viber / Telegram / call) — bottom-right, on every page.
- * • Mobile only: a small "Book" pill, bottom-centre, once the visitor scrolls past the hero.
+ * Floating chat (WhatsApp / Viber / Telegram / call) — bottom-right, on every page.
+ * There is no floating Book button: the fixed header keeps its Book button visible on every scroll position.
  * Hidden inside the booking flow to keep it distraction-free.
  */
 export function ContactDock({ links }: { links: Links }) {
@@ -45,7 +43,7 @@ export function ContactDock({ links }: { links: Links }) {
 
       {/* Chat */}
       <div
-        className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 flex flex-col items-end gap-2 transition-[opacity,transform] duration-500 md:bottom-6 md:right-6 ${
+        className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-40 flex flex-col items-end gap-2 transition-[opacity,transform] duration-500 md:bottom-6 md:right-6 ${
           visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0 md:pointer-events-auto md:translate-y-0 md:opacity-100"
         }`}
       >
@@ -78,16 +76,6 @@ export function ContactDock({ links }: { links: Links }) {
         >
           {open ? <X size={22} /> : <BrandIcon name="whatsapp" className="h-6 w-6 md:h-7 md:w-7" />}
         </button>
-      </div>
-
-      {/* Mobile Book pill */}
-      <div
-        className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-40 -translate-x-1/2 transition-[opacity,transform] duration-500 ease-[var(--ease-out-soft)] md:hidden ${
-          pastHero && !open ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
-        }`}
-        inert={!pastHero || open}
-      >
-        <BookButton className="btn btn-accent !min-h-12 px-9 shadow-[0_14px_30px_-12px_rgb(7_31_39/0.45)]">{t("nav.book")}</BookButton>
       </div>
     </>
   );

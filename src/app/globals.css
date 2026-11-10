@@ -75,7 +75,8 @@
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--header-h) + 1rem);
   }
-  html, body { overflow-x: clip; } /* safety net: nothing may widen the mobile layout viewport */
+  /* safety net: nothing may widen the mobile layout viewport (hidden = fallback for Safari < 16, which lacks clip) */
+  html, body { overflow-x: hidden; overflow-x: clip; }
   body {
     background: var(--color-white);
     color: var(--color-ink-900);
