@@ -70,6 +70,16 @@ export function SiteHeader({ contact, menuImages }: Props) {
     return () => { html.style.overflow = ""; window.removeEventListener("keydown", onKey); cancelAnimationFrame(f); };
   }, [open]);
 
+  /** A link to the page we are already on (logo on the home page, the current menu item): no navigation
+   *  happens, so close the menu and glide back to the top instead. Modifier-clicks (new tab) are left alone. */
+  const onSamePage = (href: string) => (e: React.MouseEvent) => {
+    if (href !== pathname || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    setOpen(false);
+    // wait one frame so the menu has released its scroll lock before scrolling
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }));
+  };
+
   const toggle = () => {
     setEverOpened(true);
     setOpen((v) => !v);
@@ -113,7 +123,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
           </button>
 
           {/* Center — logo */}
-          <Link href="/" className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ease-[var(--ease-out-soft)] ${scrolled && !open ? "scale-[0.84]" : ""}`}>
+          <Link href="/" onClick={onSamePage("/")} className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ease-[var(--ease-out-soft)] ${scrolled && !open ? "scale-[0.84]" : ""}`}>
             <Logo tone={light ? "light" : "dark"} />
           </Link>
 
@@ -149,6 +159,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
                     >
                       <Link
                         href={item.href}
+                        onClick={onSamePage(item.href)}
                         onMouseEnter={() => setActive(item.key)}
                         onFocus={() => setActive(item.key)}
                         aria-current={current ? "page" : undefined}

@@ -18,6 +18,7 @@ import { ContactDock } from "@/components/layout/ContactDock";
 import { CookieConsent } from "@/components/layout/CookieConsent";
 import { PreviewBanner } from "@/components/layout/PreviewBanner";
 import { RevealObserver } from "@/components/layout/RevealObserver";
+import { ScrollManager } from "@/components/layout/ScrollManager";
 import { CurrencyProvider } from "@/components/layout/CurrencyProvider";
 import { BookingDrawerProvider } from "@/components/booking/BookingDrawerProvider";
 
@@ -91,6 +92,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
               <ContactDock links={links} />
               <CookieConsent />
               <RevealObserver />
+              <ScrollManager />
               <Suspense><PreviewBanner /></Suspense>
             </BookingDrawerProvider>
           </CurrencyProvider>
