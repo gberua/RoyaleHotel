@@ -412,7 +412,7 @@ async function main() {
       sections: {
         heroTitle: t("სიმშვიდე შავი ზღვის პირას", "Calm by the Black Sea", "Спокойствие у Чёрного моря"),
         heroSubtitle: t("თანამედროვე სასტუმრო ქობულეთში — ღია აუზით, რესტორნით და პლაჟთან წვდომით.", "A modern hotel in Kobuleti with an outdoor pool, a restaurant and beach access.", "Современный отель в Кобулети с открытым бассейном, рестораном и выходом к пляжу."),
-        welcomeTitle: t("ზღვის ჰაერი, ნელი დილები და მასპინძლობა, რომელიც გემახსოვრებათ", "Sea air, slow mornings and hospitality you'll remember", "Морской воздух, неспешные утра и гостеприимство, которое запомнится"),
+        welcomeTitle: t("ზღვის ჰაერი, ნელი დილა და მასპინძლობა, რომელიც გემახსოვრებათ", "Sea air, slow mornings and hospitality you'll remember", "Морской воздух, неспешные утра и гостеприимство, которое запомнится"),
         welcomeText: t(
           "როიალ ჰოტელი ქობულეთის მთავარ გამზირზეა — ზღვასთან ახლოს, მაგრამ ქალაქის ხმაურისგან მოშორებით. ნათელი ნომრები, ღია აუზი და რესტორანი ქმნის იმ მშვიდ რიტმს, რისთვისაც ზღვაზე ჩამოდიხართ.",
           "Royale Hotel sits on Kobuleti's main avenue — close to the sea, yet away from the noise. Bright rooms, an outdoor pool and a restaurant set the calm rhythm you come to the seaside for.",
