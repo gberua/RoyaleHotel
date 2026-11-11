@@ -195,7 +195,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
                   ))}
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-sm">
-                  <LanguageSwitcher />
+                  <LanguageSwitcher onSwitch={() => setOpen(false)} />
                   <CurrencySelect />
                 </div>
                 <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-500">

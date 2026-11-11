@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { SWITCH_ATTR, hasPendingPlace, justSwitched, restorePlace } from "@/lib/locale-anchor";
 
 /** Jump to the very top without the global `scroll-behavior: smooth` animating it. */
 export function scrollToTopInstant() {
@@ -23,6 +24,8 @@ export function scrollToTopInstant() {
  *    unreliable: Safari can deliver it after the new page has rendered.)
  *  • Links with a #hash — they land on their anchor.
  *  • The first load / reload, query-only changes (e.g. filters) and new-tab clicks.
+ *  • Language switches (links marked data-locale-switch) — they keep the visitor's place instead,
+ *    see src/lib/locale-anchor.ts.
  */
 const USER_INPUT = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
 
@@ -34,7 +37,7 @@ export function ScrollManager() {
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
-      if (!a || (a.target && a.target !== "_self") || a.hasAttribute("download")) return;
+      if (!a || (a.target && a.target !== "_self") || a.hasAttribute("download") || a.hasAttribute("data-locale-switch")) return;
       const url = new URL(a.href, window.location.href);
       if (url.origin !== window.location.origin || url.hash || url.pathname === window.location.pathname) return;
       pending.current = true;
@@ -43,6 +46,13 @@ export function ScrollManager() {
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
   }, []);
+
+  // Language switch: put the same content back under the header before the new language is painted.
+  // Any other page change ends the "just switched language" state, so entrance animations work again.
+  useLayoutEffect(() => {
+    if (hasPendingPlace()) restorePlace();
+    else if (!justSwitched()) document.documentElement.removeAttribute(SWITCH_ATTR);
+  }, [pathname]);
 
   useEffect(() => {
     if (!pending.current) return;

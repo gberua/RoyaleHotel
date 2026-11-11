@@ -1,16 +1,46 @@
 "use client";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
-import { Link, usePathname } from "@/i18n/navigation";
-import { LOCALE_REGISTRY, locales } from "@/i18n/locales";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { LOCALE_REGISTRY, locales, type Locale } from "@/i18n/locales";
+import { rememberPlace } from "@/lib/locale-anchor";
 
-export function LanguageSwitcher({ tone = "dark", variant = "inline" }: { tone?: "dark" | "light"; variant?: "inline" | "list" }) {
+/**
+ * Language links. They stay real links (crawlers, hreflang, open-in-new-tab), but a plain click switches
+ * the language in place: the same page, query and position — see src/lib/locale-anchor.ts.
+ */
+export function LanguageSwitcher({ tone = "dark", variant = "inline", onSwitch }: {
+  tone?: "dark" | "light";
+  variant?: "inline" | "list";
+  /** e.g. close the menu overlay */
+  onSwitch?: () => void;
+}) {
   const current = useLocale();
   const pathname = usePathname();
   const params = useParams();
+  const router = useRouter();
   const t = useTranslations("nav");
   // Dynamic routes: keep the same params in the other language
   const href = { pathname, params } as unknown as string;
+
+  const switchTo = (l: Locale) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // new tab/window: normal link
+    e.preventDefault();
+    if (l === current) { onSwitch?.(); return; }
+    rememberPlace(); // before closing the menu: the overlay is fixed, the page under it hasn't moved
+    onSwitch?.();
+    const query = Object.fromEntries(new URLSearchParams(window.location.search));
+    router.replace({ pathname, params, query } as unknown as string, { locale: l, scroll: false });
+  };
+
+  const linkProps = (l: Locale) => ({
+    href,
+    locale: l,
+    hrefLang: LOCALE_REGISTRY[l].hreflang,
+    "aria-current": l === current ? ("true" as const) : undefined,
+    "data-locale-switch": "",
+    onClick: switchTo(l),
+  });
 
   if (variant === "list")
     return (
@@ -18,10 +48,7 @@ export function LanguageSwitcher({ tone = "dark", variant = "inline" }: { tone?:
         {locales.map((l) => (
           <li key={l}>
             <Link
-              href={href}
-              locale={l}
-              hrefLang={LOCALE_REGISTRY[l].hreflang}
-              aria-current={l === current ? "true" : undefined}
+              {...linkProps(l)}
               className={`flex h-12 items-center justify-center rounded-xl border text-sm font-semibold ${l === current ? "border-sea-600 bg-sea-50 text-sea-800" : "border-ink-100 text-ink-700"}`}
             >
               {LOCALE_REGISTRY[l].label}
@@ -36,10 +63,7 @@ export function LanguageSwitcher({ tone = "dark", variant = "inline" }: { tone?:
       {locales.map((l) => (
         <Link
           key={l}
-          href={href}
-          locale={l}
-          hrefLang={LOCALE_REGISTRY[l].hreflang}
-          aria-current={l === current ? "true" : undefined}
+          {...linkProps(l)}
           title={LOCALE_REGISTRY[l].label}
           className={`rounded-full px-2 py-1 text-xs font-semibold tracking-wide transition-colors ${
             l === current

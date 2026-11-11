@@ -252,3 +252,16 @@
 
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ───── Language switch ─────
+   Right after switching language (src/lib/locale-anchor.ts) the visitor is looking at the same page:
+   don't replay the entrance animations and don't hide content that was already visible. Cleared on the
+   next page change. */
+[data-locale-switch] :is(.hero-letter, .hero-horizon, .hero-fade, .hero-title, .hero-kenburns) {
+  animation: none !important;
+}
+[data-locale-switch] .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
