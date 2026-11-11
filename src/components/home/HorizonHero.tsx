@@ -53,7 +53,9 @@ export function HorizonHero({ name, tagline, scrollLabel, image, mobileImage, vi
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgb(7_31_39/0.35)_100%)]" />
 
       <div className="px-4 text-center">
-        <h1 aria-label={name} className="hero-title font-display text-[clamp(3.4rem,17vw,7.5rem)] leading-[1] drop-shadow-[0_2px_24px_rgb(7_31_39/0.25)] lg:whitespace-nowrap lg:text-[min(10vw,10rem)]">
+        {/* Words are flex items: the 0.28em gap exists only BETWEEN words on the same line, so when a long
+            name breaks onto two lines on small phones ("Royale" / "Palace") each line is exactly centred. */}
+        <h1 aria-label={name} className="hero-title flex flex-wrap justify-center gap-x-[0.28em] font-display text-[clamp(3.4rem,17vw,7.5rem)] leading-[1] drop-shadow-[0_2px_24px_rgb(7_31_39/0.25)] lg:flex-nowrap lg:whitespace-nowrap lg:text-[min(10vw,10rem)]">
           {words.map((word, w) => (
             <span key={w} className="inline-block whitespace-nowrap" aria-hidden>
               {Array.from(word).map((ch) => {
@@ -64,12 +66,12 @@ export function HorizonHero({ name, tagline, scrollLabel, image, mobileImage, vi
                   </span>
                 );
               })}
-              {w < words.length - 1 && <span className="inline-block w-[0.28em]" />}
             </span>
           ))}
         </h1>
         <div className="hero-horizon mx-auto mt-8 h-px w-[min(34rem,72vw)] bg-sea-400 sm:mt-12" style={{ animationDelay: `${lettersDone}ms` }} aria-hidden />
-        <p className="hero-fade mt-5 text-[0.72rem] font-semibold uppercase tracking-[0.42em] text-white/90 sm:mt-6 sm:text-xs" style={{ animationDelay: `${lettersDone + 450}ms` }}>
+        {/* letter-spacing also follows the LAST letter; the equal negative right margin centres the visible text */}
+        <p className="hero-fade -mr-[0.42em] mt-5 text-[0.72rem] font-semibold uppercase tracking-[0.42em] text-white/90 sm:mt-6 sm:text-xs" style={{ animationDelay: `${lettersDone + 450}ms` }}>
           {tagline}
         </p>
       </div>

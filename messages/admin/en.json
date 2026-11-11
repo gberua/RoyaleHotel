@@ -700,6 +700,7 @@
       "cta": "Final “Book now” band"
     },
     "texts": {
+      "heroName": "Title (hotel name in the hero)",
       "heroTagline": "Small line above the name",
       "welcomeEyebrow": "Small heading",
       "welcomeTitle": "Title",

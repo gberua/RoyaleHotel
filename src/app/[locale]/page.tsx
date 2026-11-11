@@ -285,7 +285,7 @@ export default async function HomePage() {
 
       {/* ───── Hero (Horizon) ───── */}
       <HorizonHero
-        name={tr(settings.hotel.name, locale) || "Royale Hotel"}
+        name={txt("heroName", "home.heroName")}
         tagline={txt("heroTagline", "home.heroEyebrow")}
         scrollLabel={t("home.scroll")}
         image={hero}

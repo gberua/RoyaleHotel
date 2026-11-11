@@ -4,7 +4,7 @@ export type HomeSection = (typeof HOME_SECTIONS)[number];
 
 /** text key → message key used when the admin left it empty (null = only editable, no built-in text) */
 export const HOME_TEXTS: Record<HomeSection | "hero", Record<string, string | null>> = {
-  hero: { heroTagline: "home.heroEyebrow" },
+  hero: { heroName: "home.heroName", heroTagline: "home.heroEyebrow" },
   trust: {},
   welcome: { welcomeEyebrow: "home.welcomeEyebrow", welcomeTitle: null, welcomeText: null },
   rooms: { roomsEyebrow: "home.featuredEyebrow", roomsTitle: "home.featuredTitle" },
