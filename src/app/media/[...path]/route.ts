@@ -1,5 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
-import { extname, join, normalize } from "node:path";
+import { extname, join, normalize, sep } from "node:path";
 import { LOCAL_MEDIA_ROOT } from "@/lib/media/storage";
 
 const TYPES: Record<string, string> = {
@@ -17,7 +17,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/media/[...path]">) 
   const { path } = await ctx.params;
   const file = normalize(join(LOCAL_MEDIA_ROOT, ...path));
   const type = TYPES[extname(file).toLowerCase()];
-  if (!file.startsWith(LOCAL_MEDIA_ROOT + "/") || !type) return new Response("Not found", { status: 404 });
+  if (!file.startsWith(LOCAL_MEDIA_ROOT + sep) || !type) return new Response("Not found", { status: 404 });
   try {
     const info = await stat(file);
     const body = await readFile(file);
