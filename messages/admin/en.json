@@ -491,10 +491,10 @@
     },
     "mail": {
       "hello": "Hello {name},",
-      "resetSubject": "Royale Hotel admin — set a new password",
-      "inviteSubject": "Your Royale Hotel admin account",
-      "resetIntro": "Someone (hopefully you) asked to reset the password of your Royale Hotel admin account. Click the button to choose a new one.",
-      "inviteIntro": "An account was created for you in the Royale Hotel admin panel. Click the button to choose your password.",
+      "resetSubject": "Royal Palace admin — set a new password",
+      "inviteSubject": "Your Royal Palace admin account",
+      "resetIntro": "Someone (hopefully you) asked to reset the password of your Royal Palace admin account. Click the button to choose a new one.",
+      "inviteIntro": "An account was created for you in the Royal Palace admin panel. Click the button to choose your password.",
       "button": "Choose password",
       "expires": "The link works once and expires in {minutes} minutes.",
       "ignore": "If you didn't ask for this, ignore this e-mail — your password stays the same."

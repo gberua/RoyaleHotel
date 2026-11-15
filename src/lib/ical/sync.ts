@@ -19,14 +19,14 @@ export async function exportRoomTypeIcal(roomTypeId: string) {
   const busy = new Map<string, Set<string>>();
   for (const a of allocs) for (const n of eachNight(iso(a.checkIn), iso(a.checkOut))) if (n >= from) (busy.get(n) ?? busy.set(n, new Set()).get(n)!).add(a.roomId);
   const soldOut = [...busy.entries()].filter(([, rooms]) => rooms.size >= rt.rooms.length).map(([n]) => n);
-  const events = nightsToRanges(soldOut).map((r) => ({ uid: `${rt.slug}-${r.start}@royalehotel`, start: r.start, end: r.end, summary: "Not available" }));
-  return buildIcal(`Royale Hotel — ${(rt.name as Record<string, string>).en ?? rt.slug}`, events);
+  const events = nightsToRanges(soldOut).map((r) => ({ uid: `${rt.slug}-${r.start}@royalpalacehotel`, start: r.start, end: r.end, summary: "Not available" }));
+  return buildIcal(`Royal Palace — ${(rt.name as Record<string, string>).en ?? rt.slug}`, events);
 }
 
 async function fetchFeed(url: string) {
   const u = new URL(url);
   if (!["http:", "https:"].includes(u.protocol)) throw new Error("Only http(s) iCal URLs are allowed");
-  const res = await fetch(u, { signal: AbortSignal.timeout(15_000), headers: { "User-Agent": "RoyaleHotel-iCal/1.0" } });
+  const res = await fetch(u, { signal: AbortSignal.timeout(15_000), headers: { "User-Agent": "RoyalPalaceHotel-iCal/1.0" } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await res.text();
   if (text.length > 3_000_000) throw new Error("Feed too large");

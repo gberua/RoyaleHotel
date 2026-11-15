@@ -26,10 +26,10 @@ async function setting(key: string, value: Prisma.InputJsonValue) {
 }
 
 async function main() {
-  console.log("Seeding Royale Hotel…");
+  console.log("Seeding Royal Palace…");
 
   // ── Owner account ──
-  const email = (process.env.SEED_OWNER_EMAIL ?? "owner@royalehotel.ge").toLowerCase();
+  const email = (process.env.SEED_OWNER_EMAIL ?? "owner@royalpalacehotel.ge").toLowerCase();
   const password = process.env.SEED_OWNER_PASSWORD ?? "change-me-now";
   await db.user.upsert({
     where: { email },
@@ -73,7 +73,7 @@ async function main() {
 
   // ── Settings ──
   await setting("hotel", {
-    name: t("როიალ ჰოტელი", "Royale Hotel", "Royale Hotel"),
+    name: t("როიალ პალასი", "Royal Palace", "Royal Palace"),
     tagline: t("სიმშვიდე შავი ზღვის პირას", "Calm by the Black Sea", "Спокойствие у Чёрного моря"),
     stars: 4,
     address: t("დავით აღმაშენებლის გამზ. 290ა, ქობულეთი 6200", "290a David Aghmashenebeli Ave, Kobuleti 6200", "пр. Давида Агмашенебели 290а, Кобулети 6200"),
@@ -88,8 +88,8 @@ async function main() {
   });
   await setting("contact", {
     phone: "+995 592 44 11 15",
-    email: "info@royalehotel.ge",
-    bookingEmail: "booking@royalehotel.ge",
+    email: "info@royalpalacehotel.ge",
+    bookingEmail: "booking@royalpalacehotel.ge",
     whatsapp: "995592441115",
     viber: "+995592441115",
     telegram: "",
@@ -163,8 +163,8 @@ async function main() {
       amenities: [...base, "balcony", "safe", "cot"], scenes: [0, 2], featured: true,
     },
     {
-      slug: "royale-suite", sortOrder: 5, price: 450, weekend: 490, size: 45, view: "sea", adults: 2, children: 2, occ: 4, rooms: ["401", "402"],
-      name: t("როიალ სუიტა", "Royale Suite", "Люкс Royale"),
+      slug: "royal-suite", sortOrder: 5, price: 450, weekend: 490, size: 45, view: "sea", adults: 2, children: 2, occ: 4, rooms: ["401", "402"],
+      name: t("როიალ სუიტა", "Royal Suite", "Люкс Royal"),
       beds: t("1 დიდი ორადგილიანი საწოლი + დივანი-საწოლი", "1 king-size bed + sofa bed", "1 кровать king-size + диван-кровать"),
       short: t("ცალკე მისაღები, ზღვის ხედი და ყველაზე მშვიდი საღამოები სასტუმროში.", "A separate living room, sea views and the quietest evenings in the hotel.", "Отдельная гостиная, вид на море и самые тихие вечера в отеле."),
       amenities: [...base, "bathtub", "balcony", "sea-view", "sofa", "safe", "cot"], scenes: [2, 1], featured: true,
@@ -414,9 +414,9 @@ async function main() {
         heroSubtitle: t("თანამედროვე სასტუმრო ქობულეთში — ღია აუზით, რესტორნით და პლაჟთან წვდომით.", "A modern hotel in Kobuleti with an outdoor pool, a restaurant and beach access.", "Современный отель в Кобулети с открытым бассейном, рестораном и выходом к пляжу."),
         welcomeTitle: t("ზღვის ჰაერი, ნელი დილა და მასპინძლობა, რომელიც გემახსოვრებათ", "Sea air, slow mornings and hospitality you'll remember", "Морской воздух, неспешные утра и гостеприимство, которое запомнится"),
         welcomeText: t(
-          "როიალ ჰოტელი ქობულეთის მთავარ გამზირზეა — ზღვასთან ახლოს, მაგრამ ქალაქის ხმაურისგან მოშორებით. ნათელი ნომრები, ღია აუზი და რესტორანი ქმნის იმ მშვიდ რიტმს, რისთვისაც ზღვაზე ჩამოდიხართ.",
-          "Royale Hotel sits on Kobuleti's main avenue — close to the sea, yet away from the noise. Bright rooms, an outdoor pool and a restaurant set the calm rhythm you come to the seaside for.",
-          "Royale Hotel расположен на главном проспекте Кобулети — рядом с морем, но вдали от шума. Светлые номера, открытый бассейн и ресторан задают тот спокойный ритм, ради которого едут к морю.",
+          "როიალ პალასი ქობულეთის მთავარ გამზირზეა — ზღვასთან ახლოს, მაგრამ ქალაქის ხმაურისგან მოშორებით. ნათელი ნომრები, ღია აუზი და რესტორანი ქმნის იმ მშვიდ რიტმს, რისთვისაც ზღვაზე ჩამოდიხართ.",
+          "Royal Palace sits on Kobuleti's main avenue — close to the sea, yet away from the noise. Bright rooms, an outdoor pool and a restaurant set the calm rhythm you come to the seaside for.",
+          "Royal Palace расположен на главном проспекте Кобулети — рядом с морем, но вдали от шума. Светлые номера, открытый бассейн и ресторан задают тот спокойный ритм, ради которого едут к морю.",
         ),
         beachText: t(
           "ქობულეთის 10-კილომეტრიანი პლაჟი სასტუმროდან სულ ახლოსაა, ბათუმი კი — ნახევარ საათში.",

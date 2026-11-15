@@ -22,6 +22,6 @@ export async function GET(req: Request) {
     (b.grandTotal / 100).toFixed(2), (b.amountPaid / 100).toFixed(2), (Math.max(0, b.grandTotal - b.amountPaid) / 100).toFixed(2), b.paymentStatus, b.paymentPlan, (b.discountTotal / 100).toFixed(2), b.createdAt.toISOString(),
   ].map(cell).join(","));
   return new Response("﻿" + [head.join(","), ...lines].join("\r\n"), {
-    headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="royale-bookings-${new Date().toISOString().slice(0, 10)}.csv"`, "Cache-Control": "no-store" },
+    headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="royal-palace-bookings-${new Date().toISOString().slice(0, 10)}.csv"`, "Cache-Control": "no-store" },
   });
 }

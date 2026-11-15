@@ -20,7 +20,7 @@ const css = files
   .map((file) => {
     const weight = weights.find(([re]) => re.test(file))?.[1] ?? 400;
     const style = /italic/i.test(file) ? "italic" : "normal";
-    return `@font-face {\n  font-family: "Royale Display";\n  src: url("/fonts/display/${file}") format("woff2");\n  font-weight: ${weight};\n  font-style: ${style};\n  font-display: swap;\n  unicode-range: ${range};\n}`;
+    return `@font-face {\n  font-family: "Royal Display";\n  src: url("/fonts/display/${file}") format("woff2");\n  font-weight: ${weight};\n  font-style: ${style};\n  font-display: swap;\n  unicode-range: ${range};\n}`;
   })
   .join("\n\n");
 

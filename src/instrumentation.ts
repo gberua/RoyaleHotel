@@ -5,11 +5,11 @@
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs" || process.env.ENABLE_INTERNAL_CRON !== "true") return;
-  const g = globalThis as unknown as { __royaleCron?: NodeJS.Timeout };
-  if (g.__royaleCron) return;
+  const g = globalThis as unknown as { __royalPalaceCron?: NodeJS.Timeout };
+  if (g.__royalPalaceCron) return;
   const { runMaintenance } = await import("./lib/maintenance");
   const run = () => runMaintenance().catch((e) => console.error("[cron] maintenance failed", e));
-  g.__royaleCron = setInterval(run, 15 * 60_000);
+  g.__royalPalaceCron = setInterval(run, 15 * 60_000);
   setTimeout(run, 30_000);
   console.info("[cron] internal scheduler started (every 15 min)");
 }

@@ -27,7 +27,7 @@ export async function startPayment(bookingId: string, amount: number, locale: st
   const prefix = locale === "ka" ? "" : `/${locale}`;
   const created = await provider.createPayment({
     paymentId: row.id, bookingId, amount, locale, ttlMinutes: holdMinutes,
-    description: `Royale Hotel ${booking.checkIn.toISOString().slice(0, 10)}`,
+    description: `Royal Palace ${booking.checkIn.toISOString().slice(0, 10)}`,
     returnUrl: `${SITE_URL}${prefix}/booking/return?p=${row.id}`,
     callbackUrl: `${SITE_URL}/api/payments/${provider.id}/callback`,
   });

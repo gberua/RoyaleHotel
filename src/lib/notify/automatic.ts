@@ -5,7 +5,7 @@ import { loadSettings } from "@/lib/booking/service";
 import { sendMail } from "./email";
 import { fill, loadTemplate, templateHtml, templateVars, type TemplateKey } from "./templates";
 
-const NO_EMAIL = "@guests.royalehotel.local"; // walk-ins / phone bookings without an e-mail address
+const NO_EMAIL = "@guests.royalpalacehotel.local"; // walk-ins / phone bookings without an e-mail address
 
 /**
  * Daily job (Admin → E-mails & messages switches it on/off):

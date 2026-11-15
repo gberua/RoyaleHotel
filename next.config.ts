@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
       "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
   },
+  // the suite's address before the hotel name was corrected to "Royal Palace"
+  async redirects() {
+    return [
+      { source: "/rooms/royale-suite", destination: "/rooms/royal-suite", permanent: true },
+      { source: "/:locale(ka|en|ru)/rooms/royale-suite", destination: "/:locale/rooms/royal-suite", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

@@ -111,7 +111,7 @@ describe("automatic e-mails", () => {
     const due = await book(doubleId, day(2), 2, "due@guest.test");
     await aged(due, 72);
     const fresh = await book(doubleId, day(3), 2, "fresh@guest.test"); // booked just now → no reminder
-    const walkIn = await book(suiteId, day(2), 2, "no-email+1@guests.royalehotel.local");
+    const walkIn = await book(suiteId, day(2), 2, "no-email+1@guests.royalpalacehotel.local");
     await aged(walkIn, 72);
     const far = await book(doubleId, day(10), 2, "far@guest.test");
     await aged(far, 72);

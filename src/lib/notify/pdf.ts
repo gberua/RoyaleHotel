@@ -72,7 +72,7 @@ export function header(page: PDFPage, fonts: Fonts, title: string) {
   const W = page.getWidth();
   page.drawRectangle({ x: 0, y: 760, width: W, height: 82, color: INK });
   // Logo lockup: both lines centred on one axis; the wider line keeps the left edge at x = 48.
-  const brand = "ROYALE", sub = "HOTEL · KOBULETI · GEORGIA";
+  const brand = "ROYAL PALACE", sub = "HOTEL · KOBULETI · GEORGIA";
   const brandW = textWidth(fonts, brand, 26), subW = textWidth(fonts, sub, 8, true);
   const lockupW = Math.max(brandW, subW);
   draw(page, fonts, brand, 48 + (lockupW - brandW) / 2, 800, 26, false, rgb(1, 1, 1));
@@ -83,7 +83,7 @@ export function header(page: PDFPage, fonts: Fonts, title: string) {
 export function footer(page: PDFPage, fonts: Fonts, settings: Settings, locale: string) {
   const W = page.getWidth();
   page.drawRectangle({ x: 0, y: 0, width: W, height: 70, color: rgb(0.95, 0.97, 0.97) });
-  const name = settings.hotel.legalName || tr(settings.hotel.name, locale) || "Royale Hotel";
+  const name = settings.hotel.legalName || tr(settings.hotel.name, locale) || "Royal Palace";
   draw(page, fonts, `${name} · ${tr(settings.hotel.address, locale)}`, 48, 42, 9, false, MUTED);
   draw(page, fonts, `${settings.contact.phone}  ·  ${settings.contact.email}`, 48, 26, 9, false, MUTED);
 }

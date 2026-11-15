@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteName": "Royale Hotel",
-    "defaultTitle": "Royale Hotel Кобулети — отель на берегу Чёрного моря",
+    "siteName": "Royal Palace",
+    "defaultTitle": "Royal Palace Кобулети — отель на берегу Чёрного моря",
     "defaultDescription": "Спокойный современный отель в Кобулети, Аджария: светлые номера, открытый бассейн, ресторан и пляж Чёрного моря в нескольких минутах. Бронируйте напрямую по лучшей цене."
   },
   "nav": {
@@ -85,7 +85,7 @@
     "directPerks": "Напрямую: лучшая цена, гибкие изменения, прямая связь с ресепшн"
   },
   "home": {
-    "heroName": "Royale Palace",
+    "heroName": "Royal Palace",
     "heroEyebrow": "Отель · Кобулети",
     "scroll": "Вниз",
     "welcomeEyebrow": "Добро пожаловать",
@@ -260,7 +260,7 @@
     "explore": "Разделы",
     "guests": "Гостям",
     "contact": "Контакты",
-    "rights": "© {year} Royale Hotel. Все права защищены.",
+    "rights": "© {year} Royal Palace. Все права защищены.",
     "privacy": "Конфиденциальность",
     "cookies": "Настройки cookie",
     "payments": "Принимаем"
@@ -498,7 +498,7 @@
     "subjectConfirmed": "Бронирование подтверждено — {code}",
     "subjectCancelled": "Бронирование отменено — {code}",
     "hello": "Здравствуйте, {name}!",
-    "confirmedIntro": "Спасибо, что выбрали Royale Hotel. Ваше бронирование подтверждено.",
+    "confirmedIntro": "Спасибо, что выбрали Royal Palace. Ваше бронирование подтверждено.",
     "cancelledIntro": "Ваше бронирование отменено.",
     "refundLine": "Возврат: {amount}. Средства поступят на карту в течение 5–10 рабочих дней.",
     "code": "Код бронирования",
@@ -516,7 +516,7 @@
     "manageLine": "Просмотреть или отменить бронирование",
     "freeCancel": "Бесплатная отмена до {date}.",
     "signoff": "До скорой встречи у моря,",
-    "team": "Royale Hotel, Кобулети",
+    "team": "Royal Palace, Кобулети",
     "voucherTitle": "Ваучер бронирования"
   },
   "docs": {

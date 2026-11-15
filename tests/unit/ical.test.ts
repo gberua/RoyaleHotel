@@ -38,7 +38,7 @@ describe("iCal parser", () => {
     ]);
   });
   it("builds a feed that parses back to the same events", () => {
-    const ev = [{ uid: "a@royale", start: "2027-07-01", end: "2027-07-04", summary: "Not available, sorry" }];
+    const ev = [{ uid: "a@royal", start: "2027-07-01", end: "2027-07-04", summary: "Not available, sorry" }];
     const ics = buildIcal("Test", ev);
     expect(ics).toContain("DTSTART;VALUE=DATE:20270701");
     expect(ics.split("\r\n").length).toBeGreaterThan(5);

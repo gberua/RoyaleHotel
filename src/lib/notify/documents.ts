@@ -33,7 +33,7 @@ export async function renderRegistrationCard(b: FullBooking, settings: Settings,
   pair(t("nationality"), b.guest?.country, t("birthDate"), null);
   pair(t("docType"), null, t("docNumber"), null);
   field(t("homeAddress"), null); y -= 38;
-  pair(t("phone"), b.guest?.phone, t("email"), b.guest?.email?.endsWith("@guests.royalehotel.local") ? null : b.guest?.email);
+  pair(t("phone"), b.guest?.phone, t("email"), b.guest?.email?.endsWith("@guests.royalpalacehotel.local") ? null : b.guest?.email);
   pair(t("rooms"), rooms.map((r) => r.room.number).join(", "), t("guestsCount"), `${b.adults} + ${b.children}`);
   pair(t("arrival"), `${iso(b.checkIn)} · ${t("from", { time: settings.hotel.checkInFrom })}`, t("departure"), `${iso(b.checkOut)} · ${t("until", { time: settings.hotel.checkOutUntil })}`);
   draw(page, fonts, t("otherGuests"), 48, y, 8, true, MUTED);
@@ -64,7 +64,7 @@ export async function renderInvoice(b: FullBooking, settings: Settings, messages
   draw(page, fonts, t("billTo"), W - 260, y, 8, true, MUTED);
   if (b.guest) {
     draw(page, fonts, `${b.guest.firstName} ${b.guest.lastName}`, W - 260, y - 15, 11, true);
-    const contact = [b.guest.email?.endsWith("@guests.royalehotel.local") ? "" : b.guest.email, b.guest.phone].filter((x): x is string => !!x);
+    const contact = [b.guest.email?.endsWith("@guests.royalpalacehotel.local") ? "" : b.guest.email, b.guest.phone].filter((x): x is string => !!x);
     contact.forEach((c, i) => draw(page, fonts, c, W - 260, y - 30 - i * 12, 9, false, MUTED));
   }
   y -= 64;

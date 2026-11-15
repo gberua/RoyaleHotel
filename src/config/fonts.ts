@@ -2,7 +2,7 @@
  * ─────────────────────────────── FONTS — single config file ───────────────────────────────
  *
  * DISPLAY (headings, logo)
- *   1. "Royale Display" — the licensed custom face (e.g. Narcissus). To install it, drop the
+ *   1. "Royal Display" — the licensed custom face (e.g. Narcissus). To install it, drop the
  *      .woff2 files into  public/fonts/display/  and restart / rebuild. They are picked up
  *      automatically by scripts/fonts.mjs (file names containing Light/Regular/Medium/
  *      SemiBold/Bold set the weight). It applies to Georgian characters only, because

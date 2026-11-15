@@ -41,7 +41,7 @@
   --color-danger: #b42318;
   --color-success: #067647;
 
-  --font-display: "Royale Display", var(--font-display-ka), var(--font-display-latin), ui-serif, Georgia, serif;
+  --font-display: "Royal Display", var(--font-display-ka), var(--font-display-latin), ui-serif, Georgia, serif;
   --font-sans: var(--font-body-ka), var(--font-body-latin), ui-sans-serif, system-ui, sans-serif;
 
   --radius-card: 1.25rem;

@@ -7,6 +7,6 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/ical/[token]">)
   const feed = await db.icalFeed.findUnique({ where: { exportToken: token.replace(/\.ics$/, "") } });
   if (!feed?.roomTypeId || !feed.active) return new Response("Not found", { status: 404 });
   return new Response(await exportRoomTypeIcal(feed.roomTypeId), {
-    headers: { "Content-Type": "text/calendar; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": `inline; filename="royale-${feed.id}.ics"` },
+    headers: { "Content-Type": "text/calendar; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": `inline; filename="royal-palace-${feed.id}.ics"` },
   });
 }

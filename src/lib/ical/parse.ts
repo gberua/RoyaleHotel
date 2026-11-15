@@ -41,7 +41,7 @@ export function buildIcal(name: string, events: { uid: string; start: string; en
   const body = events.map((e) => [
     "BEGIN:VEVENT", `UID:${e.uid}`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${d(e.start)}`, `DTEND;VALUE=DATE:${d(e.end)}`, `SUMMARY:${esc(e.summary)}`, "END:VEVENT",
   ].join("\r\n"));
-  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Royale Hotel//Booking//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${esc(name)}`, ...body, "END:VCALENDAR", ""].join("\r\n");
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Royal Palace//Booking//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${esc(name)}`, ...body, "END:VCALENDAR", ""].join("\r\n");
 }
 
 /** Collapse a sorted list of blocked nights into [start, end) ranges. */

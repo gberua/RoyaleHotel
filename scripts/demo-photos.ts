@@ -46,7 +46,7 @@ function downloadUrl(p: Photo) {
 async function ensureFile(p: Photo) {
   const target = join(DIR, p.file);
   if (existsSync(target)) return readFile(target);
-  const res = await fetch(downloadUrl(p), { headers: { "User-Agent": "RoyaleHotelDemo/1.0" } });
+  const res = await fetch(downloadUrl(p), { headers: { "User-Agent": "RoyalPalaceHotelDemo/1.0" } });
   if (!res.ok || !/image\//.test(res.headers.get("content-type") ?? "")) throw new Error(`download failed (${res.status})`);
   const buf = Buffer.from(await res.arrayBuffer());
   await writeFile(target, buf);

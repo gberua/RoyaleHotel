@@ -14,7 +14,7 @@ const OUTBOX = process.env.VERCEL ? join(tmpdir(), "outbox") : join(process.cwd(
  */
 export async function sendMail(mail: Mail): Promise<{ ok: boolean; id?: string; outbox?: string }> {
   const to = Array.isArray(mail.to) ? mail.to : [mail.to];
-  const from = process.env.EMAIL_FROM || "Royale Hotel <booking@royalehotel.ge>";
+  const from = process.env.EMAIL_FROM || "Royal Palace <booking@royalpalacehotel.ge>";
   if (process.env.RESEND_API_KEY) {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

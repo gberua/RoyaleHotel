@@ -10,7 +10,7 @@ export async function renderVoucher(b: FullBooking, settings: Settings, messages
   const locale = b.locale;
   const t = translator(locale, messages, "email");
   const ts = translator(locale, messages, "bookingStatus");
-  const { doc, fonts } = await newPdf(`${b.code} — Royale Hotel`);
+  const { doc, fonts } = await newPdf(`${b.code} — Royal Palace`);
   const page = doc.addPage(A4);
   const W = page.getWidth();
   const money = (n: number) => formatMoney(n, undefined, locale);

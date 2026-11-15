@@ -145,13 +145,13 @@ export async function createManualBooking(input: ManualInput) {
   let code = "";
   try {
     const p = manualSchema.parse(input);
-    const email = p.guest.email && /^\S+@\S+\.\S+$/.test(p.guest.email) ? p.guest.email : `no-email+${Date.now()}@guests.royalehotel.local`;
+    const email = p.guest.email && /^\S+@\S+\.\S+$/.test(p.guest.email) ? p.guest.email : `no-email+${Date.now()}@guests.royalpalacehotel.local`;
     const hold = await holdRooms({ checkIn: p.checkIn, checkOut: p.checkOut, lines: p.lines, locale: "ka", staff: true });
     const res = await finalizeBooking({ holdId: hold.holdId, guest: { ...p.guest, email }, extras: p.extras, promoCode: p.promoCode || null, plan: "pay_at_hotel", source: p.source, staffConfirm: true });
     code = res.booking.code;
     if (p.note?.trim()) await db.bookingNote.create({ data: { bookingId: res.booking.id, userId: user.id, body: p.note.trim() } });
     await logActivity({ userId: user.id, action: "booking.create_manual", entity: "Booking", entityId: res.booking.id, summary: `${code} created by staff (${p.source})`, ip: await clientIp() });
-    if (p.sendEmail && !email.endsWith("@guests.royalehotel.local")) after(() => notifyBookingConfirmed(res.booking.id));
+    if (p.sendEmail && !email.endsWith("@guests.royalpalacehotel.local")) after(() => notifyBookingConfirmed(res.booking.id));
   } catch (e) {
     return { ok: false as const, message: e instanceof z.ZodError ? "manual_required" : errKey(e) };
   }
@@ -223,7 +223,7 @@ export async function adminResendConfirmation(_p: Result, form: FormData): Promi
     const b = await bookingByCode(String(form.get("code")));
     if (!["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"].includes(b.status)) throw new BookingError("bad_transition");
     const guest = b.guestId ? await db.guest.findUnique({ where: { id: b.guestId } }) : null;
-    if (!guest?.email || guest.email.endsWith("@guests.royalehotel.local")) throw new ActionError("no_guest_email");
+    if (!guest?.email || guest.email.endsWith("@guests.royalpalacehotel.local")) throw new ActionError("no_guest_email");
     const ok = await notifyBookingConfirmed(b.id, { hotel: false });
     if (!ok) throw new ActionError("email_failed");
     await logActivity({ userId: user.id, action: "booking.resend_confirmation", entity: "Booking", entityId: b.id, summary: `${b.code}: confirmation re-sent to ${guest.email}` });

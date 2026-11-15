@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteName": "Royale Hotel",
-    "defaultTitle": "Royale Hotel Kobuleti — Seaside hotel on the Black Sea",
+    "siteName": "Royal Palace",
+    "defaultTitle": "Royal Palace Kobuleti — Seaside hotel on the Black Sea",
     "defaultDescription": "A calm, modern hotel in Kobuleti, Adjara: bright rooms, an outdoor pool, a restaurant and the Black Sea beach a short walk away. Book direct for the best price."
   },
   "nav": {
@@ -85,7 +85,7 @@
     "directPerks": "Book direct: best rate, flexible changes, a direct line to reception"
   },
   "home": {
-    "heroName": "Royale Palace",
+    "heroName": "Royal Palace",
     "heroEyebrow": "Hotel · Kobuleti",
     "scroll": "Scroll",
     "welcomeEyebrow": "Welcome",
@@ -260,7 +260,7 @@
     "explore": "Explore",
     "guests": "For guests",
     "contact": "Contact",
-    "rights": "© {year} Royale Hotel. All rights reserved.",
+    "rights": "© {year} Royal Palace. All rights reserved.",
     "privacy": "Privacy",
     "cookies": "Cookie settings",
     "payments": "We accept"
@@ -498,7 +498,7 @@
     "subjectConfirmed": "Booking confirmed — {code}",
     "subjectCancelled": "Booking cancelled — {code}",
     "hello": "Dear {name},",
-    "confirmedIntro": "Thank you for booking with Royale Hotel. Your booking is confirmed.",
+    "confirmedIntro": "Thank you for booking with Royal Palace. Your booking is confirmed.",
     "cancelledIntro": "Your booking has been cancelled.",
     "refundLine": "Refund: {amount}. It will reach your card within 5–10 business days.",
     "code": "Booking code",
@@ -516,7 +516,7 @@
     "manageLine": "View or cancel your booking",
     "freeCancel": "Free cancellation until {date}.",
     "signoff": "See you soon by the sea,",
-    "team": "Royale Hotel, Kobuleti",
+    "team": "Royal Palace, Kobuleti",
     "voucherTitle": "Booking voucher"
   },
   "docs": {

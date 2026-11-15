@@ -54,7 +54,7 @@ export function HorizonHero({ name, tagline, scrollLabel, image, mobileImage, vi
 
       <div className="px-4 text-center">
         {/* Words are flex items: the 0.28em gap exists only BETWEEN words on the same line, so when a long
-            name breaks onto two lines on small phones ("Royale" / "Palace") each line is exactly centred. */}
+            name breaks onto two lines on small phones ("Royal" / "Palace") each line is exactly centred. */}
         <h1 aria-label={name} className="hero-title flex flex-wrap justify-center gap-x-[0.28em] font-display text-[clamp(3.4rem,17vw,7.5rem)] leading-[1] drop-shadow-[0_2px_24px_rgb(7_31_39/0.25)] lg:flex-nowrap lg:whitespace-nowrap lg:text-[min(10vw,10rem)]">
           {words.map((word, w) => (
             <span key={w} className="inline-block whitespace-nowrap" aria-hidden>

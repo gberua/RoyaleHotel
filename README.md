@@ -1,6 +1,6 @@
-# Royale Hotel — Kobuleti
+# Royal Palace — Kobuleti
 
-Direct-booking website, booking engine and staff admin panel for Royale Hotel, Kobuleti, Georgia.
+Direct-booking website, booking engine and staff admin panel for Royal Palace, Kobuleti, Georgia.
 Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS 4 · PostgreSQL + Prisma 7 · next-intl · Auth.js ·
 zod · sharp · pdf-lib · Resend (e-mail) · Vitest + Playwright.
 

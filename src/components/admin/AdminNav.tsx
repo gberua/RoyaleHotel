@@ -50,11 +50,11 @@ export function AdminNav({ groups, user, accountLabel, logoutLabel, menuLabel, l
   return (
     <>
       <aside className="fixed inset-y-0 left-0 hidden w-60 overflow-y-auto border-r border-ink-100 bg-white px-3 py-5 lg:block">
-        <Link href="/admin" className="mb-6 block px-3 font-display text-2xl tracking-[0.12em]">ROYALE <span className="font-sans text-xs tracking-normal text-ink-500">admin</span></Link>
+        <Link href="/admin" className="mb-6 block px-3 font-display text-lg tracking-[0.12em]">ROYAL PALACE <span className="font-sans text-xs tracking-normal text-ink-500">admin</span></Link>
         {nav}
       </aside>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-2 backdrop-blur lg:hidden">
-        <Link href="/admin" className="font-display text-xl tracking-[0.12em]">ROYALE</Link>
+        <Link href="/admin" className="font-display text-xl tracking-[0.12em]">ROYAL PALACE</Link>
         <button type="button" onClick={() => setOpen(true)} className="flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-semibold" aria-expanded={open}><Menu size={18} aria-hidden /> {menuLabel}</button>
       </div>
       {open && (

@@ -30,7 +30,7 @@ function emailHtml(b: FullBooking, kind: "confirmed" | "cancelled", t: T, settin
   return `<!doctype html><html lang="${locale}"><body style="margin:0;background:#f3f8f7;font-family:'Noto Sans Georgian','Noto Sans',Arial,sans-serif">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
 <table width="100%" style="max-width:560px;background:#fff;border-radius:16px;overflow:hidden" cellpadding="0" cellspacing="0">
-<tr><td align="left" style="background:#0b2e3a;padding:24px 28px;text-align:left"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="text-align:center;padding:0;color:#fff;font-family:Georgia,serif;font-size:26px;letter-spacing:4px">ROYALE</td></tr><tr><td align="center" style="text-align:center;padding:4px 0 0;font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#a3e8ee">HOTEL · KOBULETI</td></tr></table></td></tr>
+<tr><td align="left" style="background:#0b2e3a;padding:24px 28px;text-align:left"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="text-align:center;padding:0;color:#fff;font-family:Georgia,serif;font-size:26px;letter-spacing:4px">ROYAL PALACE</td></tr><tr><td align="center" style="text-align:center;padding:4px 0 0;font-family:Arial,sans-serif;font-size:10px;letter-spacing:4px;color:#a3e8ee">HOTEL · KOBULETI</td></tr></table></td></tr>
 <tr><td style="padding:28px">
 <p style="margin:0 0 12px;color:#0b2e3a">${esc(t("hello", { name: b.guest?.firstName ?? "" }))}</p>
 <p style="margin:0 0 20px;color:#1d4652;line-height:1.6">${esc(kind === "confirmed" ? t("confirmedIntro") : t("cancelledIntro"))}</p>
@@ -100,7 +100,7 @@ async function notifyHotel(b: FullBooking, label: string, settings: Awaited<Retu
   ].filter(Boolean);
   const to = settings.notifications.adminEmails.length ? settings.notifications.adminEmails : [settings.contact.bookingEmail];
   await Promise.allSettled([
-    sendMail({ to, subject: `[Royale] ${label} ${b.code} — ${iso(b.checkIn)}`, html: `<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6">${lines.join("<br>")}<br><br><a href="${SITE_URL}/admin/bookings/${encodeURIComponent(b.code)}">Open in admin</a></div>` }),
+    sendMail({ to, subject: `[Royal Palace] ${label} ${b.code} — ${iso(b.checkIn)}`, html: `<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6">${lines.join("<br>")}<br><br><a href="${SITE_URL}/admin/bookings/${encodeURIComponent(b.code)}">Open in admin</a></div>` }),
     sendTelegram(lines.join("\n") + `\n${SITE_URL}/admin/bookings/${encodeURIComponent(b.code)}`),
   ]);
 }

@@ -3,7 +3,7 @@ import "../globals.css";
 import { fontVariables } from "@/config/fonts";
 
 export const metadata: Metadata = {
-  title: { default: "Admin", template: "%s · Royale Admin" },
+  title: { default: "Admin", template: "%s · Royal Palace Admin" },
   robots: { index: false, follow: false },
 };
 

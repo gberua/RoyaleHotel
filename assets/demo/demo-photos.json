@@ -309,7 +309,7 @@
       "uses": [
         {
           "type": "room",
-          "slug": "royale-suite",
+          "slug": "royal-suite",
           "order": 0
         }
       ],
@@ -330,7 +330,7 @@
       "uses": [
         {
           "type": "room",
-          "slug": "royale-suite",
+          "slug": "royal-suite",
           "order": 1
         }
       ],
@@ -351,7 +351,7 @@
       "uses": [
         {
           "type": "room",
-          "slug": "royale-suite",
+          "slug": "royal-suite",
           "order": 2
         }
       ],
