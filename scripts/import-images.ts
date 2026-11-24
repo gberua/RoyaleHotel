@@ -38,8 +38,9 @@ import { basename, extname, join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import sharp from "sharp";
 import { processImage } from "../src/lib/media/process";
-import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, problems, storageProblem, toPosix } from "./lib/photo-catalog";
+import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, type Entry, problems, storageProblem, toPosix } from "./lib/photo-catalog";
 
 const EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".tif", ".tiff"]);
 
@@ -52,6 +53,14 @@ async function walk(dir: string): Promise<string[]> {
     else if (EXT.has(extname(name).toLowerCase())) out.push(p);
   }
   return out;
+}
+
+/** Trims a photo by fractions of its size (lossless, so the pipeline compresses it only once). */
+async function cropped(buf: Buffer, crop: NonNullable<Entry["crop"]>) {
+  const m = await sharp(buf).metadata();
+  const c = { left: 0, right: 0, top: 0, bottom: 0, ...crop };
+  const left = Math.round(m.width! * c.left), top = Math.round(m.height! * c.top);
+  return sharp(buf).extract({ left, top, width: Math.round(m.width! * (1 - c.left - c.right)), height: Math.round(m.height! * (1 - c.top - c.bottom)) }).png().toBuffer();
 }
 
 export type ImportOptions = { dir: string; catalogPath: string; /** stored in Media.sourceFile as `<prefix>/<file>` */ sourcePrefix: string };
@@ -84,9 +93,12 @@ export async function importPhotos(db: PrismaClient, opts: ImportOptions) {
   for (const { file, rel } of files) {
     const entry = entryFor(catalog, rel);
     if (entry?.skip || (!entry && catalog.onlyListed)) { result.skipped++; continue; }
-    const buf = await readFile(file);
+    const sourceFile = `${opts.sourcePrefix}/${rel}`;
+    const original = await readFile(file);
+    const buf = entry?.crop ? await cropped(original, entry.crop) : original;
     const checksum = createHash("sha256").update(buf).digest("hex");
-    const existing = await db.media.findUnique({ where: { checksum } });
+    // the same picture, or (hand-picked list only) the same file with a changed crop: that one is replaced in place
+    const existing = (await db.media.findUnique({ where: { checksum } })) ?? (entry && catalog.onlyListed ? await db.media.findFirst({ where: { sourceFile, isDemo: false } }) : null);
     // Only a hand-picked list (onlyListed) is the source of truth for a photo that is already in the library;
     // a plain folder import or an old flat catalog leaves it alone, so edits made in the admin are kept.
     if (existing && (!entry || !catalog.onlyListed)) { result.skipped++; console.log(`  already in library  ${rel}`); continue; }
@@ -99,14 +111,19 @@ export async function importPhotos(db: PrismaClient, opts: ImportOptions) {
       inGallery: entry?.gallery === undefined ? !catalog.onlyListed && category !== "unsorted" : entry.gallery !== false,
       ...(typeof entry?.gallery === "number" ? { galleryOrder: entry.gallery } : {}),
       isDemo: false,
-      sourceFile: `${opts.sourcePrefix}/${rel}`,
+      sourceFile,
     };
     try {
       let id: string;
-      if (existing) {
+      if (existing && existing.checksum === checksum) {
         id = (await db.media.update({ where: { id: existing.id }, data: details })).id;
         result.updated++;
         console.log(`  ↻ ${rel} (details updated)`);
+      } else if (existing) {
+        const img = await processImage(buf, entry?.name ?? basename(file, extname(file)), `photos/${category}`);
+        id = (await db.media.update({ where: { id: existing.id }, data: { ...img, ...details } })).id; // same entry, so every slot keeps it
+        result.updated++;
+        console.log(`  ↻ ${rel} → ${img.url} (picture replaced, ${img.width}×${img.height})`);
       } else {
         const img = await processImage(buf, entry?.name ?? basename(file, extname(file)), `photos/${category}`);
         id = (await db.media.create({ data: { ...img, ...details } })).id;

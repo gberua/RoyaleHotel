@@ -87,6 +87,25 @@ describe("photo import with a catalog", () => {
   });
 });
 
+describe("cropping a photo in the catalog", () => {
+  it("replaces the picture in place: same library entry, same slots, no second copy", async () => {
+    const entry = { name: "front", category: "exterior", alt, gallery: 0, slot: "hero" };
+    const run = async (e: Record<string, unknown>) => importPhotos(db, { dir, sourcePrefix: "real", catalogPath: await catalog({ "a/one.jpg": e }) });
+    await db.roomType.create({ data: { slug: "standard-double", name: { en: "Standard Double" }, basePrice: 20000, maxAdults: 2, maxOccupancy: 2 } });
+    await run(entry);
+    const before = await db.media.findFirstOrThrow({ where: { sourceFile: "real/a/one.jpg" } });
+
+    expect(await run({ ...entry, crop: { left: 0.25 } })).toMatchObject({ imported: 0, updated: 1, failed: 0 });
+    const after = await db.media.findMany({ where: { isDemo: false } });
+    expect(after).toHaveLength(1);
+    expect(after[0].id).toBe(before.id);
+    expect(after[0].checksum).not.toBe(before.checksum);
+    expect((await db.setting.findUniqueOrThrow({ where: { key: "media" } })).value).toMatchObject({ heroImageIds: [before.id] });
+    const cropped = vi.mocked(processImage).mock.calls.at(-1)![0];
+    expect((await sharp(cropped).metadata()).width).toBe(6); // 8 px wide, a quarter trimmed off the left
+  });
+});
+
 describe("photo import that goes wrong", () => {
   it("a photo that fails to upload leaves rooms, gallery and hero exactly as they were", async () => {
     const room = await db.roomType.create({ data: { slug: "standard-double", name: { en: "Standard Double" }, basePrice: 20000, maxAdults: 2, maxOccupancy: 2 } });

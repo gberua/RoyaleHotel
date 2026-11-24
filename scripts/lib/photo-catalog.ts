@@ -23,6 +23,8 @@ export type Entry = {
   /** Service keys / Offer slugs that should show this photo */
   services?: string[];
   offers?: string[];
+  /** trim the photo before use, as fractions of its size: { left: 0.06 } cuts 6 % off the left edge */
+  crop?: { left?: number; right?: number; top?: number; bottom?: number };
   skip?: boolean;
 };
 

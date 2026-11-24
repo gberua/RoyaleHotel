@@ -24,7 +24,10 @@
         "en": "Front of the Royal Palace hotel with the entrance and the RP emblem",
         "ru": "Фасад отеля Royal Palace: вход и эмблема RP"
       },
-      "slot": "hero"
+      "slot": "hero",
+      "crop": {
+        "left": 0.06
+      }
     },
     "royal palace/0L9A7291.jpg.jpg": {
       "name": "outdoor-pool-from-above",
