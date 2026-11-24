@@ -95,10 +95,17 @@ export async function releaseExpired(client: Tx | typeof db = db) {
   if (expired.length) {
     const ids = expired.map((b) => b.id);
     await client.roomAllocation.updateMany({ where: { bookingId: { in: ids }, active: true }, data: { active: false } });
-    await client.booking.updateMany({ where: { id: { in: ids }, status: "PENDING" }, data: { status: "EXPIRED", cancelReason: "Payment / checkout not completed in time — room released" } });
+    // Only the rows this call actually expired come back, so concurrent calls never give a promo use back twice
+    const released = await client.booking.updateManyAndReturn({ where: { id: { in: ids }, status: "PENDING" }, data: { status: "EXPIRED", cancelReason: "Payment / checkout not completed in time — room released" }, select: { promoCodeId: true } });
+    for (const r of released) if (r.promoCodeId) await releasePromoUse(client, r.promoCodeId);
   }
   const holds = await client.roomAllocation.updateMany({ where: { kind: "HOLD", active: true, holdExpiresAt: { lt: now } }, data: { active: false } });
   return { bookings: expired.length, holds: holds.count };
+}
+
+/** Gives one use of a promo code back (the booking that claimed it was never paid, or switched to another code). */
+async function releasePromoUse(client: Tx | typeof db, promoCodeId: string) {
+  await client.promoCode.updateMany({ where: { id: promoCodeId, usedCount: { gt: 0 } }, data: { usedCount: { decrement: 1 } } });
 }
 
 // ───────────────────────────── Search ─────────────────────────────
@@ -287,7 +294,7 @@ export async function finalizeBooking(input: {
 
   const result = await db.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "Booking" WHERE id = ${input.holdId} FOR UPDATE`;
-    const b = await tx.booking.findUnique({ where: { id: input.holdId }, include: { rooms: true } });
+    const b = await tx.booking.findUnique({ where: { id: input.holdId }, include: { rooms: { orderBy: [{ createdAt: "asc" }, { id: "asc" }] } } });
     if (!b) throw new BookingError("not_found");
     if (b.status !== "PENDING") throw new BookingError(b.status === "EXPIRED" ? "hold_expired" : "not_pending");
     const checkIn = iso(b.checkIn)!, checkOut = iso(b.checkOut)!;
@@ -312,13 +319,18 @@ export async function finalizeBooking(input: {
         const used = await tx.booking.count({ where: { promoCodeId: promoRow.id, guest: { email: input.guest.email.trim().toLowerCase() }, status: { in: ["PENDING", "CONFIRMED", "CHECKED_IN", "CHECKED_OUT"] }, NOT: { id: b.id } } });
         if (used >= promoRow.perGuestLimit) throw new BookingError("promo_guest_limit");
       }
-      const rows = await tx.$queryRaw<{ id: string }[]>`
-        UPDATE "PromoCode" SET "usedCount" = "usedCount" + 1
-        WHERE code = ${quote.promo.code} AND active AND ("maxUses" IS NULL OR "usedCount" < "maxUses")
-        RETURNING id`;
-      if (!rows.length) throw new BookingError("promo_used_up");
-      promoCodeId = rows[0].id;
+      if (promoRow && b.promoCodeId === promoRow.id) {
+        promoCodeId = promoRow.id; // this booking already holds its use (the guest re-submitted the payment step)
+      } else {
+        const rows = await tx.$queryRaw<{ id: string }[]>`
+          UPDATE "PromoCode" SET "usedCount" = "usedCount" + 1
+          WHERE code = ${quote.promo.code} AND active AND ("maxUses" IS NULL OR "usedCount" < "maxUses")
+          RETURNING id`;
+        if (!rows.length) throw new BookingError("promo_used_up");
+        promoCodeId = rows[0].id;
+      }
     }
+    if (b.promoCodeId && b.promoCodeId !== promoCodeId) await releasePromoUse(tx, b.promoCodeId);
 
     const email = input.guest.email.trim().toLowerCase();
     const guest = await tx.guest.upsert({
@@ -331,10 +343,12 @@ export async function finalizeBooking(input: {
     if (quote.extras.length) {
       await tx.bookingExtra.createMany({ data: quote.extras.map((e) => ({ bookingId: b.id, extraId: e.extraId, quantity: e.quantity, unitPrice: e.unitPrice, total: e.total })) });
     }
-    // Store the exact nightly prices on each allocation (what the guest saw)
-    const allocs = await tx.roomAllocation.findMany({ where: { bookingId: b.id }, orderBy: { createdAt: "asc" } });
-    for (const [i, a] of allocs.entries()) {
-      await tx.roomAllocation.update({ where: { id: a.id }, data: { nightlyPrices: quote.rooms[i].nights.map((n) => n.price), extraGuestTotal: quote.rooms[i].extraGuestTotal } });
+    // Store the exact nightly prices on each allocation (what the guest saw). Quote line i was built from
+    // b.rooms[i], so match by that row — re-acquired allocations were already written with their prices above.
+    if (holdsAlive) {
+      for (const [i, a] of b.rooms.entries()) {
+        await tx.roomAllocation.update({ where: { id: a.id }, data: { nightlyPrices: quote.rooms[i].nights.map((n) => n.price), extraGuestTotal: quote.rooms[i].extraGuestTotal } });
+      }
     }
 
     const due = amountDue(input.plan, quote.grandTotal, settings.booking.depositPercent);
@@ -380,8 +394,11 @@ export async function confirmPaidBooking(bookingId: string, payment: { provider:
     const existing = await tx.payment.findFirst({ where: { bookingId, providerRef: payment.providerRef, status: "succeeded" } });
     if (existing) return { booking: b, alreadyProcessed: true, conflict: false };
 
+    // Only a booking still waiting for its payment is (re)confirmed. Money arriving for a cancelled / no-show /
+    // finished booking is recorded, but must never take the room back.
+    const awaitingPayment = b.status === "PENDING" || b.status === "EXPIRED";
     let conflict = false;
-    if (b.status === "PENDING" || b.status === "EXPIRED") {
+    if (awaitingPayment) {
       // If the hold lapsed while the guest was paying, try to re-acquire the same rooms
       const allActive = b.rooms.length > 0 && b.rooms.every((r) => r.active);
       if (!allActive) {
@@ -406,11 +423,16 @@ export async function confirmPaidBooking(bookingId: string, payment: { provider:
       where: { id: bookingId },
       data: {
         code, amountPaid, paymentStatus: amountPaid >= b.grandTotal ? "PAID" : "DEPOSIT_PAID",
-        ...(conflict ? {} : { status: b.status === "PENDING" || b.status === "EXPIRED" ? "CONFIRMED" : b.status, confirmedAt: b.confirmedAt ?? new Date(), holdExpiresAt: null }),
+        ...(awaitingPayment && !conflict ? { status: "CONFIRMED" as const, confirmedAt: b.confirmedAt ?? new Date(), holdExpiresAt: null } : {}),
       },
     });
-    if (!conflict) await tx.roomAllocation.updateMany({ where: { bookingId }, data: { kind: "BOOKING", holdExpiresAt: null, active: true } });
-    else await tx.bookingNote.create({ data: { bookingId, body: "⚠️ Payment received after the hold expired and the room was taken. Re-assign a room or refund the guest." } });
+    if (awaitingPayment && !conflict) {
+      await tx.roomAllocation.updateMany({ where: { bookingId }, data: { kind: "BOOKING", holdExpiresAt: null, active: true } });
+      // its promo use was given back when it expired — it counts again now that it is paid
+      if (b.status === "EXPIRED" && b.promoCodeId) await tx.promoCode.update({ where: { id: b.promoCodeId }, data: { usedCount: { increment: 1 } } });
+    } else if (!awaitingPayment) {
+      if (b.status === "CANCELLED" || b.status === "NO_SHOW") await tx.bookingNote.create({ data: { bookingId, body: "⚠️ Payment received after this booking was cancelled. The room was not re-booked — refund the guest or make a new booking." } });
+    } else await tx.bookingNote.create({ data: { bookingId, body: "⚠️ Payment received after the hold expired and the room was taken. Re-assign a room or refund the guest." } });
     return { booking, alreadyProcessed: false, conflict };
   }, TX);
 }
@@ -593,7 +615,9 @@ async function quoteUnrestricted(tx: Tx, cart: CartInput) {
 
 export async function recordManualPayment(bookingId: string, amount: number, method: string) {
   return db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Booking" WHERE id = ${bookingId} FOR UPDATE`; // two clicks must not overwrite each other's total
     const b = await tx.booking.findUniqueOrThrow({ where: { id: bookingId } });
+    if (b.status === "CANCELLED" || b.status === "EXPIRED") throw new BookingError("not_payable");
     await tx.payment.create({ data: { bookingId, provider: method, status: "succeeded", amount, providerRef: `manual-${Date.now()}` } });
     const amountPaid = b.amountPaid + amount;
     return tx.booking.update({ where: { id: bookingId }, data: { amountPaid, paymentStatus: amountPaid >= b.grandTotal ? "PAID" : amountPaid > 0 ? "DEPOSIT_PAID" : "UNPAID" } });

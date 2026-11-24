@@ -9,7 +9,7 @@ import { BookingFlow } from "@/components/booking/BookingFlow";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await rootLocale();
   const t = await getTranslations({ locale });
-  return { ...pageMetadata({ title: t("drawer.title"), path: "/book", locale }), robots: { index: false } };
+  return { ...(await pageMetadata({ title: t("drawer.title"), path: "/book", locale })), robots: { index: false } };
 }
 
 async function Flow({ searchParams }: { searchParams: PageProps<"/[locale]/book">["searchParams"] }) {
@@ -18,9 +18,10 @@ async function Flow({ searchParams }: { searchParams: PageProps<"/[locale]/book"
   const checkIn = one(sp.checkIn), checkOut = one(sp.checkOut);
   const adults = Math.min(12, Math.max(1, Number(one(sp.adults)) || 2));
   const children = Math.min(8, Math.max(0, Number(one(sp.children)) || 0));
+  const promo = (one(sp.promo) ?? "").trim().toUpperCase();
   return (
     <BookingFlow
-      initial={{ checkIn: isIsoDate(checkIn) ? checkIn : undefined, checkOut: isIsoDate(checkOut) && checkOut! > (checkIn ?? "") ? checkOut : undefined, adults, childAges: Array(children).fill(6) }}
+      initial={{ promo: /^[A-Z0-9_-]{1,40}$/.test(promo) ? promo : undefined, checkIn: isIsoDate(checkIn) ? checkIn : undefined, checkOut: isIsoDate(checkOut) && checkOut! > (checkIn ?? "") ? checkOut : undefined, adults, childAges: Array(children).fill(6) }}
       preselect={one(sp.room) ?? null}
     />
   );

@@ -74,3 +74,4 @@ logs/
 *.swo
 Thumbs.db
 .claude/
+.gstack/

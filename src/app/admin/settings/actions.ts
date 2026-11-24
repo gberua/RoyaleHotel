@@ -26,7 +26,8 @@ export async function saveSettings(_p: ActionResult, form: FormData): Promise<Ac
         case "list": patch[f.key] = raw.split(/[\s,;]+/).map((s) => s.trim()).filter(Boolean); break;
         case "money": patch[f.key] = gelToTetri(raw) ?? 0; break;
         case "int": case "percent": case "decimal": {
-          if (raw === "") { patch[f.key] = current[f.key] === null ? null : 0; break; }
+          // an emptied box must not silently become 0 (0 "max advance days" would refuse every online booking)
+          if (raw === "") { if (current[f.key] === null) patch[f.key] = null; else fieldErrors[f.key] = "required"; break; }
           const n = Number(raw.replace(",", "."));
           if (!Number.isFinite(n) || (f.kind !== "decimal" && !Number.isInteger(n))) fieldErrors[f.key] = "invalid";
           else if (f.kind === "percent" && (n < 0 || n > 100)) fieldErrors[f.key] = "too_big";

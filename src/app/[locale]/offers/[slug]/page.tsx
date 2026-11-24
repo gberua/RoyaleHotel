@@ -1,3 +1,4 @@
+import { longDate } from "@/lib/booking/dates";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -52,9 +53,9 @@ export default async function OfferPage({ params }: PageProps<"/[locale]/offers/
               <CopyCode code={offer.promoCode} />
             </div>
           )}
-          {offer.validTo && <p className="text-sm text-ink-700">{t("offers.validUntil", { date: offer.validTo })}</p>}
+          {offer.validTo && <p className="text-sm text-ink-700">{t("offers.validUntil", { date: longDate(offer.validTo, locale) })}</p>}
           <p className="flex gap-2 text-sm text-ink-700"><BadgeCheck size={18} className="shrink-0 text-sea-700" aria-hidden />{t("trust.bestPrice")}</p>
-          <Link href={offer.promoCode ? `/book?promo=${offer.promoCode}` : "/book"} className="btn btn-primary w-full">{t("offers.bookOffer")}</Link>
+          <Link href={offer.promoCode ? `/book?promo=${encodeURIComponent(offer.promoCode)}` : "/book"} className="btn btn-primary w-full">{t("offers.bookOffer")}</Link>
         </aside>
       </section>
     </>

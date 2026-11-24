@@ -5,20 +5,21 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const session = vi.hoisted(() => ({ user: null as null | { id: string; name: string; email: string; role: string; adminLocale: string } }));
-const mail = vi.hoisted(() => ({ sent: [] as { to: string | string[]; subject: string; html: string }[] }));
+const mail = vi.hoisted(() => ({ sent: [] as { to: string | string[]; subject: string; html: string }[], fail: false, telegram: [] as string[] }));
 vi.mock("@/lib/admin-auth", () => ({ currentStaff: async () => session.user, requirePermission: async () => session.user }));
 vi.mock("next/cache", () => ({ updateTag: () => {}, revalidatePath: () => {}, revalidateTag: () => {}, cacheLife: () => {}, cacheTag: () => {} }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers(), cookies: async () => ({ get: () => undefined, set: () => {} }), draftMode: async () => ({ isEnabled: false }) }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw Object.assign(new Error("NEXT_REDIRECT"), { digest: `NEXT_REDIRECT;${to}` }); } }));
 vi.mock("next/server", () => ({ after: () => {}, connection: async () => {} }));
 vi.mock("@/auth", () => ({ signIn: async () => {}, signOut: async () => {}, auth: async () => null }));
-vi.mock("@/lib/notify/email", () => ({ sendMail: vi.fn(async (m: { to: string | string[]; subject: string; html: string }) => { mail.sent.push(m); return { ok: true }; }) }));
-vi.mock("@/lib/notify/telegram", () => ({ sendTelegram: async () => ({ ok: true }) }));
+vi.mock("@/lib/notify/email", () => ({ sendMail: vi.fn(async (m: { to: string | string[]; subject: string; html: string }) => { mail.sent.push(m); return { ok: !mail.fail }; }) }));
+vi.mock("@/lib/notify/telegram", () => ({ sendTelegram: async (m: string) => { mail.telegram.push(m); return { ok: true }; } }));
 
 import { db } from "@/lib/db";
 import { addDaysIso, todayInGeorgia } from "@/lib/booking/dates";
 import { BookingError, finalizeBooking, holdRooms, moveBooking } from "@/lib/booking/service";
 import { sendAutomaticEmails } from "@/lib/notify/automatic";
+import { notifyBookingCancelled, notifyBookingConfirmed } from "@/lib/notify/booking-mail";
 import { applyMove, previewMove, adminChangeStatus } from "@/app/admin/booking-actions";
 import { setHousekeeping } from "@/app/admin/housekeeping/actions";
 
@@ -37,7 +38,7 @@ async function book(roomTypeId: string, checkIn: string, nights: number, guest =
 }
 
 beforeEach(async () => {
-  mail.sent.length = 0;
+  mail.sent.length = 0; mail.telegram.length = 0; mail.fail = false;
   await db.$executeRawUnsafe(`TRUNCATE "RoomAllocation","BookingExtra","Payment","BookingNote","Booking","Guest","Room","RoomTypePhoto","RoomTypeAmenity","SeasonRate","Season","RateOverride","RoomType","OccupancyRule","Extra","PromoCode","Setting","BookingSequence","IcalFeed","ActivityLog","User","EmailTemplate" CASCADE`);
   await db.setting.create({ data: { key: "booking", value: { holdMinutes: 15, sameDayCutoff: "23:59" } } });
   const double = await db.roomType.create({ data: { slug: "double", name: { en: "Double" }, basePrice: 20000, maxAdults: 2, maxOccupancy: 2 } });
@@ -137,6 +138,21 @@ describe("automatic e-mails", () => {
     expect(r.reviews).toBe(1);
     expect(mail.sent[0].subject).toBe("How was it, Ana?");
     expect(mail.sent[0].html).toContain(`/reviews?code=${stay.code}`);
+  });
+});
+
+describe("booking e-mails that fail", () => {
+  it("a confirmation or cancellation that could not be sent is noted on the booking and the hotel is alerted", async () => {
+    const b = await book(doubleId, day(10), 2, "guest@example.test");
+    expect(await notifyBookingConfirmed(b.id, { hotel: false })).toBe(true);
+    expect(await db.activityLog.count({ where: { action: "email.failed" } })).toBe(0);
+
+    mail.fail = true;
+    expect(await notifyBookingConfirmed(b.id, { hotel: false })).toBe(false);
+    await notifyBookingCancelled(b.id, "staff");
+    const notes = await db.activityLog.findMany({ where: { action: "email.failed", entityId: b.id }, orderBy: { createdAt: "asc" } });
+    expect(notes.map((n) => n.summary)).toEqual([expect.stringMatching(/confirmation.*guest@example\.test/), expect.stringMatching(/cancellation.*guest@example\.test/)]);
+    expect(mail.telegram.filter((m) => m.includes("NOT SENT") && m.includes(b.code))).toHaveLength(2);
   });
 });
 

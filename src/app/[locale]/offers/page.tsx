@@ -1,3 +1,4 @@
+import { longDate } from "@/lib/booking/dates";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { rootLocale } from "@/i18n/root-locale";
@@ -39,7 +40,7 @@ export default async function OffersPage() {
                   <div className="p-6 sm:p-8">
                     <h2 className="text-4xl leading-none"><Link href={`/offers/${o.slug}`} className="after:absolute after:inset-0">{tr(o.title, locale)}</Link></h2>
                     <p className="mt-3 text-ink-500">{tr(o.summary, locale)}</p>
-                    {o.validTo && <p className="mt-3 text-sm text-ink-700">{t("offers.validUntil", { date: o.validTo })}</p>}
+                    {o.validTo && <p className="mt-3 text-sm text-ink-700">{t("offers.validUntil", { date: longDate(o.validTo, locale) })}</p>}
                     <span className="mt-6 inline-flex items-center gap-2 font-semibold text-sea-800">{t("common.learnMore")} <ArrowRight size={16} aria-hidden /></span>
                   </div>
                 </article>

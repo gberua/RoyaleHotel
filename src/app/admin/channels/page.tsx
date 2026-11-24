@@ -7,7 +7,8 @@ import { adminT } from "@/lib/admin-i18n";
 import { tr } from "@/lib/i18n-content";
 import { SITE_URL } from "@/lib/site-url";
 import { AdminFrame } from "@/components/admin/AdminFrame";
-import { AdminForm } from "@/components/admin/ui";
+import { AdminForm, ConfirmSubmit } from "@/components/admin/ui";
+import { stampInGeorgia } from "@/lib/booking/dates";
 import { adminAddFeed, adminRemoveFeed, adminSyncFeed } from "../booking-actions";
 
 export const metadata: Metadata = { title: "Channels" };
@@ -40,13 +41,13 @@ async function Channels() {
                       <strong>{name(fd.channel)}</strong>
                       <div className="flex gap-2">
                         {fd.importUrl && <form action={adminSyncFeed}><input type="hidden" name="id" value={fd.id} /><button className="btn btn-ghost !min-h-8 !px-3 text-xs">{t("ch.syncNow")}</button></form>}
-                        <form action={adminRemoveFeed}><input type="hidden" name="id" value={fd.id} /><button className="btn btn-ghost !min-h-8 !px-3 text-xs text-danger">{t("ch.remove")}</button></form>
+                        <ConfirmSubmit action={adminRemoveFeed} id={fd.id} label={t("ch.remove")} confirm={t("ch.removeConfirm")} />
                       </div>
                     </div>
                     <p className="mt-2 text-xs text-ink-500">{t("ch.exportUrl", { channel: name(fd.channel) })}</p>
                     <code className="block break-all rounded bg-white p-2 text-xs" data-testid="export-url">{`${SITE_URL}/api/ical/${fd.exportToken}.ics`}</code>
                     {fd.importUrl ? <p className="mt-2 break-all text-xs text-ink-500">{t("ch.import")}: {fd.importUrl}</p> : <p className="mt-2 text-xs text-ink-500">{t("ch.exportOnly")}</p>}
-                    <p className="mt-1 text-xs">{fd.lastSyncAt ? t("ch.lastSync", { at: fd.lastSyncAt.toISOString().slice(0, 16).replace("T", " "), count: fd.lastCount ?? 0 }) : t("ch.never")}</p>
+                    <p className="mt-1 text-xs">{fd.lastSyncAt ? t("ch.lastSync", { at: stampInGeorgia(fd.lastSyncAt), count: fd.lastCount ?? 0 }) : t("ch.never")}</p>
                     {fd.lastError && <p className="mt-1 rounded bg-red-50 p-2 text-xs text-red-800">⚠️ {fd.lastError}</p>}
                   </li>
                 ))}

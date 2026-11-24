@@ -15,6 +15,7 @@ export function ReviewForm() {
         <CheckCircle2 className="mt-0.5 shrink-0 text-sea-700" aria-hidden /> <p>{t("reviews.thanks")}</p>
       </div>
     );
+  const v = (k: string) => state.values?.[k] ?? "";
   const err = (k: string) => state.fieldErrors?.[k] && <p className="mt-1 text-sm text-danger">{t(`form.${state.fieldErrors[k] as "required"}`)}</p>;
   return (
     <form action={action} className="grid gap-4 sm:grid-cols-2" noValidate>
@@ -34,20 +35,21 @@ export function ReviewForm() {
       </fieldset>
       <div>
         <label className="label" htmlFor="r-name">{t("reviews.yourName")} *</label>
-        <input id="r-name" name="authorName" required autoComplete="given-name" className="field" />
+        <input id="r-name" name="authorName" required maxLength={80} defaultValue={v("authorName")} autoComplete="given-name" className="field" />
         {err("authorName")}
       </div>
       <div>
         <label className="label" htmlFor="r-country">{t("reviews.country")}</label>
-        <input id="r-country" name="country" autoComplete="country-name" className="field" />
+        <input id="r-country" name="country" maxLength={60} defaultValue={v("country")} autoComplete="country-name" className="field" />
+        {err("country")}
       </div>
       <div>
         <label className="label" htmlFor="r-month">{t("reviews.stayMonth")}</label>
-        <input id="r-month" name="stayMonth" type="month" className="field" />
+        <input id="r-month" name="stayMonth" type="month" defaultValue={v("stayMonth")} className="field" />
       </div>
       <div className="sm:col-span-2">
         <label className="label" htmlFor="r-body">{t("reviews.yourReview")} *</label>
-        <textarea id="r-body" name="body" required rows={5} className="field resize-y" />
+        <textarea id="r-body" name="body" required maxLength={3000} defaultValue={v("body")} rows={5} className="field resize-y" />
         {err("body")}
       </div>
       {state.error && state.error !== "invalid" && <p role="alert" className="text-sm text-danger sm:col-span-2">{t(`form.${state.error}`)}</p>}

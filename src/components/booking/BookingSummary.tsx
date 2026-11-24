@@ -1,3 +1,4 @@
+import { longDate } from "@/lib/booking/dates";
 import { getTranslations } from "next-intl/server";
 import type { FullBooking } from "@/lib/booking/load";
 import { tr } from "@/lib/i18n-content";
@@ -7,7 +8,7 @@ import { formatMoney } from "@/lib/money";
 export async function BookingSummary({ b, locale }: { b: FullBooking; locale: string }) {
   const t = await getTranslations({ locale });
   const money = (n: number) => formatMoney(n, undefined, locale);
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const iso = (d: Date) => longDate(d.toISOString().slice(0, 10), locale);
   const statusTone: Record<string, string> = { CONFIRMED: "bg-sea-100 text-sea-900", CHECKED_IN: "bg-emerald-100 text-emerald-900", PENDING: "bg-amber-100 text-amber-900", CANCELLED: "bg-ink-100 text-ink-700", EXPIRED: "bg-ink-100 text-ink-700" };
   return (
     <dl className="divide-y divide-ink-100 rounded-2xl bg-white text-sm ring-1 ring-ink-100">

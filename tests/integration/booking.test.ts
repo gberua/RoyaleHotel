@@ -150,3 +150,46 @@ describe("holds & lifecycle", () => {
     await expect(holdRooms({ checkIn, checkOut, lines: line(singleTypeId), locale: "en" })).rejects.toMatchObject({ code: "sold_out" });
   });
 });
+
+describe("audit regressions", () => {
+  it("a late payment callback never puts a cancelled booking back into its room", async () => {
+    const h = await holdRooms({ checkIn, checkOut, lines: line(singleTypeId), locale: "en" });
+    await finalizeBooking({ holdId: h.holdId, guest: guest(1), extras: [], plan: "pay_at_hotel" });
+    await cancelBooking(h.holdId, "Guest cancelled");
+    const { booking } = await confirmPaidBooking(h.holdId, { provider: "mock", providerRef: "late-1", amount: 5000 });
+    expect(booking.status).toBe("CANCELLED");
+    expect(await db.roomAllocation.count({ where: { bookingId: h.holdId, active: true } })).toBe(0);
+    // the room is still free for the next guest
+    await expect(holdRooms({ checkIn, checkOut, lines: line(singleTypeId), locale: "en" })).resolves.toBeTruthy();
+  });
+
+  it("a two-room booking of different types keeps each room's own nightly prices", async () => {
+    const lines = [...line(singleTypeId), ...line(pairTypeId)];
+    const h = await holdRooms({ checkIn, checkOut, lines, locale: "en" });
+    // make "oldest first" disagree with the order the rooms were added
+    const [first, second] = await db.roomAllocation.findMany({ where: { bookingId: h.holdId }, orderBy: { createdAt: "asc" } });
+    await db.roomAllocation.update({ where: { id: first.id }, data: { createdAt: new Date(second.createdAt.getTime() + 5_000) } });
+    await finalizeBooking({ holdId: h.holdId, guest: guest(1), extras: [], plan: "pay_at_hotel" });
+    const allocs = await db.roomAllocation.findMany({ where: { bookingId: h.holdId } });
+    expect(allocs.find((a) => a.roomTypeId === singleTypeId)!.nightlyPrices).toEqual([10000, 10000, 10000]);
+    expect(allocs.find((a) => a.roomTypeId === pairTypeId)!.nightlyPrices).toEqual([20000, 20000, 20000]);
+  });
+
+  it("a promo use is counted once per booking and given back when the booking expires unpaid", async () => {
+    await db.promoCode.create({ data: { code: "TWICE", type: "PERCENT", value: 10, maxUses: 2 } });
+    const used = async () => (await db.promoCode.findUniqueOrThrow({ where: { code: "TWICE" } })).usedCount;
+    const h = await holdRooms({ checkIn, checkOut, lines: line(singleTypeId), locale: "en" });
+    // the guest submits the payment step twice (e.g. went back after a failed card)
+    await finalizeBooking({ holdId: h.holdId, guest: guest(1), extras: [], plan: "full", promoCode: "TWICE" });
+    await finalizeBooking({ holdId: h.holdId, guest: guest(1), extras: [], plan: "full", promoCode: "TWICE" });
+    expect(await used()).toBe(1);
+    // never pays → the booking expires and the use is returned
+    await db.booking.update({ where: { id: h.holdId }, data: { holdExpiresAt: new Date(Date.now() - 1000) } });
+    await releaseExpired();
+    await releaseExpired();
+    expect(await used()).toBe(0);
+    // paid after all (slow bank) → the booking is revived and counts again
+    await confirmPaidBooking(h.holdId, { provider: "mock", providerRef: "slow-1", amount: 1000 });
+    expect(await used()).toBe(1);
+  });
+});

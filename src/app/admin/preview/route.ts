@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   const user = await currentStaff();
   if (!user || !can(user.role as RoleName, "content")) return new Response("Forbidden", { status: 403 });
   const path = new URL(req.url).searchParams.get("path") ?? "/";
-  const safe = path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/admin") ? path : "/";
+  const safe = path.startsWith("/") && !path.startsWith("//") && !path.includes("\\") && !path.startsWith("/admin") ? path : "/";
   (await draftMode()).enable();
   redirect(safe);
 }

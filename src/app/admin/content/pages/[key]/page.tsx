@@ -11,6 +11,7 @@ import { CONTENT_PAGES, PAGE_PATH, type ContentPage } from "@/lib/content/pages"
 import { HOME_SECTIONS, HOME_TEXTS, LONG_TEXTS, homeLayout } from "@/lib/content/home";
 import { AdminFrame } from "@/components/admin/AdminFrame";
 import { AdminForm, Card, LocalizedInput } from "@/components/admin/ui";
+import { stampInGeorgia } from "@/lib/booking/dates";
 import { SectionOrder } from "@/components/admin/SectionOrder";
 import { discardPageDraft, publishPage, savePageDraft } from "../../actions";
 
@@ -37,7 +38,7 @@ async function Editor({ params }: { params: PageProps<"/admin/content/pages/[key
     <AdminFrame user={user} title={`${t("content.title")} › ${t(`content.pages.${key}`)}`} actions={<Link href="/admin/content" className="btn btn-ghost !min-h-10 text-sm"><ArrowLeft size={15} aria-hidden /> {t("common.back")}</Link>}>
       <div className={`mb-4 flex flex-wrap items-center gap-3 rounded-2xl p-4 text-sm ring-1 ${draft ? "bg-amber-50 ring-amber-200" : "bg-white ring-ink-100"}`}>
         <span className="font-semibold">{draft ? t("content.hasDraft") : t("content.noDraft")}</span>
-        {page?.publishedAt && <span className="text-ink-500">{t("content.lastPublished")}: {page.publishedAt.toISOString().slice(0, 16).replace("T", " ")}</span>}
+        {page?.publishedAt && <span className="text-ink-500">{t("content.lastPublished")}: {stampInGeorgia(page.publishedAt)}</span>}
         <span className="flex flex-wrap gap-2">
           {["ka", "en", "ru"].map((l) => <a key={l} href={previewPath(l)} target="_blank" rel="noopener" className="btn btn-ghost !min-h-9 !px-3 text-xs"><ExternalLink size={13} aria-hidden /> {t("content.preview")} {l.toUpperCase()}</a>)}
         </span>

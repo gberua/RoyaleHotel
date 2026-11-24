@@ -56,8 +56,8 @@ export const settingsSchema = z.object({
   booking: z
     .object({
       baseCurrency: z.string().default("GEL"),
-      maxAdvanceDays: z.number().int().default(450),
-      freeCancellationDays: z.number().int().default(7),
+      maxAdvanceDays: z.number().int().min(1).max(1000).default(450),
+      freeCancellationDays: z.number().int().min(0).max(365).default(7),
       depositPercent: z.number().int().min(0).max(100).default(30),
       allowPayAtHotel: z.boolean().default(true),
       allowDeposit: z.boolean().default(true),

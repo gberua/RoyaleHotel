@@ -8,7 +8,14 @@ import { cookies } from "next/headers";
  * redirect back from the payment page).
  */
 const NAME = "rh_booking";
-const sign = (v: string) => createHmac("sha256", process.env.AUTH_SECRET ?? "dev-secret").update(v).digest("base64url");
+/** In production a missing secret must stop the request — a known fallback would let anyone forge access to a booking. */
+function secret() {
+  const s = process.env.AUTH_SECRET;
+  if (s) return s;
+  if (process.env.NODE_ENV === "production") throw new Error("AUTH_SECRET is not set");
+  return "dev-secret";
+}
+const sign = (v: string) => createHmac("sha256", secret()).update(v).digest("base64url");
 
 export async function grantBookingAccess(bookingId: string, hours = 6) {
   const exp = Date.now() + hours * 3_600_000;

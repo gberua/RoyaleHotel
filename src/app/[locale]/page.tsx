@@ -188,7 +188,7 @@ export default async function HomePage() {
             <p className="mt-3 text-ink-500">{t("reviews.basedOn", { count: settings.trust.googleReviewCount })}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/reviews" className="btn btn-ghost">{t("nav.reviews")}</Link>
-              {settings.hotel.googleMapsUrl && (
+              {(settings.trust.googleReviewsUrl || settings.hotel.googleMapsUrl) && (
                 <a href={settings.trust.googleReviewsUrl || settings.hotel.googleMapsUrl} target="_blank" rel="noopener" className="btn btn-ghost">
                   <BrandIcon name="google" className="h-4 w-4" /> {t("reviews.readOnGoogle")}
                 </a>
@@ -202,7 +202,7 @@ export default async function HomePage() {
           ) : (
             <div className="reveal flex flex-col justify-center rounded-[var(--radius-card)] bg-sand-50 p-8 ring-1 ring-sand-300/60 sm:p-12">
               <p className="text-lg leading-relaxed text-ink-700">{t("reviews.empty")}</p>
-              {settings.hotel.googleMapsUrl && (
+              {(settings.trust.googleReviewsUrl || settings.hotel.googleMapsUrl) && (
                 <a href={settings.trust.googleReviewsUrl || settings.hotel.googleMapsUrl} target="_blank" rel="noopener" className="btn btn-primary mt-6 self-start">
                   <BrandIcon name="google" className="h-4 w-4" color="#fff" /> {t("reviews.readOnGoogle")}
                 </a>

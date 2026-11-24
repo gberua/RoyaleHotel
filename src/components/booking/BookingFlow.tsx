@@ -23,7 +23,7 @@ type Step = "stay" | "extras" | "details" | "review" | "done";
 type Line = { key: string; roomTypeId: string; name: string; image: RoomOption["image"]; maxAdults: number; maxChildren: number; maxOccupancy: number; adults: number; childAges: number[] };
 type Options = Awaited<ReturnType<typeof checkoutOptions>>;
 type Guest = { firstName: string; lastName: string; email: string; phone: string; country: string; arrivalTime: string; specialRequests: string; marketingConsent: boolean };
-export type FlowInitial = { checkIn?: string; checkOut?: string; adults?: number; childAges?: number[]; room?: string | null };
+export type FlowInitial = { checkIn?: string; checkOut?: string; adults?: number; childAges?: number[]; room?: string | null; promo?: string };
 
 const STEPS: Step[] = ["stay", "extras", "details", "review"];
 const STEP_LABEL = { stay: "checkout.stepRooms", extras: "checkout.stepExtras", details: "checkout.stepDetails", review: "checkout.stepReview" } as const;
@@ -84,8 +84,9 @@ export function BookingFlow({ initial, preselect, compact = false }: { initial?:
   const [extras, setExtras] = useState<Record<string, number>>({});
   const [guest, setGuest] = useState<Guest>({ firstName: "", lastName: "", email: "", phone: "+995 ", country: "", arrivalTime: "", specialRequests: "", marketingConsent: false });
   const [badFields, setBadFields] = useState<string[]>([]);
-  const [promoInput, setPromoInput] = useState("");
-  const [promo, setPromo] = useState<{ code: string; ok: boolean } | null>(null);
+  // A code that came with the link ("Book this offer") is filled in and applied when the price is first calculated
+  const [promoInput, setPromoInput] = useState(initial?.promo ?? "");
+  const [promo, setPromo] = useState<{ code: string; ok: boolean } | null>(initial?.promo ? { code: initial.promo, ok: true } : null);
   const [quote, setQuote] = useState<{ quote: Quote; deposit: number } | null>(null);
   const [plan, setPlan] = useState<"pay_at_hotel" | "deposit" | "full">("pay_at_hotel");
   const [accept, setAccept] = useState(false);

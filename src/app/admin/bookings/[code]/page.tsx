@@ -15,13 +15,14 @@ import { formatMoney } from "@/lib/money";
 import type { Quote } from "@/lib/booking/engine";
 import { AdminFrame, StatusChip } from "@/components/admin/AdminFrame";
 import { AdminForm } from "@/components/admin/ui";
+import { stampInGeorgia } from "@/lib/booking/dates";
 import { StatusButton } from "@/components/admin/StatusButton";
 import { adminAddNote, adminCancel, adminChangeDates, adminMoveRoom, adminRecordPayment, adminResendConfirmation } from "../../booking-actions";
 
 export const metadata: Metadata = { title: "Booking" };
 const money = (n: number) => formatMoney(n, undefined, "en", 2);
 const iso = (d: Date) => d.toISOString().slice(0, 10);
-const stamp = (d: Date) => d.toISOString().slice(0, 16).replace("T", " ");
+const stamp = stampInGeorgia;
 const card = "rounded-2xl bg-white p-5 ring-1 ring-ink-100";
 const h2 = "mb-3 font-sans text-base font-semibold";
 const fld = "field mt-1 !min-h-10 !py-1.5 text-sm";

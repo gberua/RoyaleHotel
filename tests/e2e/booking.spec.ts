@@ -120,3 +120,23 @@ test("declined card keeps the room held and offers a retry", async ({ page }) =>
   await expect(page.getByText("The payment was declined")).toBeVisible();
   await expect(page.getByRole("button", { name: /Continue to payment/ })).toBeVisible();
 });
+
+test("an offer's promo code travels with the 'Book this offer' link and is applied at review", async ({ page }) => {
+  await page.goto("/en/offers/early-summer");
+  await expect(page.getByRole("link", { name: /Book this offer/ })).toHaveAttribute("href", /\/book\?promo=EARLY10$/);
+  const ci = iso(new Date(Date.now() + (offset + 12) * 86_400_000)), co = iso(new Date(Date.now() + (offset + 15) * 86_400_000)); // 3 nights: high season has a minimum stay
+  await page.goto(`/en/book?promo=EARLY10&checkIn=${ci}&checkOut=${co}&adults=2`);
+  await page.getByRole("button", { name: /^Add$/ }).first().click();
+  await page.getByRole("button", { name: /^Continue/ }).click();
+  await expect(page.getByText("Make your stay easier")).toBeVisible();
+  await page.getByRole("button", { name: /^Continue/ }).click();
+  await page.fill("#g-firstName", "Promo");
+  await page.fill("#g-lastName", "Guest");
+  await page.fill("#g-email", `promo+${Date.now()}@example.test`);
+  await page.fill("#g-phone", "+995 555 00 11 22");
+  await page.getByRole("button", { name: /^Continue/ }).click();
+  await expect(page.getByTestId("grand-total")).toContainText("₾");
+  await expect(page.locator("#promo")).toHaveValue("EARLY10");
+  // the guest is told straight away whether the code counts for these dates — never a silent full price
+  await expect(page.getByText(/Promo code applied|isn't valid/i)).toBeVisible();
+});

@@ -1,3 +1,4 @@
+import { stampInGeorgia } from "@/lib/booking/dates";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -67,7 +68,7 @@ async function List({ searchParams }: { searchParams: PageProps<"/admin/bookings
                 <td className="px-3 py-2.5 text-xs">{t(`bk.pay.${b.paymentStatus}`)}{b.paymentPlan && <div className="text-ink-500">{t(`bk.plan.${b.paymentPlan}`)}</div>}</td>
                 <td className="whitespace-nowrap px-3 py-2.5 tabular-nums">{money(b.grandTotal)}<div className="text-xs text-ink-500">{t("bk.paid")} {money(b.amountPaid)}</div></td>
                 <td className="px-3 py-2.5 text-xs">{t(`bk.sources.${b.source}`)}</td>
-                <td className="whitespace-nowrap px-3 py-2.5 text-xs text-ink-500">{b.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td>
+                <td className="whitespace-nowrap px-3 py-2.5 text-xs text-ink-500">{stampInGeorgia(b.createdAt)}</td>
               </tr>
             ))}
           </tbody>

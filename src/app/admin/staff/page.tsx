@@ -8,6 +8,7 @@ import { adminT, ADMIN_LOCALES } from "@/lib/admin-i18n";
 import { ROLE_PERMISSIONS, type RoleName } from "@/lib/permissions";
 import { AdminFrame } from "@/components/admin/AdminFrame";
 import { ActionButton, AdminForm, Card, SelectInput, TextInput, Toggle } from "@/components/admin/ui";
+import { stampInGeorgia } from "@/lib/booking/dates";
 import { resetStaffPassword, saveStaff, setStaffActive, unlockStaff } from "./actions";
 
 export const metadata: Metadata = { title: "Staff" };
@@ -20,7 +21,7 @@ async function Staff() {
   const staff = await db.user.findMany({ orderBy: [{ active: "desc" }, { role: "asc" }, { name: "asc" }] });
   const roleOptions = ROLES.map((r) => ({ value: r, label: t(`roles.${r}`) }));
   const langOptions = ADMIN_LOCALES.map((l) => ({ value: l, label: t(`langs.${l}`) }));
-  const fmt = (d: Date | null) => (d ? d.toISOString().slice(0, 16).replace("T", " ") : "—");
+  const fmt = (d: Date | null) => (d ? stampInGeorgia(d) : "—");
 
   const form = (u?: (typeof staff)[number]) => (
     <AdminForm action={saveStaff} submit={u ? t("common.save") : t("staff.create")} resetOnSuccess={!u} tone={u ? "ghost" : "primary"} className="grid grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1.3fr_1fr_10rem_8rem]">

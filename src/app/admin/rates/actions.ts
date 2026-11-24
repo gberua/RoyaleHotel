@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { ActionError, gelToTetri, staffAction, type ActionResult } from "@/lib/admin-action";
+import { ActionError, gelToTetri, roomPrice, staffAction, type ActionResult } from "@/lib/admin-action";
 import { addDaysIso, isIsoDate, toDate } from "@/lib/booking/dates";
 import { loadRateContext, logActivity } from "@/lib/booking/service";
 import { bulkPlan, overrideFor, type BulkChange, type BulkOp } from "@/lib/booking/rates";
@@ -27,7 +27,7 @@ function parseBulk(form: FormData) {
   };
   let op: BulkOp;
   switch (p.op) {
-    case "set": op = { kind: "set", price: gelToTetri(p.value ?? "", true)! }; break;
+    case "set": op = { kind: "set", price: roomPrice(gelToTetri(p.value ?? "", true)!) }; break;
     case "percent": { const n = num(); if (n < -90 || n > 500) throw new ActionError("too_big"); op = { kind: "percent", value: n }; break; }
     case "amount": op = { kind: "amount", value: Math.round(num() * 100) }; break;
     case "minStay": { const n = p.value?.trim() ? Math.round(num()) : null; if (n != null && (n < 1 || n > 30)) throw new ActionError("too_big"); op = { kind: "minStay", value: n }; break; }

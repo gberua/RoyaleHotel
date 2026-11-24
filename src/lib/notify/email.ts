@@ -38,5 +38,6 @@ export async function sendMail(mail: Mail): Promise<{ ok: boolean; id?: string; 
     return { ok: false };
   }
   console.info(`[email] ${process.env.RESEND_API_KEY ? "Resend failed — " : ""}saved to outbox: ${base}.html (${mail.subject})`);
-  return { ok: !process.env.RESEND_API_KEY, outbox: `${base}.html` };
+  // The outbox only counts as delivery in development: on Vercel it is a temporary folder nobody can read.
+  return { ok: !process.env.RESEND_API_KEY && !process.env.VERCEL, outbox: `${base}.html` };
 }

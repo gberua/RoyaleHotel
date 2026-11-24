@@ -137,6 +137,16 @@ export function LocalizedInput({ label, name, value, multiline = false, rows = 3
   );
 }
 
+/** Small danger button for a plain form action (no result message) that asks before it runs. */
+export function ConfirmSubmit({ action, id, label, confirm }: { action: (form: FormData) => Promise<void>; id: string; label: string; confirm: string }) {
+  return (
+    <form action={action} onSubmit={(e) => { if (!window.confirm(confirm)) e.preventDefault(); }}>
+      <input type="hidden" name="id" value={id} />
+      <button className="btn btn-ghost !min-h-8 !px-3 text-xs text-danger">{label}</button>
+    </form>
+  );
+}
+
 /** Button that runs a server action after a confirmation, showing the result. */
 export function ActionButton({ action, fields, label, confirm, tone = "ghost", className = "" }: { action: FormAction; fields: Record<string, string>; label: string; confirm?: string; tone?: "primary" | "ghost" | "danger"; className?: string }) {
   return (

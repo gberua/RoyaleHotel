@@ -3,7 +3,7 @@ import type { PDFPage } from "pdf-lib";
 import { translator } from "./translator";
 import { draw, footer, header, newPdf, textWidth, wrap, A4, LINE, MUTED, SEA, type Fonts } from "./pdf";
 import type { FullBooking } from "@/lib/booking/load";
-import { nightsBetween } from "@/lib/booking/dates";
+import { nightsBetween, todayInGeorgia } from "@/lib/booking/dates";
 import { tr } from "@/lib/i18n-content";
 import { formatMoney } from "@/lib/money";
 import type { Settings } from "@/lib/settings-schema";
@@ -60,7 +60,7 @@ export async function renderInvoice(b: FullBooking, settings: Settings, messages
   header(page, fonts, t("invoiceTitle"));
   let y = 722;
   draw(page, fonts, `${t("invoiceNo")} INV-${b.code.replace(/^RH-/, "")}`, 48, y, 13, true, SEA);
-  draw(page, fonts, `${t("issued")}: ${new Date().toISOString().slice(0, 10)} · ${t("booking")} ${b.code}`, 48, y - 18, 10, false, MUTED);
+  draw(page, fonts, `${t("issued")}: ${todayInGeorgia()} · ${t("booking")} ${b.code}`, 48, y - 18, 10, false, MUTED);
   draw(page, fonts, t("billTo"), W - 260, y, 8, true, MUTED);
   if (b.guest) {
     draw(page, fonts, `${b.guest.firstName} ${b.guest.lastName}`, W - 260, y - 15, 11, true);
@@ -96,9 +96,9 @@ export async function renderInvoice(b: FullBooking, settings: Settings, messages
   draw(page, fonts, t("payments"), 48, y, 8, true, MUTED); y -= 18;
   const paid = b.payments.filter((p) => p.status === "succeeded");
   if (!paid.length) row(t("noPayments"), null);
-  for (const p of paid) row(`${p.createdAt.toISOString().slice(0, 10)} · ${t.has(`method.${p.provider}`) ? t(`method.${p.provider}`) : p.provider}`, p.amount);
+  for (const p of paid) row(`${todayInGeorgia(p.createdAt.getTime())} · ${t.has(`method.${p.provider}`) ? t(`method.${p.provider}`) : p.provider}`, p.amount);
   const refunds = b.payments.filter((p) => p.status === "refunded");
-  for (const p of refunds) row(`${p.createdAt.toISOString().slice(0, 10)} · ${t("refund")}`, -p.amount);
+  for (const p of refunds) row(`${todayInGeorgia(p.createdAt.getTime())} · ${t("refund")}`, -p.amount);
   page.drawLine({ start: { x: 48, y: y + 12 }, end: { x: W - 48, y: y + 12 }, thickness: 0.8, color: MUTED });
   row(t("balance"), Math.max(0, due - b.amountPaid), { bold: true });
   footer(page, fonts, settings, locale);

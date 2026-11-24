@@ -1,3 +1,4 @@
+import { longDate } from "@/lib/booking/dates";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -7,7 +8,7 @@ import { db } from "@/lib/db";
 import { getPolicies } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
 import { Markdown } from "@/lib/markdown";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, plainSummary } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return (await db.policy.findMany({ select: { slug: true } })).map((p) => ({ slug: p.slug }));
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/policies
   const locale = await rootLocale();
   const p = (await getPolicies()).find((x) => x.slug === slug);
   if (!p) return {};
-  return { ...pageMetadata({ title: tr(p.title, locale), path: `/policies/${slug}`, locale }), robots: slug === "privacy" ? { index: true } : undefined };
+  return { ...(await pageMetadata({ title: tr(p.title, locale), description: plainSummary(tr(p.body, locale)), path: `/policies/${slug}`, locale })), robots: slug === "privacy" ? { index: true } : undefined };
 }
 
 /**
@@ -50,7 +51,7 @@ export default async function PolicyPage({ params }: PageProps<"/[locale]/polici
       </nav>
       <article className="max-w-2xl">
         <div className="flex items-center gap-3"><h1 className="text-5xl leading-none sm:text-6xl">{tr(p.title, locale)}</h1></div>
-        <p className="mb-8 mt-3 text-sm text-ink-500">{t("policies.updated", { date: p.updatedAt.slice(0, 10) })}</p>
+        <p className="mb-8 mt-3 text-sm text-ink-500">{t("policies.updated", { date: longDate(p.updatedAt.slice(0, 10), locale) })}</p>
         <Markdown text={tr(p.body, locale)} />
       </article>
     </div>

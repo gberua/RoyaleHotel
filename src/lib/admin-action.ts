@@ -87,6 +87,12 @@ export function gelToTetri(v: FormDataEntryValue | null, required = false): numb
   return Math.round(n * 100);
 }
 
+/** A room price: 0 is always a typo and would put free rooms on sale. */
+export function roomPrice<T extends number | null>(tetri: T): T {
+  if (tetri !== null && tetri <= 0) throw new ActionError("price_invalid");
+  return tetri;
+}
+
 /** Shallow diff for the activity log: only changed keys, old → new. */
 export function diff(before: Record<string, unknown>, after: Record<string, unknown>) {
   const b: Record<string, unknown> = {}, a: Record<string, unknown> = {};

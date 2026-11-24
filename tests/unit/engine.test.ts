@@ -3,7 +3,7 @@ import {
   amountDue, arrivalAllowed, buildQuote, cancellationTerms, checkRestrictions, evaluatePromo, extraGuestCharges, extraTotal,
   nightlyPrices, occupancyFits, type PromoDef, type RateRoomType, type RateSeason, type RateOverride,
 } from "@/lib/booking/engine";
-import { eachNight, nightsBetween } from "@/lib/booking/dates";
+import { eachNight, isIsoDate, nightsBetween } from "@/lib/booking/dates";
 
 const GEL = (n: number) => n * 100;
 const room: RateRoomType = { id: "rt1", slug: "deluxe", basePrice: GEL(200), weekendPrice: GEL(240), minStay: 1, maxAdults: 3, maxChildren: 2, maxOccupancy: 4, baseOccupancy: 2 };
@@ -173,5 +173,16 @@ describe("cancellation", () => {
   it("never refunds more than was paid", () => {
     expect(cancellationTerms({ ...base, amountPaid: GEL(100), todayLocal: "2027-07-08" })).toMatchObject({ penalty: GEL(300), refund: 0 });
     expect(cancellationTerms({ ...base, amountPaid: 0, todayLocal: "2027-07-01" }).refund).toBe(0);
+  });
+});
+
+describe("date validation", () => {
+  it("rejects calendar dates that do not exist", () => {
+    expect(isIsoDate("2027-02-28")).toBe(true);
+    expect(isIsoDate("2028-02-29")).toBe(true);
+    expect(isIsoDate("2027-02-29")).toBe(false);
+    expect(isIsoDate("2027-02-31")).toBe(false);
+    expect(isIsoDate("2027-04-31")).toBe(false);
+    expect(isIsoDate("2027-13-01")).toBe(false);
   });
 });

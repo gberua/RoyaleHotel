@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { ActionError, diff, gelToTetri, localized, staffAction, type ActionResult } from "@/lib/admin-action";
+import { ActionError, diff, gelToTetri, roomPrice, localized, staffAction, type ActionResult } from "@/lib/admin-action";
 import { logActivity } from "@/lib/booking/service";
 import { isIsoDate, toDate } from "@/lib/booking/dates";
 import { deletionVerdict } from "@/lib/admin/rooms";
@@ -35,7 +35,7 @@ export async function saveRoomType(_p: ActionResult, form: FormData): Promise<Ac
       sizeM2: base.sizeM2 === "" || base.sizeM2 == null ? null : Number(base.sizeM2), view: base.view || null,
       maxAdults: base.maxAdults, maxChildren: base.maxChildren, maxOccupancy: base.maxOccupancy, baseOccupancy: base.baseOccupancy,
       extraBeds: Math.max(0, base.maxOccupancy - base.baseOccupancy),
-      basePrice: gelToTetri(form.get("basePrice"), true)!, weekendPrice: gelToTetri(form.get("weekendPrice")),
+      basePrice: roomPrice(gelToTetri(form.get("basePrice"), true)!), weekendPrice: roomPrice(gelToTetri(form.get("weekendPrice"))),
       minStay: base.minStay, sortOrder: base.sortOrder, featured: form.get("featured") === "on", active: form.get("active") === "on",
     };
     const amenityIds = form.getAll("amenity").map(String);

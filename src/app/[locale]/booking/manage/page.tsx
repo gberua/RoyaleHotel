@@ -1,3 +1,4 @@
+import { longDate } from "@/lib/booking/dates";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
@@ -16,7 +17,7 @@ import { CancelPanel, LookupForm } from "@/components/booking/ManageForms";
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await rootLocale();
   const t = await getTranslations({ locale });
-  return { ...pageMetadata({ title: t("manage.title"), path: "/booking/manage", locale }), robots: { index: false } };
+  return { ...(await pageMetadata({ title: t("manage.title"), path: "/booking/manage", locale })), robots: { index: false } };
 }
 
 async function Manage({ searchParams, locale }: { searchParams: PageProps<"/[locale]/booking/manage">["searchParams"]; locale: string }) {
@@ -47,7 +48,7 @@ async function Manage({ searchParams, locale }: { searchParams: PageProps<"/[loc
         <CancelPanel
           bookingId={b.id}
           refund={terms.refund}
-          free={terms.freeCancellation ? t("manageBooking.cancelFree", { date: terms.deadline }) : null}
+          free={terms.freeCancellation ? t("manageBooking.cancelFree", { date: longDate(terms.deadline, locale) }) : null}
           penaltyLabel={t("manageBooking.cancelPenalty", { penalty: money(terms.penalty) })}
           refundLabel={b.amountPaid > 0 ? t("manageBooking.refund", { amount: money(terms.refund) }) : t("manageBooking.noRefund")}
         />

@@ -52,7 +52,7 @@ export async function adminRecordPayment(_p: Result, form: FormData): Promise<Re
     const b = await bookingByCode(String(form.get("code")));
     const amount = gel(form.get("amount"));
     const method = z.enum(["cash", "card_terminal", "bank_transfer"]).parse(form.get("method"));
-    if (!amount || amount < 0 || amount > 10_000_000) throw new ActionError("price_invalid");
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) throw new ActionError("price_invalid");
     await recordManualPayment(b.id, amount, method);
     await logActivity({ userId: user.id, action: "payment.record", entity: "Booking", entityId: b.id, summary: `${b.code}: payment ${amount / 100} GEL (${method})`, ip: await clientIp() });
     done(b.code);
@@ -90,12 +90,17 @@ export async function adminCancel(_p: Result, form: FormData): Promise<Result> {
     const b = await bookingByCode(String(form.get("code")));
     const preview = await cancellationPreview(b.id);
     const refund = form.get("refundMode") === "custom" ? gel(form.get("refundAmount")) : form.get("refundMode") === "none" ? 0 : preview.refund;
+    // checked BEFORE anything is cancelled: an empty / mistyped amount must not leave a half-cancelled booking
+    if (!Number.isFinite(refund) || refund < 0 || refund > b.amountPaid) throw new ActionError("refund_invalid", { max: (b.amountPaid / 100).toFixed(2) });
     await cancelBooking(b.id, String(form.get("reason") || "Cancelled by hotel").slice(0, 300));
     await db.booking.update({ where: { id: b.id }, data: { refundAmount: refund } });
     const r = form.get("refundOnline") === "on" ? await refundBookingPayments(b.id, refund) : { refunded: 0 };
     await logActivity({ userId: user.id, action: "booking.cancel", entity: "Booking", entityId: b.id, summary: `${b.code} cancelled by staff; refund ${refund / 100} GEL (online ${r.refunded / 100})`, ip: await clientIp() });
+    if ("outstanding" in r && (r.outstanding ?? 0) > 0) await db.bookingNote.create({ data: { bookingId: b.id, userId: user.id, body: `⚠️ Online refund failed: ${(r.outstanding ?? 0) / 100} GEL was NOT returned to the guest. Refund it by hand.` } });
     if (form.get("notifyGuest") === "on") after(() => notifyBookingCancelled(b.id, "staff"));
     done(b.code);
+    const unpaid = "outstanding" in r ? r.outstanding ?? 0 : 0;
+    if (unpaid > 0) return { ok: true, message: "booking_cancelled_refund_failed", values: { amount: (unpaid / 100).toFixed(2) } };
     return { ok: true, message: "booking_cancelled" };
   });
 }

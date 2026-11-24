@@ -2,6 +2,7 @@ import "server-only";
 import { translator, type T } from "./translator";
 import { loadBooking, type FullBooking } from "@/lib/booking/load";
 import { loadSettings } from "@/lib/booking/service";
+import { db } from "@/lib/db";
 import { tr } from "@/lib/i18n-content";
 import { formatMoney } from "@/lib/money";
 import { SITE_URL } from "@/lib/site-url";
@@ -62,12 +63,13 @@ export async function notifyBookingConfirmed(bookingId: string, opts: { hotel?: 
     const { locale, messages } = await messagesFor(b.locale);
     const t = translator(locale, messages, "email");
     const voucher = await renderVoucher(b, settings, messages);
-    await sendMail({
+    const sent = await sendMail({
       to: b.guest.email, subject: t("subjectConfirmed", { code: b.code }), html: emailHtml(b, "confirmed", t, settings, locale),
       attachments: [{ filename: `${b.code}.pdf`, content: voucher, contentType: "application/pdf" }], replyTo: settings.contact.bookingEmail,
-    });
+    }).catch(() => ({ ok: false }));
     if (opts.hotel !== false) await notifyHotel(b, "NEW BOOKING", settings);
-    return true;
+    if (!sent.ok) await reportNotSent(b, "confirmation");
+    return sent.ok;
   } catch (e) {
     console.error("[notify] confirmation failed", e);
     return false;
@@ -80,11 +82,22 @@ export async function notifyBookingCancelled(bookingId: string, by: "guest" | "s
     if (!b?.guest) return;
     const { locale, messages } = await messagesFor(b.locale);
     const t = translator(locale, messages, "email");
-    await sendMail({ to: b.guest.email, subject: t("subjectCancelled", { code: b.code }), html: emailHtml(b, "cancelled", t, settings, locale), replyTo: settings.contact.bookingEmail });
+    const sent = await sendMail({ to: b.guest.email, subject: t("subjectCancelled", { code: b.code }), html: emailHtml(b, "cancelled", t, settings, locale), replyTo: settings.contact.bookingEmail }).catch(() => ({ ok: false }));
+    if (!sent.ok) await reportNotSent(b, "cancellation");
     await notifyHotel(b, by === "guest" ? "CANCELLED BY GUEST" : "CANCELLED", settings);
   } catch (e) {
     console.error("[notify] cancellation failed", e);
   }
+}
+
+/** A guest e-mail that did not go out must not vanish: note it on the booking and alert the hotel. */
+async function reportNotSent(b: FullBooking, what: "confirmation" | "cancellation") {
+  const email = b.guest?.email ?? "";
+  console.error(`[notify] ${b.code}: ${what} e-mail to ${email} was not sent`);
+  await Promise.allSettled([
+    db.activityLog.create({ data: { action: "email.failed", entity: "Booking", entityId: b.id, summary: `${b.code}: ${what} e-mail to ${email} could NOT be sent` } }),
+    sendTelegram(`<b>⚠️ E-MAIL NOT SENT</b> · ${esc(b.code)}\nThe ${what} e-mail to ${esc(email)} did not go out. Contact the guest or send it again from the booking page.\n${SITE_URL}/admin/bookings/${encodeURIComponent(b.code)}`),
+  ]);
 }
 
 async function notifyHotel(b: FullBooking, label: string, settings: Awaited<ReturnType<typeof loadSettings>>) {

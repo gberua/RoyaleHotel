@@ -1,7 +1,7 @@
 "use server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { ActionError, diff, gelToTetri, localized, staffAction, type ActionResult } from "@/lib/admin-action";
+import { ActionError, diff, gelToTetri, roomPrice, localized, staffAction, type ActionResult } from "@/lib/admin-action";
 import { logActivity } from "@/lib/booking/service";
 import { isIsoDate, toDate, toIso } from "@/lib/booking/dates";
 import { seasonOverlaps } from "@/lib/booking/rates";
@@ -26,12 +26,12 @@ export async function saveSeason(_p: ActionResult, form: FormData): Promise<Acti
     const types = await db.roomType.findMany({ select: { id: true } });
     const rates: { roomTypeId: string; price: number; weekendPrice: number | null; minStay: number | null }[] = [];
     for (const rt of types) {
-      const price = gelToTetri(form.get(`price.${rt.id}`));
+      const price = roomPrice(gelToTetri(form.get(`price.${rt.id}`)));
       if (price == null) continue;
       const ms = String(form.get(`minStay.${rt.id}`) ?? "").trim();
       const minStay = ms ? Number(ms) : null;
       if (minStay != null && (!Number.isInteger(minStay) || minStay < 1 || minStay > 60)) throw new ActionError("min_stay_invalid");
-      rates.push({ roomTypeId: rt.id, price, weekendPrice: gelToTetri(form.get(`weekendPrice.${rt.id}`)), minStay });
+      rates.push({ roomTypeId: rt.id, price, weekendPrice: roomPrice(gelToTetri(form.get(`weekendPrice.${rt.id}`))), minStay });
     }
     const data = { name, startDate: toDate(f.startDate), endDate: toDate(f.endDate), color: f.color || null };
     const label = name.en || name.ka;

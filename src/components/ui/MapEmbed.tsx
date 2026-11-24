@@ -1,18 +1,19 @@
 "use client";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { MapPin, Navigation } from "lucide-react";
 
 /** Click-to-load Google map: keeps the page fast (Lighthouse) and loads Google only on request (GDPR). */
 export function MapEmbed({ lat, lng, address, directionsUrl, className = "" }: { lat: number; lng: number; address: string; directionsUrl: string; className?: string }) {
   const t = useTranslations("common");
+  const locale = useLocale();
   const [loaded, setLoaded] = useState(false);
   return (
     <div className={`relative overflow-hidden rounded-[var(--radius-card)] bg-foam ${className}`}>
       {loaded ? (
         <iframe
           title={address}
-          src={`https://maps.google.com/maps?q=${lat},${lng}&z=16&hl=en&output=embed`}
+          src={`https://maps.google.com/maps?q=${lat},${lng}&z=16&hl=${locale}&output=embed`}
           className="absolute inset-0 h-full w-full border-0"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
