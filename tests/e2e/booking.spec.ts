@@ -138,5 +138,5 @@ test("an offer's promo code travels with the 'Book this offer' link and is appli
   await expect(page.getByTestId("grand-total")).toContainText("₾");
   await expect(page.locator("#promo")).toHaveValue("EARLY10");
   // the guest is told straight away whether the code counts for these dates — never a silent full price
-  await expect(page.getByText(/Promo code applied|isn't valid/i)).toBeVisible();
+  await expect(page.getByText(/Promo code applied|can't be used for this stay/i)).toBeVisible(); // which one depends on whether the test dates fall in the offer's stay window
 });
