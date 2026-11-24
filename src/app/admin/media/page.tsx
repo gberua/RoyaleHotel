@@ -11,6 +11,7 @@ import { settingsSchema } from "@/lib/settings-schema";
 import { tr } from "@/lib/i18n-content";
 import { MEDIA_CATEGORIES } from "@/lib/media/categories";
 import { mediaUsage, type Usage } from "@/lib/admin/media-usage";
+import { ShrinkingFileInput } from "@/components/admin/ShrinkingFileInput";
 import { AdminFrame } from "@/components/admin/AdminFrame";
 import { ActionButton, AdminForm, Card, LocalizedInput, SelectInput, Toggle } from "@/components/admin/ui";
 import { SortableList } from "@/components/admin/Sortable";
@@ -67,7 +68,7 @@ function MediaCard({ m, t, usage, locale }: { m: Row; t: AdminT; usage: Usage[];
             </AdminForm>
             <AdminForm action={replaceMedia} submit={t("media.replace")} tone="ghost" className="border-t border-ink-100 pt-2">
               <input type="hidden" name="id" value={m.id} />
-              <label className="block text-xs font-medium">{t("media.replaceHint")}<input type="file" name="file" accept="image/*,.heic,.heif" className="mt-1 block w-full text-xs" /></label>
+              <label className="block text-xs font-medium">{t("media.replaceHint")}<ShrinkingFileInput name="file" accept="image/*,.heic,.heif" className="mt-1 block w-full text-xs" /></label>
             </AdminForm>
             <div className="border-t border-ink-100 pt-2">
               <ActionButton action={deleteMedia} fields={{ id: m.id, force: real.length ? "1" : "0" }} label={t("common.delete")} tone="danger"

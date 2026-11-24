@@ -56,8 +56,18 @@ test("rate calendar: select dates → preview old → new → apply → undo", a
   await expect(cells.nth(2).locator("span").first()).toHaveText(`${before}`);
 });
 
-test("media library: drag-drop upload converts the photo, then delete it", async ({ page, isMobile }) => {
+test("media library: drag-drop upload converts the photo, then delete it; a large phone photo is shrunk to fit the hosting upload limit", async ({ page, isMobile }) => {
   test.skip(isMobile, "upload flow covered on desktop");
+  // record the size of every file the page sends (the browser does not expose multipart bodies to the test)
+  await page.addInitScript(() => {
+    const w = window as unknown as { __largestUpload: number };
+    w.__largestUpload = 0;
+    const send = window.fetch;
+    window.fetch = (input, init) => {
+      if (init?.body instanceof FormData) for (const [, v] of init.body) if (v instanceof File) w.__largestUpload = Math.max(w.__largestUpload, v.size);
+      return send(input, init);
+    };
+  });
   await login(page);
   await page.goto("/admin/media?unused=1");
   await page.waitForLoadState("networkidle");
@@ -74,6 +84,25 @@ test("media library: drag-drop upload converts the photo, then delete it", async
   page.once("dialog", (d) => d.accept());
   await card.getByRole("button", { name: /Delete|წაშლა|Удалить/ }).click();
   await expect(card).toHaveCount(0);
+
+  // (same login as above: the admin sign-in is limited to 8 attempts per 15 minutes, which the suite already uses)
+  // 4000×3000 of noise: about 30 MB as PNG, far over the ~4.5 MB a Vercel request may carry
+  const noise = Buffer.alloc(4000 * 3000 * 3);
+  for (let i = 0; i < noise.length; i++) noise[i] = (i * 2654435761) >>> 24;
+  const big = await sharp(noise, { raw: { width: 4000, height: 3000, channels: 3 } }).jpeg({ quality: 100 }).toBuffer();
+  expect(big.length).toBeGreaterThan(5_000_000);
+  const bigName = `e2e-big-${Date.now()}.jpg`;
+  await page.getByTestId("media-file").setInputFiles({ name: bigName, mimeType: "image/jpeg", buffer: big });
+  const bigCard = page.getByTestId("media-card").filter({ hasText: bigName });
+  await expect(bigCard).toBeVisible({ timeout: 60_000 });
+  await expect(bigCard).toContainText("2560×1920");
+  const largestBody = await page.evaluate(() => (window as unknown as { __largestUpload: number }).__largestUpload);
+  expect(largestBody).toBeGreaterThan(100_000); // the upload really was measured
+  expect(largestBody).toBeLessThan(4_300_000);
+  await bigCard.locator("summary").click();
+  page.once("dialog", (d) => d.accept());
+  await bigCard.getByRole("button", { name: /Delete|წაშლა|Удалить/ }).click();
+  await expect(bigCard).toHaveCount(0);
 });
 
 test("website content: a draft is visible only in preview until published", async ({ page, context, isMobile }) => {

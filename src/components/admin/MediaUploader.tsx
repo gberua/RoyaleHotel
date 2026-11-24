@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, UploadCloud } from "lucide-react";
 import { uploadMedia } from "@/app/admin/media/actions";
+import { shrinkForUpload } from "@/lib/shrink-image";
 import { useErrorText } from "./ui";
 
 /** Drag-and-drop (or pick) many photos; each is uploaded and converted to WebP + AVIF one by one. */
@@ -23,7 +24,7 @@ export function MediaUploader({ category = "unsorted", roomTypeId, inGallery = f
     for (let i = 0; i < files.length; i++) {
       setBusy({ done: i, total: files.length });
       const fd = new FormData();
-      fd.set("file", files[i]);
+      fd.set("file", await shrinkForUpload(files[i])); // big phone photos are made small enough to upload
       fd.set("category", category);
       if (roomTypeId) fd.set("roomTypeId", roomTypeId);
       if (inGallery) fd.set("inGallery", "true");
