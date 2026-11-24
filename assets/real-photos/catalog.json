@@ -13,8 +13,7 @@
         "ka": "სასტუმრო Royal Palace ქობულეთის სახურავებს შორის, უკან თოვლიანი მთები",
         "en": "Royal Palace hotel among the rooftops of Kobuleti, with snow-capped mountains behind",
         "ru": "Отель Royal Palace среди крыш Кобулети, на заднем плане заснеженные горы"
-      },
-      "slot": "hero"
+      }
     },
     "palasi2/0L9A7013.jpg.jpg": {
       "name": "royal-palace-entrance-facade",
@@ -24,7 +23,8 @@
         "ka": "სასტუმრო Royal Palace-ის ფასადი, შესასვლელი და RP ემბლემა",
         "en": "Front of the Royal Palace hotel with the entrance and the RP emblem",
         "ru": "Фасад отеля Royal Palace: вход и эмблема RP"
-      }
+      },
+      "slot": "hero"
     },
     "royal palace/0L9A7291.jpg.jpg": {
       "name": "outdoor-pool-from-above",
