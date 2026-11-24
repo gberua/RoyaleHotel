@@ -8,6 +8,7 @@ import { locale as rawLocale } from "next/root-params";
 import "../globals.css";
 import { fontVariables, DISPLAY_FONT_STRETCH } from "@/config/fonts";
 import { LOCALE_REGISTRY, isLocale, locales } from "@/i18n/locales";
+import { preferReal } from "@/lib/prefer-real";
 import { getCurrencies, getHeroImages, getMediaByCategory, getSettings, type Img } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
 import { contactLinks } from "@/lib/contact";
@@ -60,7 +61,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
   // The full-screen menu shows a photo for each link
   const menuImages = {
     home: pick(hero[0]), rooms: pick(rooms[0]), amenities: pick(pool[0]), offers: pick(beach[0]),
-    gallery: pick(exterior[0]), kobuleti: pick(kobuleti[0]), reviews: pick(view[0]), contact: pick(lobby[0] ?? exterior[1]),
+    gallery: pick(exterior[0]), kobuleti: pick(kobuleti[0]), reviews: pick(view[0]), contact: pick(preferReal(lobby[0], exterior[1], exterior[0])),
   };
 
   return (

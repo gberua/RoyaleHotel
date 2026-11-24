@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { rootLocale } from "@/i18n/root-locale";
 import { Car, MapPin } from "lucide-react";
+import { preferReal } from "@/lib/prefer-real";
 import { getAttractions, getMediaByCategory, getSettings, pageCopy } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
 import { pageMetadata } from "@/lib/seo";
@@ -31,7 +32,7 @@ export default async function KobuletiPage() {
           itemListElement: items.map((a, i) => ({ "@type": "ListItem", position: i + 1, item: { "@type": "TouristAttraction", name: tr(a.title, locale), description: tr(a.summary, locale) } })),
         }}
       />
-      <PageHero title={copy.title} intro={copy.intro} image={hero[1] ?? hero[0]} locale={locale} />
+      <PageHero title={copy.title} intro={copy.intro} image={preferReal(hero[1], hero[0])} locale={locale} />
       <section className="container-x py-12 sm:py-16">
         <ol className="grid gap-x-8 gap-y-14 md:grid-cols-2">
           {items.map((a, i) => (
