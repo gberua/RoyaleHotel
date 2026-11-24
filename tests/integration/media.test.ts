@@ -18,6 +18,7 @@ vi.mock("@/lib/media/process", () => ({
 }));
 
 import { db } from "@/lib/db";
+import { getMediaByCategory } from "@/lib/data";
 import { importPhotos } from "../../scripts/import-images";
 
 const alt = { ka: "ფოტო", en: "Photo", ru: "Фото" };
@@ -82,5 +83,16 @@ describe("photo import with a catalog", () => {
     await expect(run({ "a/one.jpg": { category: "room", alt: { en: "Photo" } } })).rejects.toThrow(/alt text/i);
     await expect(run({ "a/one.jpg": { category: "room", alt, roomType: "no-such-room" } })).rejects.toThrow(/no-such-room/);
     expect(await db.media.count()).toBe(0);
+  });
+});
+
+describe("photo lookups by category", () => {
+  it("a real photo wins over a demo one; demo photos still fill a category with no real photo", async () => {
+    await demo("pool", { galleryOrder: 0 });
+    await db.media.create({ data: { url: "/real-pool.webp", width: 8, height: 8, category: "pool", galleryOrder: 5 } });
+    await demo("lobby");
+    expect((await getMediaByCategory("pool", 1))[0].isDemo).toBe(false);
+    expect((await getMediaByCategory("pool", 2)).map((m) => m.isDemo)).toEqual([false, true]);
+    expect(await getMediaByCategory("lobby", 1)).toHaveLength(1);
   });
 });

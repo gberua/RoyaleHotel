@@ -110,7 +110,8 @@ export async function getMediaByCategory(category: string, take = 12): Promise<I
   "use cache";
   cacheLife("days");
   cacheTag(TAGS.media);
-  const rows = await db.media.findMany({ where: { category }, orderBy: { galleryOrder: "asc" }, take });
+  // real hotel photos before demo (stock) ones, so page bands and the menu never pick stock when a real photo exists
+  const rows = await db.media.findMany({ where: { category }, orderBy: [{ isDemo: "asc" }, { galleryOrder: "asc" }, { createdAt: "asc" }], take });
   return rows.map(toImg);
 }
 
