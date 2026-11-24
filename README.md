@@ -49,7 +49,25 @@ Every variable is documented in `.env.example`. Minimum to run: `DATABASE_URL`, 
 
 Photos are managed in **Admin → Media library** (upload, order, alt text, replace). Licensed DEMO photos are marked there until the hotel's own photos replace them.
 
-## Demo photos (until the real hotel photos arrive)
+## Real hotel photos
+
+The hotel's own photos are not in git (about 45 MB). The list of which photo goes where is:
+`assets/real-photos/catalog.json` (category, alt text in KA/EN/RU, gallery position, room type, hero / CTA slot,
+service and offer).
+
+1. Extract the photos to `~/Downloads/royal-palace-pictures` (on Windows: `C:\Users\<you>\Downloads\royal-palace-pictures`),
+   keeping the three sub-folders. Another folder: set `REAL_PHOTOS_DIR`.
+2. Run `npm run photos:real`, then restart the dev server (pages are cached).
+
+It sets the home hero and the booking call-to-action photo, replaces the Standard Double photos, points the pool and
+beach services and both offers at real photos, and takes every demo photo out of the gallery. Demo photos are only
+unlinked, never deleted. Safe to re-run: edit the catalog and run again; photos already imported are updated in place.
+A catalog that names a missing file, room type, service or offer stops the run before anything changes.
+
+**Live site:** run the same command with the live `DATABASE_URL` and storage settings in the environment
+(photo records belong to one environment: the local import does not reach production).
+
+## Demo photos (still used where no real photo exists yet)
 
 All image slots are filled with licensed Unsplash / Pexels photos listed in `assets/demo/demo-photos.json`
 (credits in `CREDITS.md`). `npm run demo:photos` downloads, optimizes and links them; `npm run demo:hero` does the hero.
@@ -119,6 +137,7 @@ behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up t
 | `npm run build && npm start` | production build / server |
 | `npm run db:seed` | add missing placeholder data |
 | `npm run images` | import photos from `assets/google-maps/` |
+| `npm run photos:real` | import the real hotel photos listed in `assets/real-photos/catalog.json` |
 | `npm run demo:photos` | (re)import the licensed demo photos |
 | `npm run db:studio` | browse the database |
 | `npm run typecheck` / `npm run lint` | checks |
