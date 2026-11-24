@@ -30,6 +30,7 @@
  * matches a category is used (assets/google-maps/pool/…).
  */
 import "dotenv/config";
+import { realpathSync } from "node:fs";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { homedir } from "node:os";
@@ -38,7 +39,7 @@ import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { processImage } from "../src/lib/media/process";
-import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, problems, toPosix } from "./lib/photo-catalog";
+import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, problems, storageProblem, toPosix } from "./lib/photo-catalog";
 
 const EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".tif", ".tiff"]);
 
@@ -86,7 +87,9 @@ export async function importPhotos(db: PrismaClient, opts: ImportOptions) {
     const buf = await readFile(file);
     const checksum = createHash("sha256").update(buf).digest("hex");
     const existing = await db.media.findUnique({ where: { checksum } });
-    if (existing && !entry) { result.skipped++; console.log(`  already in library  ${rel}`); continue; }
+    // Only a hand-picked list (onlyListed) is the source of truth for a photo that is already in the library;
+    // a plain folder import or an old flat catalog leaves it alone, so edits made in the admin are kept.
+    if (existing && (!entry || !catalog.onlyListed)) { result.skipped++; console.log(`  already in library  ${rel}`); continue; }
 
     const category = categoryFor(rel, entry);
     const details = {
@@ -115,6 +118,12 @@ export async function importPhotos(db: PrismaClient, opts: ImportOptions) {
       result.failed++;
       console.error(`  ✗ ${rel}: ${(e as Error).message}`);
     }
+  }
+
+  // A photo that failed would leave its slot half-filled (a room with no photos, an empty gallery): change no links.
+  if (result.failed) {
+    console.error(`\n${result.failed} photo(s) failed, so rooms, services, offers, gallery and hero were left as they were. Fix the error and run again.`);
+    return result;
   }
 
   // ── Links: rooms, services, offers, gallery, hero ──
@@ -149,6 +158,8 @@ async function main() {
   const real = process.argv.includes("--real");
   const dir = arg("dir") ?? (real ? process.env.REAL_PHOTOS_DIR || join(homedir(), "Downloads", "royal-palace-pictures") : join(process.cwd(), "assets", "google-maps"));
   const catalogPath = arg("catalog") ?? (real ? join(process.cwd(), "assets", "real-photos", "catalog.json") : join(dir, "catalog.json"));
+  const blocked = storageProblem(process.env.DATABASE_URL, process.env.STORAGE_DRIVER);
+  if (blocked) { console.error(blocked); process.exitCode = 1; return; }
   const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
   try {
     const r = await importPhotos(db, { dir, catalogPath, sourcePrefix: real ? "real" : "google-maps" });
@@ -163,4 +174,6 @@ async function main() {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) void main();
+// run only as a script, not when imported by a test (realpath: the folder may be reached through a link)
+const invoked = (() => { try { return pathToFileURL(realpathSync(process.argv[1] ?? "")).href; } catch { return ""; } })();
+if (invoked === import.meta.url) void main();

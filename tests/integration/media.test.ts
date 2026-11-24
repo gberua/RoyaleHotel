@@ -19,6 +19,7 @@ vi.mock("@/lib/media/process", () => ({
 
 import { db } from "@/lib/db";
 import { getMediaByCategory } from "@/lib/data";
+import { processImage } from "@/lib/media/process";
 import { importPhotos } from "../../scripts/import-images";
 
 const alt = { ka: "ფოტო", en: "Photo", ru: "Фото" };
@@ -83,6 +84,34 @@ describe("photo import with a catalog", () => {
     await expect(run({ "a/one.jpg": { category: "room", alt: { en: "Photo" } } })).rejects.toThrow(/alt text/i);
     await expect(run({ "a/one.jpg": { category: "room", alt, roomType: "no-such-room" } })).rejects.toThrow(/no-such-room/);
     expect(await db.media.count()).toBe(0);
+  });
+});
+
+describe("photo import that goes wrong", () => {
+  it("a photo that fails to upload leaves rooms, gallery and hero exactly as they were", async () => {
+    const room = await db.roomType.create({ data: { slug: "standard-double", name: { en: "Standard Double" }, basePrice: 20000, maxAdults: 2, maxOccupancy: 2 } });
+    const demoCover = await demo("room", { inGallery: true });
+    await db.roomTypePhoto.create({ data: { roomTypeId: room.id, mediaId: demoCover.id, sortOrder: 0 } });
+    await db.setting.create({ data: { key: "media", value: { heroImageIds: ["demoHero"] } } });
+    vi.mocked(processImage).mockRejectedValueOnce(new Error("storage is down"));
+
+    const r = await importPhotos(db, { dir, sourcePrefix: "real", catalogPath: await catalog({
+      "a/one.jpg": { category: "room", alt, gallery: 0, roomType: "standard-double", slot: "hero" },
+      "a/two.jpg": { category: "room", alt, gallery: 1, roomType: "standard-double", slot: "cta" },
+    }) });
+    expect(r).toMatchObject({ imported: 1, failed: 1 });
+    expect((await db.roomTypePhoto.findMany({ where: { roomTypeId: room.id } })).map((l) => l.mediaId)).toEqual([demoCover.id]);
+    expect((await db.media.findUniqueOrThrow({ where: { id: demoCover.id } })).inGallery).toBe(true);
+    expect((await db.setting.findUniqueOrThrow({ where: { key: "media" } })).value).toEqual({ heroImageIds: ["demoHero"] });
+  });
+
+  it("an old flat catalog still skips photos that are already in the library (admin edits are kept)", async () => {
+    const path = join(dir, "flat.json");
+    await writeFile(path, JSON.stringify({ "one.jpg": { category: "pool" } }));
+    expect(await importPhotos(db, { dir, sourcePrefix: "google-maps", catalogPath: path })).toMatchObject({ imported: 3 });
+    await db.media.updateMany({ where: { category: "pool" }, data: { category: "view", inGallery: false } }); // edited in the admin
+    expect(await importPhotos(db, { dir, sourcePrefix: "google-maps", catalogPath: path })).toMatchObject({ imported: 0, updated: 0, skipped: 3 });
+    expect(await db.media.count({ where: { category: "view", inGallery: false } })).toBe(1);
   });
 });
 

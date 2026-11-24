@@ -96,6 +96,19 @@ export function heroSettings(media: Record<string, unknown>, ids: { hero?: strin
   const explicit = Boolean(ids.hero || ids.cta);
   const list = explicit ? [ids.hero ?? current[0], ids.cta ?? current[1], ...ids.appended] : [...current, ...ids.appended];
   const out: Record<string, unknown> = { ...media, heroImageIds: [...new Set(list.filter(Boolean))] };
-  if (ids.hero) { out.ogImageId = ids.hero; out.heroMobileImageId = ""; }
+  // only when the hero actually changes: a re-run must not undo a phone hero or share image chosen in the admin since
+  if (ids.hero && ids.hero !== current[0]) { out.ogImageId = ids.hero; out.heroMobileImageId = ""; }
   return out;
+}
+
+/**
+ * Photo files are written by the storage driver of the machine that runs the import. A remote (live) database
+ * with local storage would record /media/… addresses for files that only exist on this computer.
+ */
+export function storageProblem(databaseUrl: string | undefined, storageDriver: string | undefined): string | null {
+  let host = "";
+  try { host = new URL(databaseUrl ?? "").hostname; } catch { return "DATABASE_URL is missing or not a valid address"; }
+  const local = ["localhost", "127.0.0.1", "::1", "[::1]", ""].includes(host);
+  if (local || (storageDriver ?? "local") !== "local") return null;
+  return `The database is remote (${host}) but photos would be saved on this computer. Set STORAGE_DRIVER (and its token) to the live site's storage, then run again.`;
 }

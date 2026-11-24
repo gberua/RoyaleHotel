@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, problems, toPosix } from "../../scripts/lib/photo-catalog";
+import { categoryFor, entryFor, heroSettings, missingFiles, parseCatalog, problems, storageProblem, toPosix } from "../../scripts/lib/photo-catalog";
 
 describe("photo catalog", () => {
   it("matches catalog keys on Windows paths", () => {
@@ -33,5 +33,18 @@ describe("photo catalog", () => {
     expect(heroSettings({ heroImageIds: ["old", "oldCta", "x"], heroMobileImageId: "demo", logoUrl: "l" }, { hero: "H", cta: "C", appended: [] }))
       .toEqual({ heroImageIds: ["H", "C"], heroMobileImageId: "", ogImageId: "H", logoUrl: "l" });
     expect(heroSettings({ heroImageIds: ["old"] }, { appended: ["n", "old"] })).toEqual({ heroImageIds: ["old", "n"] });
+  });
+
+  it("a re-run with the same hero keeps a phone hero and share image chosen in the admin since", () => {
+    const set = { heroImageIds: ["H", "C"], heroMobileImageId: "portrait", ogImageId: "share" };
+    expect(heroSettings(set, { hero: "H", cta: "C", appended: [] })).toEqual(set);
+  });
+
+  it("refuses a remote database with local photo storage", () => {
+    expect(storageProblem("postgresql://u:p@db.example.com:5432/x", undefined)).toMatch(/STORAGE_DRIVER/);
+    expect(storageProblem("postgresql://u:p@db.example.com:5432/x", "local")).toMatch(/STORAGE_DRIVER/);
+    expect(storageProblem("postgresql://u:p@db.example.com:5432/x", "blob")).toBeNull();
+    expect(storageProblem("postgresql://postgres@localhost:54329/royale_hotel", undefined)).toBeNull();
+    expect(storageProblem("postgresql://postgres@127.0.0.1/royale_hotel", "local")).toBeNull();
   });
 });
