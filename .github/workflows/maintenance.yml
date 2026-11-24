@@ -1,0 +1,38 @@
+# Calls the site's maintenance job every 15 minutes: syncs the Booking.com / Airbnb calendars, releases
+# expired holds, re-checks pending payments and sends the automatic guest e-mails.
+# (Vercel's own cron in vercel.json runs once a day on the Hobby plan and stays as a fallback.)
+#
+# Needs two repository settings (Settings → Secrets and variables → Actions):
+#   secret   CRON_SECRET  the same value as CRON_SECRET in the Vercel project
+#   variable SITE_URL     the live address without a trailing slash, e.g. https://royalpalacehotel.ge
+# GitHub runs schedules only from the default branch, may start them a few minutes late, and pauses
+# them after 60 days without any commit in the repository.
+name: Site maintenance
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: maintenance
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Run the maintenance job
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::error::Set the SITE_URL variable and the CRON_SECRET secret (see the top of this file)."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error --max-time 240 \
+            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/maintenance"

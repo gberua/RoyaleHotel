@@ -125,7 +125,9 @@ behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up t
 - Photos: Vercel Blob store (public) → `STORAGE_DRIVER=blob` + `BLOB_READ_WRITE_TOKEN`.
 - Build command `node scripts/vercel-build.mjs` (vercel.json): runs migrations on every deploy. The first deploy ran with
   `SETUP_DATA=1` (seed + DEMO photos to Blob + pay-at-hotel only); that flag was removed afterwards — never set it again on a live site.
-- Background job: once a day on Hobby (`vercel.json` cron). Expired holds are also released on every booking search.
+- Background job: every 15 minutes through GitHub Actions (`.github/workflows/maintenance.yml`; set the `CRON_SECRET` secret
+  and the `SITE_URL` variable in the repository settings), plus once a day from `vercel.json` as a fallback. Expired holds are
+  also released on every booking search.
 - Online payments are off until TBC / Bank of Georgia keys are added (then Admin → Settings → Payment options).
 - E-mails need `RESEND_API_KEY` (and a verified sending domain) — without it no e-mail is sent on Vercel.
 
