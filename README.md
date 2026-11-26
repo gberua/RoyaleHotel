@@ -67,6 +67,13 @@ A catalog that names a missing file, room type, service or offer stops the run b
 **Live site:** run the same command with the live `DATABASE_URL` and storage settings in the environment
 (photo records belong to one environment: the local import does not reach production).
 
+## Real room list
+
+`npm run rooms:real` sets up the hotel's 59 rooms: 43 two-person, 6 three-person, 10 four-person (`scripts/lib/room-plan.ts`).
+It removes the demo room types, keeps existing prices, and gives a new type a starting price. Still provisional until
+the hotel confirms them: prices, the room numbers on floors 3–4, and photos of a four-person room.
+After running it against the live database, redeploy (pages are cached).
+
 ## Demo photos (still used where no real photo exists yet)
 
 All image slots are filled with licensed Unsplash / Pexels photos listed in `assets/demo/demo-photos.json`
@@ -140,6 +147,7 @@ behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up t
 | `npm run db:seed` | add missing placeholder data |
 | `npm run images` | import photos from `assets/google-maps/` |
 | `npm run photos:real` | import the real hotel photos listed in `assets/real-photos/catalog.json` |
+| `npm run rooms:real` | replace the demo rooms with the hotel's real list (59 rooms, `scripts/lib/room-plan.ts`); never changes prices, refuses while a room to be removed has a booking |
 | `npm run demo:photos` | (re)import the licensed demo photos |
 | `npm run db:studio` | browse the database |
 | `npm run typecheck` / `npm run lint` | checks |

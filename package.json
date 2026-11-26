@@ -16,6 +16,7 @@
     "db:studio": "prisma studio",
     "images": "tsx scripts/import-images.ts",
     "photos:real": "tsx scripts/import-images.ts --real",
+    "rooms:real": "tsx scripts/live-rooms.ts",
     "postinstall": "prisma generate && node scripts/fonts.mjs",
     "demo:hero": "tsx scripts/demo-hero.ts",
     "demo:photos": "tsx scripts/demo-photos.ts",
