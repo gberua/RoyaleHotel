@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getCurrentYear, getPage, getPolicies, getSettings } from "@/lib/data";
+import { getCurrentYear, getPage, getPolicies, getSettings, getTours } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
 import { contactLinks } from "@/lib/contact";
 import { Logo } from "./Logo";
@@ -17,7 +17,7 @@ const LINK = "block min-w-0 py-2.5 leading-5 break-words [hyphens:auto] hover:te
 
 export async function SiteFooter({ locale }: { locale: string }) {
   const t = await getTranslations({ locale });
-  const [settings, policies, footer] = await Promise.all([getSettings(), getPolicies(), getPage("footer")]);
+  const [settings, policies, footer, tours] = await Promise.all([getSettings(), getPolicies(), getPage("footer"), getTours()]);
   const links = contactLinks(settings.contact);
   const year = await getCurrentYear();
 
@@ -49,7 +49,7 @@ export async function SiteFooter({ locale }: { locale: string }) {
         <nav aria-label={t("footer.explore")} className="min-w-0">
           <p className={HEADING}>{t("footer.explore")}</p>
           <ul className={LIST}>
-            {(["rooms", "amenities", "offers", "gallery", "kobuleti", "reviews"] as const).map((k) => (
+            {(["rooms", "amenities", "offers", "gallery", "kobuleti", "tours", "reviews"] as const).filter((k) => k !== "tours" || tours.length > 0).map((k) => (
               <li key={k}><Link href={`/${k}`} className={LINK}>{t(`nav.${k}`)}</Link></li>
             ))}
           </ul>

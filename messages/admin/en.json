@@ -434,6 +434,7 @@
       "service": "Amenity",
       "offer": "Offer",
       "attraction": "Kobuleti",
+      "tour": "Tour",
       "page": "Page share image"
     },
     "cat": {
@@ -649,7 +650,8 @@
       "faq": "FAQ",
       "policies": "Policies",
       "offers": "Offers & packages",
-      "kobuleti": "Kobuleti"
+      "kobuleti": "Kobuleti",
+      "tours": "Tours"
     },
     "pages": {
       "home": "Home page",
@@ -658,6 +660,7 @@
       "offers": "Offers",
       "gallery": "Gallery",
       "kobuleti": "About Kobuleti",
+      "tours": "Tours",
       "reviews": "Reviews",
       "contact": "Contact",
       "faq": "FAQ",
@@ -670,6 +673,7 @@
       "offers": "Page title, intro, SEO",
       "gallery": "Page title, intro, SEO",
       "kobuleti": "Page title, intro, SEO",
+      "tours": "Page title, intro, SEO",
       "reviews": "Page title, intro, SEO",
       "contact": "Page title, intro, SEO",
       "faq": "Page title, intro, SEO",
@@ -768,7 +772,12 @@
     "distanceKm": "Distance (km)",
     "driveMinutes": "Drive (min)",
     "mapUrl": "Google Maps link",
-    "addPlace": "Add a place"
+    "addPlace": "Add a place",
+    "toursHint": "Tours shown on the Tours page: information and photos only, no prices. The page is hidden from the menu while no tour is published. Upload photos in the Media library first. Page intro:",
+    "tourDuration": "Duration (e.g. Full day)",
+    "tourMainPhoto": "Main photo",
+    "tourMorePhotos": "More photos",
+    "addTour": "Add a tour"
   },
   "bk": {
     "title": "Bookings",

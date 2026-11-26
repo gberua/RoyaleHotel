@@ -14,12 +14,12 @@ import { ActionButton, AdminForm, Card, LocalizedInput, SelectInput, TextInput, 
 import { SortableList } from "@/components/admin/Sortable";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import {
-  deleteAttraction, deleteFaq, deleteOffer, deletePolicy, discardPolicyDraft, orderAttractions, orderFaq, orderOffers, orderPolicies,
-  publishPolicy, saveAttraction, saveFaq, saveOffer, savePolicyDraft,
+  deleteAttraction, deleteFaq, deleteOffer, deletePolicy, deleteTour, discardPolicyDraft, orderAttractions, orderFaq, orderOffers, orderPolicies,
+  orderTours, publishPolicy, saveAttraction, saveFaq, saveOffer, savePolicyDraft, saveTour,
 } from "./actions";
 
 export const metadata: Metadata = { title: "Website content" };
-const TABS = ["pages", "faq", "policies", "offers", "kobuleti"] as const;
+const TABS = ["pages", "faq", "policies", "offers", "kobuleti", "tours"] as const;
 type L = Record<string, string>;
 
 async function Content({ searchParams }: { searchParams: PageProps<"/admin/content">["searchParams"] }) {
@@ -156,6 +156,37 @@ async function Content({ searchParams }: { searchParams: PageProps<"/admin/conte
           })} />
         </Card>
         <Card title={t("content.addOffer")}>{form()}</Card>
+      </div>
+    );
+  } else if (tab === "tours") {
+    const items = await db.tour.findMany({ orderBy: { sortOrder: "asc" } });
+    const form = (x?: (typeof items)[number]) => (
+      <AdminForm action={saveTour} submit={x ? t("common.save") : t("common.add")} resetOnSuccess={!x} tone={x ? "ghost" : "primary"} className="space-y-3">
+        {x && <input type="hidden" name="id" value={x.id} />}
+        <LocalizedInput label={t("content.texts.title")} name="title" value={x?.title as L} required />
+        <LocalizedInput label={t("content.summary")} name="summary" value={x?.summary as L} multiline rows={2} required />
+        <LocalizedInput label={t("content.details")} name="body" value={x?.body as L} multiline rows={5} />
+        <LocalizedInput label={t("content.tourDuration")} name="duration" value={x?.duration as L} />
+        <MediaPicker name="mediaId" value={x?.mediaId} label={t("content.tourMainPhoto")} noneLabel={t("content.noPhoto")} />
+        <MediaPicker name="photoIds" multiple values={x?.photoIds} label={t("content.tourMorePhotos")} noneLabel={t("content.noPhoto")} />
+        <Toggle name="active" label={t("content.published")} defaultChecked={x?.active ?? true} hint={t("content.publishedHint")} />
+      </AdminForm>
+    );
+    body = (
+      <div className="space-y-4">
+        <p className="text-sm text-ink-700">{t("content.toursHint")} <Link href="/admin/content/pages/tours" className="font-semibold text-sea-700 hover:underline">{t("content.pages.tours")}</Link> · <Link href="/admin/media" className="font-semibold text-sea-700 hover:underline">{t("nav.media")}</Link></p>
+        <Card actions={preview("/tours")}>
+          <SortableList action={orderTours} items={items.map((x) => ({
+            id: x.id,
+            node: (
+              <details>
+                <summary className="flex cursor-pointer flex-wrap items-center gap-2 p-1"><span className="font-semibold">{tr(x.title, loc)}</span><span className={pill(x.active)}>{x.active ? t("content.published") : t("content.draftBadge")}</span></summary>
+                <div className="mt-2 space-y-2 border-t border-ink-100 pt-3">{form(x)}<ActionButton action={deleteTour} fields={{ id: x.id }} label={t("common.delete")} tone="danger" confirm={t("content.deleteConfirm")} /></div>
+              </details>
+            ),
+          }))} />
+        </Card>
+        <Card title={t("content.addTour")}>{form()}</Card>
       </div>
     );
   } else {

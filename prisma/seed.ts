@@ -87,9 +87,9 @@ async function main() {
     airportDriveMin: 35,
   });
   await setting("contact", {
-    phone: "+995 592 44 11 15",
-    email: "info@royalpalacehotel.ge",
-    bookingEmail: "booking@royalpalacehotel.ge",
+    phone: "+995 591 05 55 88",
+    email: "corporate@royalpalacehotel.ge",
+    bookingEmail: "corporate@royalpalacehotel.ge",
     whatsapp: "995592441115",
     viber: "+995592441115",
     telegram: "",

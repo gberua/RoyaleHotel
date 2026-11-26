@@ -20,20 +20,24 @@ export const NAV = [
   { href: "/offers", key: "offers" },
   { href: "/gallery", key: "gallery" },
   { href: "/kobuleti", key: "kobuleti" },
+  { href: "/tours", key: "tours" },
   { href: "/reviews", key: "reviews" },
   { href: "/contact", key: "contact" },
 ] as const;
 
 /** Routes that open with a full-bleed photo: the header starts transparent with white text. */
-const OVERLAY = new Set(["/", "/rooms", "/amenities", "/offers", "/gallery", "/kobuleti"]);
+const OVERLAY = new Set(["/", "/rooms", "/amenities", "/offers", "/gallery", "/kobuleti", "/tours"]);
 export const isOverlayRoute = (path: string) => OVERLAY.has(path) || /^\/offers\/[^/]+$/.test(path);
 
 type Props = {
   contact: { phone: string; tel: string; email: string; address: string; whatsapp: string | null; viber: string | null; telegram: string | null; instagram: string; facebook: string };
   menuImages: Record<string, MenuImage>;
+  /** nav keys to leave out (e.g. "tours" while no tour is published) */
+  hidden?: string[];
 };
 
-export function SiteHeader({ contact, menuImages }: Props) {
+export function SiteHeader({ contact, menuImages, hidden = [] }: Props) {
+  const nav = NAV.filter((item) => !hidden.includes(item.key));
   const t = useTranslations();
   const pathname = usePathname();
   const isOverlay = isOverlayRoute(pathname);
@@ -149,7 +153,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
           <div className="flex flex-col">
             <nav aria-label="Main">
               <ol>
-                {NAV.map((item, i) => {
+                {nav.map((item, i) => {
                   const current = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(item.href + "/");
                   return (
                     <li
@@ -179,7 +183,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
 
             <div
               className={`mt-auto grid gap-8 pt-10 transition-[opacity,transform] duration-700 sm:grid-cols-2 ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
-              style={{ transitionDelay: open ? `${160 + NAV.length * 55}ms` : "0ms" }}
+              style={{ transitionDelay: open ? `${160 + nav.length * 55}ms` : "0ms" }}
             >
               <ul className="space-y-2.5 text-sm text-ink-700">
                 <li className="flex gap-3"><MapPin size={17} className="mt-0.5 shrink-0 text-sea-700" aria-hidden />{contact.address}</li>
@@ -212,7 +216,7 @@ export function SiteHeader({ contact, menuImages }: Props) {
             className={`relative hidden overflow-hidden rounded-[var(--radius-card)] bg-mist transition-[opacity,clip-path] duration-1000 ease-[var(--ease-out-soft)] lg:block ${open ? "opacity-100 [clip-path:inset(0_0_0_0)]" : "opacity-0 [clip-path:inset(0_0_100%_0)]"}`}
           >
             {everOpened &&
-              NAV.map((item) => {
+              nav.map((item) => {
                 const img = menuImages[item.key];
                 if (!img) return null;
                 return (

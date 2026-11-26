@@ -6,10 +6,11 @@ import { SITE_URL } from "@/lib/seo";
 
 /** Every public page in every language, with hreflang alternates. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [rooms, offers, policies] = await Promise.all([
+  const [rooms, offers, policies, tours] = await Promise.all([
     db.roomType.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }),
     db.offer.findMany({ where: { active: true }, select: { slug: true, createdAt: true } }),
     db.policy.findMany({ select: { slug: true, updatedAt: true } }),
+    db.tour.count({ where: { active: true } }),
   ]);
   const pages: { path: string; priority: number; lastModified?: Date }[] = [
     { path: "/", priority: 1 },
@@ -20,6 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/amenities", priority: 0.7 },
     { path: "/gallery", priority: 0.6 },
     { path: "/kobuleti", priority: 0.7 },
+    ...(tours ? [{ path: "/tours", priority: 0.7 }] : []),
     { path: "/reviews", priority: 0.6 },
     { path: "/contact", priority: 0.7 },
     { path: "/faq", priority: 0.5 },

@@ -565,6 +565,24 @@ model Offer {
   createdAt   DateTime  @default(now())
 }
 
+/// Tours the hotel offers — shown on the Tours page for information only (no prices, not bookable online).
+model Tour {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     Json
+  summary   Json
+  body      Json?
+  /// free text, e.g. "Full day" / "4 hours"
+  duration  Json?
+  /// main photo
+  mediaId   String?
+  /// more photos (Media ids)
+  photoIds  String[] @default([])
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
 model Attraction {
   id          String  @id @default(cuid())
   slug        String  @unique

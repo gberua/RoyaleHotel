@@ -94,6 +94,7 @@ person picks their own language (My account; the login screen has a switch too).
 | Prices | Rate calendar · Seasons · Extras & children · Promo codes | drag over dates → preview old → new → apply; changes affect **new** bookings only |
 | Photos | Media library | drag-drop many files (auto WebP + AVIF), order per room / gallery, alt text ×3, cover, Replace, DEMO filter |
 | Texts & SEO | Website content | drafts → *Preview* (shows the real site with your draft) → *Publish* |
+| Tours | Website content → Tours | tours the hotel offers: text and photos only, no prices; the Tours page and its menu link appear once a tour is published |
 | Staff | Staff (owner only) | roles: Owner · Manager · Receptionist · Housekeeping; e-mail invite or one-time password; 5 wrong passwords lock an account for 15 min |
 | Hotel facts, booking rules, payments, alerts, currencies | Settings (owner only) | optional daily exchange-rate update from the National Bank of Georgia |
 | Today at a glance | Dashboard | arrivals / departures with one-click check-in / out, occupancy, revenue (owner & manager), unpaid, new & cancelled bookings, rooms to clean |

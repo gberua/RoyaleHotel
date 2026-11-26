@@ -5,10 +5,19 @@
     "standard-double"
   ],
   "photos": {
-    "palasi 3/DJI_20261117141720_0803_D.jpg.jpg": {
-      "name": "royal-palace-kobuleti-aerial-mountains",
+    "royal palace/royal-palace-aerial-pines.png": {
+      "name": "royal-palace-aerial-pines",
       "category": "kobuleti",
       "gallery": 0,
+      "alt": {
+        "ka": "სასტუმრო Royal Palace ზემოდან, ფიჭვნარსა და შემოდგომის ხეებს შორის",
+        "en": "Royal Palace hotel from above, between the pine grove and autumn trees",
+        "ru": "Отель Royal Palace с высоты, среди сосновой рощи и осенних деревьев"
+      }
+    },
+    "palasi 3/DJI_20261117141720_0803_D.jpg.jpg": {
+      "name": "royal-palace-kobuleti-aerial-mountains",
+      "category": "unsorted",
       "alt": {
         "ka": "სასტუმრო Royal Palace ქობულეთის სახურავებს შორის, უკან თოვლიანი მთები",
         "en": "Royal Palace hotel among the rooftops of Kobuleti, with snow-capped mountains behind",
@@ -24,9 +33,21 @@
         "en": "Front of the Royal Palace hotel with the entrance and the RP emblem",
         "ru": "Фасад отеля Royal Palace: вход и эмблема RP"
       },
-      "slot": "hero",
       "crop": {
         "left": 0.06
+      }
+    },
+    "royal palace/royal-palace-front-evening.png": {
+      "name": "royal-palace-front-evening",
+      "category": "exterior",
+      "alt": {
+        "ka": "სასტუმრო Royal Palace-ის ფასადი საღამოს: განათებული აივნები, რესტორანი და ლაუნჯ ბარი",
+        "en": "Front of the Royal Palace hotel in the evening, with lit balconies, the restaurant and the lounge bar",
+        "ru": "Фасад отеля Royal Palace вечером: освещённые балконы, ресторан и лаундж-бар"
+      },
+      "slot": "hero",
+      "crop": {
+        "left": 0.05
       }
     },
     "royal palace/0L9A7291.jpg.jpg": {
@@ -348,6 +369,153 @@
         "ka": "807-ე ნომრის ღია კარი და ხედი ოთახში",
         "en": "Open door of room 807 with a view into the room",
         "ru": "Открытая дверь номера 807 и вид в комнату"
+      }
+    },
+    "tours/makhuntseti-waterfall.png": {
+      "name": "tour-makhuntseti-waterfall",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მახუნცეთის ჩანჩქერი მწვანე ფერდობებს შორის, ძირში სახედი ხიდით",
+        "en": "Makhuntseti waterfall between green slopes, with a viewing bridge at its foot",
+        "ru": "Водопад Махунцети среди зелёных склонов, у подножия — смотровой мостик"
+      },
+      "crop": {
+        "bottom": 0.15
+      }
+    },
+    "tours/makhuntseti-bridge.png": {
+      "name": "tour-queen-tamar-bridge",
+      "category": "unsorted",
+      "alt": {
+        "ka": "თამარის ქვის თაღოვანი ხიდი მდინარე აჭარისწყალზე, ტყიანი მთების ფონზე",
+        "en": "Queen Tamar's stone arch bridge over the Acharistskali river, with forested mountains behind",
+        "ru": "Каменный арочный мост царицы Тамары через реку Аджарисцкали на фоне лесистых гор"
+      }
+    },
+    "tours/gonio-fortress.png": {
+      "name": "tour-gonio-fortress",
+      "category": "unsorted",
+      "alt": {
+        "ka": "გონიოს ციხის ქვის გალავანი და შესასვლელი კარიბჭე",
+        "en": "Stone walls and entrance gate of Gonio fortress",
+        "ru": "Каменные стены и входные ворота крепости Гонио"
+      }
+    },
+    "tours/petra-fortress.png": {
+      "name": "tour-petra-fortress",
+      "category": "unsorted",
+      "alt": {
+        "ka": "პეტრას ციხის ნანგრევები ზღვის თავზე, ზემოდან გადაღებული",
+        "en": "Ruins of Petra fortress above the sea, seen from the air",
+        "ru": "Руины крепости Петра над морем, вид с высоты"
+      }
+    },
+    "tours/green-cape.png": {
+      "name": "tour-green-cape",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მწვანე კონცხი: მწვანე ფერდობი, რკინიგზა და სანაპირო ზემოდან",
+        "en": "Green Cape: a green hillside, the railway and the shoreline seen from above",
+        "ru": "Зелёный мыс: зелёный склон, железная дорога и берег, вид сверху"
+      }
+    },
+    "tours/botanical-garden.png": {
+      "name": "tour-batumi-botanical-garden",
+      "category": "unsorted",
+      "alt": {
+        "ka": "ბამბუკის ხიდი და ქვის ფარანი ტბორთან ბოტანიკურ ბაღში",
+        "en": "Bamboo bridge and a stone lantern by a pond in the botanical garden",
+        "ru": "Бамбуковый мостик и каменный фонарь у пруда в ботаническом саду"
+      }
+    },
+    "tours/machakhela-gorge.png": {
+      "name": "tour-machakhela-gorge",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მაჭახელას ხეობა: მდინარე ტყიან მთებს შორის",
+        "en": "Machakhela gorge: a river between forested mountains",
+        "ru": "Ущелье Мачахела: река между лесистыми горами"
+      }
+    },
+    "tours/gomismta.png": {
+      "name": "tour-gomismta-above-clouds",
+      "category": "unsorted",
+      "alt": {
+        "ka": "გომის მთა: ფერადი ხის სახლები მწვანე ფერდობზე, ქვემოთ ღრუბლების ზღვა",
+        "en": "Gomismta: colourful wooden houses on a green slope above a sea of clouds",
+        "ru": "Гомис-мта: разноцветные деревянные домики на зелёном склоне над морем облаков"
+      }
+    },
+    "tours/gomismta-sunset.png": {
+      "name": "tour-gomismta-sunset",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მზის ჩასვლა ღრუბლებს ზემოთ გომის მთაზე",
+        "en": "Sunset above the clouds at Gomismta",
+        "ru": "Закат над облаками на Гомис-мта"
+      }
+    },
+    "tours/chinchao-lake.png": {
+      "name": "tour-chinchao-lake",
+      "category": "unsorted",
+      "alt": {
+        "ka": "ჭინჭაოს ტბა ალპურ მდელოზე, წინა პლანზე ყვავილები",
+        "en": "Chinchao lake in an alpine meadow, with wildflowers in front",
+        "ru": "Озеро Чинчао на альпийском лугу, на переднем плане цветы"
+      }
+    },
+    "tours/mestia-towers.png": {
+      "name": "tour-mestia-svan-towers",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მესტიის სვანური კოშკები სახლებს შორის, უკან ღრუბლიანი მთები",
+        "en": "Svan towers of Mestia among the houses, with cloudy mountains behind",
+        "ru": "Сванские башни Местии среди домов, на заднем плане горы в облаках"
+      }
+    },
+    "tours/mestia-night.png": {
+      "name": "tour-mestia-night",
+      "category": "unsorted",
+      "alt": {
+        "ka": "განათებული სვანური კოშკები ღამით, თოვლიანი მთისა და ვარსკვლავიანი ცის ფონზე",
+        "en": "Lit Svan towers at night below a snowy mountain and a starry sky",
+        "ru": "Подсвеченные сванские башни ночью на фоне снежной горы и звёздного неба"
+      }
+    },
+    "tours/mestia-panorama.png": {
+      "name": "tour-mestia-panorama",
+      "category": "unsorted",
+      "alt": {
+        "ka": "მესტიის ხედი კოშკებით და თოვლიანი მწვერვალებით",
+        "en": "View of Mestia with its towers and snow-capped peaks",
+        "ru": "Вид на Местию с башнями и снежными вершинами"
+      }
+    },
+    "tours/vardzia.png": {
+      "name": "tour-vardzia-cave-monastery",
+      "category": "unsorted",
+      "alt": {
+        "ka": "ვარძიის კლდეში ნაკვეთი სამონასტრო კომპლექსი ხეობის თავზე",
+        "en": "Vardzia cave monastery cut into the cliff above the valley",
+        "ru": "Пещерный монастырь Вардзия, высеченный в скале над долиной"
+      }
+    },
+    "tours/borjomi.png": {
+      "name": "tour-borjomi-park-pavilion",
+      "category": "unsorted",
+      "alt": {
+        "ka": "ბორჯომის პარკის მინის პავილიონი მინერალური წყლის წყაროსთან, ხეებს შორის",
+        "en": "Glass pavilion over the mineral spring in Borjomi park, among the trees",
+        "ru": "Стеклянный павильон у минерального источника в парке Боржоми, среди деревьев"
+      }
+    },
+    "tours/rabati.png": {
+      "name": "tour-rabati-fortress-evening",
+      "category": "unsorted",
+      "alt": {
+        "ka": "განათებული რაბათის ციხე ახალციხეში საღამოს",
+        "en": "Rabati fortress in Akhaltsikhe lit up in the evening",
+        "ru": "Подсвеченная крепость Рабат в Ахалцихе вечером"
       }
     }
   }

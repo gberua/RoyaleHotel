@@ -11,6 +11,7 @@
     "offers": "Offers",
     "gallery": "Gallery",
     "kobuleti": "Kobuleti",
+    "tours": "Tours",
     "reviews": "Reviews",
     "contact": "Contact",
     "faq": "FAQ",
@@ -174,6 +175,12 @@
     "title": "Kobuleti & things to do",
     "intro": "A long pebble beach, pine-scented boulevards and Batumi half an hour away. Here is what to see around the hotel.",
     "distance": "Distance from the hotel"
+  },
+  "tours": {
+    "title": "Tours & excursions",
+    "intro": "Day trips around Adjara and beyond, arranged by the hotel. Ask our team for details.",
+    "none": "Tours will be listed here soon. Ask at reception for what is available.",
+    "ask": "To arrange a tour, ask at reception or contact us. We will help you choose and plan it."
   },
   "reviews": {
     "title": "Guest reviews",

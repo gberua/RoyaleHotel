@@ -9,7 +9,7 @@ import "../globals.css";
 import { fontVariables, DISPLAY_FONT_STRETCH } from "@/config/fonts";
 import { LOCALE_REGISTRY, isLocale, locales } from "@/i18n/locales";
 import { preferReal } from "@/lib/prefer-real";
-import { getCurrencies, getHeroImages, getMediaByCategory, getSettings, type Img } from "@/lib/data";
+import { getCurrencies, getHeroImages, getMediaByCategory, getSettings, getTours, type Img } from "@/lib/data";
 import { tr } from "@/lib/i18n-content";
 import { contactLinks } from "@/lib/contact";
 import { SITE_URL } from "@/lib/seo";
@@ -56,12 +56,13 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
     getMessages(), getSettings(), getCurrencies(), getHeroImages(),
     ...["room", "pool", "beach", "exterior", "kobuleti", "view", "lobby"].map((c) => getMediaByCategory(c, 2)),
   ]);
+  const tours = await getTours();
   const links = contactLinks(settings.contact);
   const pick = (img?: Img) => (img ? { url: img.url, blur: img.blurDataUrl } : null);
   // The full-screen menu shows a photo for each link
   const menuImages = {
     home: pick(hero[0]), rooms: pick(rooms[0]), amenities: pick(pool[0]), offers: pick(beach[0]),
-    gallery: pick(exterior[0]), kobuleti: pick(kobuleti[0]), reviews: pick(view[0]), contact: pick(preferReal(lobby[0], exterior[1], exterior[0])),
+    gallery: pick(exterior[0]), kobuleti: pick(kobuleti[0]), tours: pick(tours[0]?.image ?? view[1] ?? kobuleti[1] ?? kobuleti[0]), reviews: pick(view[0]), contact: pick(preferReal(lobby[0], exterior[1], exterior[0])),
   };
 
   return (
@@ -83,6 +84,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
             <BookingDrawerProvider>
               <SiteHeader
                 menuImages={menuImages}
+                hidden={tours.length ? [] : ["tours"]}
                 contact={{
                   phone: settings.contact.phone, tel: links.tel, email: settings.contact.email, address: tr(settings.hotel.address, locale),
                   whatsapp: links.whatsapp, viber: links.viber, telegram: links.telegram, instagram: settings.contact.instagram, facebook: settings.contact.facebook,

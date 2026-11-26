@@ -96,7 +96,7 @@ export async function deleteFaq(_p: ActionResult, form: FormData): Promise<Actio
   });
 }
 
-const orderAction = (model: "faqItem" | "offer" | "attraction" | "policy", idField: "id" | "slug") => async (_p: ActionResult, form: FormData): Promise<ActionResult> =>
+const orderAction = (model: "faqItem" | "offer" | "attraction" | "tour" | "policy", idField: "id" | "slug") => async (_p: ActionResult, form: FormData): Promise<ActionResult> =>
   staffAction("content", async (user) => {
     const ids = String(form.get("order") ?? "").split(",").filter(Boolean);
     const delegate = db[model] as unknown as { update: (a: unknown) => Prisma.PrismaPromise<unknown> };
@@ -108,6 +108,7 @@ const orderAction = (model: "faqItem" | "offer" | "attraction" | "policy", idFie
 export async function orderFaq(p: ActionResult, form: FormData) { return orderAction("faqItem", "id")(p, form); }
 export async function orderOffers(p: ActionResult, form: FormData) { return orderAction("offer", "id")(p, form); }
 export async function orderAttractions(p: ActionResult, form: FormData) { return orderAction("attraction", "id")(p, form); }
+export async function orderTours(p: ActionResult, form: FormData) { return orderAction("tour", "id")(p, form); }
 export async function orderPolicies(p: ActionResult, form: FormData) { return orderAction("policy", "slug")(p, form); }
 
 // ───────────────────────────── Policies (draft → publish) ─────────────────────────────
@@ -241,6 +242,41 @@ export async function deleteAttraction(_p: ActionResult, form: FormData): Promis
   return staffAction("content", async (user) => {
     const a = await db.attraction.delete({ where: { id: String(form.get("id")) } });
     await logActivity({ userId: user.id, action: "attraction.delete", entity: "Attraction", entityId: a.id, summary: `Kobuleti place "${rec(a.title).en}" deleted` });
+    done();
+  });
+}
+
+// ───────────────────────────── Tours (information only, no prices) ─────────────────────────────
+
+export async function saveTour(_p: ActionResult, form: FormData): Promise<ActionResult> {
+  return staffAction("content", async (user) => {
+    const id = String(form.get("id") ?? "");
+    const title = localized(form, "title", true);
+    const mediaId = String(form.get("mediaId") ?? "") || null;
+    const data = {
+      title, summary: localized(form, "summary", true), body: localized(form, "body"), duration: localized(form, "duration"),
+      mediaId, photoIds: [...new Set(form.getAll("photoIds").map(String).filter((x) => x && x !== mediaId))].slice(0, 12),
+      active: form.get("active") === "on",
+    };
+    if (id) {
+      const before = await db.tour.findUniqueOrThrow({ where: { id } });
+      await db.tour.update({ where: { id }, data });
+      const d = diff(rec(JSON.parse(JSON.stringify(before))), JSON.parse(JSON.stringify({ ...before, ...data })));
+      await logActivity({ userId: user.id, action: "tour.update", entity: "Tour", entityId: id, summary: `Tour "${title.en || title.ka}" updated (${d.changed.join(", ") || "no changes"})`, before: d.before, after: d.after });
+    } else {
+      let slug = slugify(title.en || title.ka);
+      if (await db.tour.findUnique({ where: { slug } })) slug = `${slug}-${Date.now().toString(36)}`;
+      const x = await db.tour.create({ data: { ...data, slug, sortOrder: await db.tour.count() } });
+      await logActivity({ userId: user.id, action: "tour.create", entity: "Tour", entityId: x.id, summary: `Tour "${title.en || title.ka}" added` });
+    }
+    done();
+  });
+}
+
+export async function deleteTour(_p: ActionResult, form: FormData): Promise<ActionResult> {
+  return staffAction("content", async (user) => {
+    const x = await db.tour.delete({ where: { id: String(form.get("id")) } });
+    await logActivity({ userId: user.id, action: "tour.delete", entity: "Tour", entityId: x.id, summary: `Tour "${rec(x.title).en || rec(x.title).ka}" deleted` });
     done();
   });
 }

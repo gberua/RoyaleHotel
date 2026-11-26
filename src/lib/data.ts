@@ -277,6 +277,25 @@ export async function getAttractions() {
   }));
 }
 
+/** Tours the hotel offers (information only: no prices, not bookable online). */
+export async function getTours() {
+  "use cache";
+  cacheLife("days");
+  cacheTag(TAGS.content, TAGS.media);
+  const rows = await db.tour.findMany({ where: (await draftMode()).isEnabled ? {} : { active: true }, orderBy: { sortOrder: "asc" } });
+  const media = await getMediaByIds([...new Set(rows.flatMap((r) => [r.mediaId, ...r.photoIds]).filter((x): x is string => !!x))]);
+  const byId = new Map(media.map((m) => [m.id, m]));
+  return rows.map((r) => ({
+    slug: r.slug,
+    title: r.title as Record<string, string>,
+    summary: r.summary as Record<string, string>,
+    body: (r.body ?? {}) as Record<string, string>,
+    duration: (r.duration ?? {}) as Record<string, string>,
+    image: r.mediaId ? byId.get(r.mediaId) ?? null : null,
+    photos: r.photoIds.filter((id) => id !== r.mediaId).map((id) => byId.get(id)).filter((x): x is Img => Boolean(x)),
+  }));
+}
+
 export async function getFaq() {
   "use cache";
   cacheLife("days");

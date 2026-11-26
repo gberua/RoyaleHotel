@@ -111,6 +111,9 @@ export async function deleteMedia(_p: ActionResult, form: FormData): Promise<Act
       await tx.service.updateMany({ where: { mediaId: id }, data: { mediaId: null } });
       await tx.offer.updateMany({ where: { mediaId: id }, data: { mediaId: null } });
       await tx.attraction.updateMany({ where: { mediaId: id }, data: { mediaId: null } });
+      await tx.tour.updateMany({ where: { mediaId: id }, data: { mediaId: null } });
+      for (const x of await tx.tour.findMany({ where: { photoIds: { has: id } }, select: { id: true, photoIds: true } }))
+        await tx.tour.update({ where: { id: x.id }, data: { photoIds: x.photoIds.filter((p) => p !== id) } });
       await tx.page.updateMany({ where: { ogImageId: id }, data: { ogImageId: null } });
       await tx.media.delete({ where: { id } }); // room-type links cascade
     });
