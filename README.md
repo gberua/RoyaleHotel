@@ -132,8 +132,8 @@ behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up t
 **Vercel** (live: https://royale-hotel-eta.vercel.app) — Hobby plan, functions in Frankfurt (`fra1`):
 - Database: Neon (Vercel Marketplace, Frankfurt) → `DATABASE_URL` / `DATABASE_URL_UNPOOLED` are set by the integration.
 - Photos: Vercel Blob store (public) → `STORAGE_DRIVER=blob` + `BLOB_READ_WRITE_TOKEN`.
-- Only `main` is built: `ignoreCommand` in vercel.json skips preview builds of other branches (the database settings
-  exist for Production only, so a preview build cannot work).
+- Pushes to the working branch `real-photos` are not deployed (`git.deploymentEnabled` in vercel.json): the database
+  settings exist for Production only, so a preview build cannot work. Add any other working branch there too.
 - Build command `node scripts/vercel-build.mjs` (vercel.json): runs migrations on every deploy. The first deploy ran with
   `SETUP_DATA=1` (seed + DEMO photos to Blob + pay-at-hotel only); that flag was removed afterwards — never set it again on a live site.
 - Background job: every 15 minutes through GitHub Actions (`.github/workflows/maintenance.yml`; set the `CRON_SECRET` secret

@@ -1,6 +1,6 @@
 {
   "buildCommand": "node scripts/vercel-build.mjs",
-  "ignoreCommand": "[ \"$VERCEL_ENV\" != \"production\" ]",
+  "git": { "deploymentEnabled": { "real-photos": false } },
   "regions": ["fra1"],
   "crons": [{ "path": "/api/cron/maintenance", "schedule": "0 3 * * *" }]
 }
