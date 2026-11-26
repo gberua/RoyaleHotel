@@ -52,16 +52,12 @@
     },
     "royal palace/0L9A7291.jpg.jpg": {
       "name": "outdoor-pool-from-above",
-      "category": "pool",
-      "gallery": 2,
+      "category": "unsorted",
       "alt": {
         "ka": "ღია საცურაო აუზი და ტერასა, ხედი ზემოდან",
         "en": "Outdoor swimming pool and terrace, seen from above",
         "ru": "Открытый бассейн и терраса, вид сверху"
-      },
-      "services": [
-        "pool"
-      ]
+      }
     },
     "royal palace/0L9A6958.jpg.jpg": {
       "name": "balcony-table-park-view",
@@ -79,7 +75,7 @@
     "royal palace/0L9A7173.jpg.jpg": {
       "name": "standard-double-bed",
       "category": "room",
-      "gallery": 4,
+      "gallery": 5,
       "alt": {
         "ka": "სტანდარტული ორადგილიანი ნომერი: ორადგილიანი საწოლი პირსახოცებითა და ხალათებით",
         "en": "Standard Double room: double bed with towels and bathrobes",
@@ -91,7 +87,7 @@
     "palasi 3/DJI_20261117141856_0810_D.jpg.jpg": {
       "name": "kobuleti-coast-beach-aerial",
       "category": "beach",
-      "gallery": 5,
+      "gallery": 6,
       "alt": {
         "ka": "ქობულეთის სანაპირო ზემოდან: ზღვა, პლაჟი, სანაპირო პარკი და მთები",
         "en": "Kobuleti coastline from the air: the sea, the beach, the seaside park and the mountains",
@@ -105,7 +101,7 @@
     "royal palace/0L9A6946.jpg.jpg": {
       "name": "standard-double-room-balcony-door",
       "category": "room",
-      "gallery": 6,
+      "gallery": 7,
       "alt": {
         "ka": "სტანდარტული ორადგილიანი ნომერი: საწოლი, ტელევიზორი და აივნის კარი",
         "en": "Standard Double room with a double bed, TV and balcony door",
@@ -116,8 +112,7 @@
     },
     "palasi2/0L9A7005.jpg.jpg": {
       "name": "hotel-curved-balconies",
-      "category": "exterior",
-      "gallery": 7,
+      "category": "unsorted",
       "alt": {
         "ka": "სასტუმროს მომრგვალებული აივნები ცის ფონზე",
         "en": "Curved balconies of the hotel against the sky",
@@ -126,21 +121,17 @@
     },
     "palasi 3/0L9A7290.JPG.jpg": {
       "name": "outdoor-pool-tiled-terrace",
-      "category": "pool",
-      "gallery": 8,
+      "category": "unsorted",
       "alt": {
         "ka": "ღია აუზი და მოპირკეთებული ტერასა მის გარშემო",
         "en": "Outdoor pool and the tiled terrace around it",
         "ru": "Открытый бассейн и терраса вокруг него"
-      },
-      "offers": [
-        "early-summer"
-      ]
+      }
     },
     "royal palace/0L9A7176.JPG.jpg": {
       "name": "standard-double-room-desk",
       "category": "room",
-      "gallery": 9,
+      "gallery": 10,
       "alt": {
         "ka": "სტანდარტული ორადგილიანი ნომერი: მაგიდა ჩაიდნით, ტელევიზორი და საწოლი ფანჯარასთან",
         "en": "Standard Double room: desk with a kettle, TV and the bed by the window",
@@ -152,7 +143,7 @@
     "palasi2/0L9A6965.jpg.jpg": {
       "name": "balcony-view-trees-town",
       "category": "view",
-      "gallery": 10,
+      "gallery": 11,
       "alt": {
         "ka": "ნომრის აივანი, ხედი ხეებსა და ქალაქზე",
         "en": "Room balcony with a view over the trees to the town",
@@ -162,7 +153,7 @@
     "royal palace/0L9A7147.jpg.jpg": {
       "name": "standard-double-bed-linen",
       "category": "room",
-      "gallery": 11,
+      "gallery": 12,
       "alt": {
         "ka": "ორადგილიანი საწოლი სუფთა თეთრეულით, პირსახოცებითა და ხალათებით",
         "en": "Double bed with fresh linen, towels and bathrobes",
@@ -174,7 +165,7 @@
     "palasi 3/DJI_20261117141629_0799_D.jpg.jpg": {
       "name": "hotel-beside-park-aerial",
       "category": "exterior",
-      "gallery": 12,
+      "gallery": 13,
       "alt": {
         "ka": "სასტუმრო პარკის გვერდით, ხედი ზემოდან",
         "en": "The hotel beside the park, from above",
@@ -184,7 +175,7 @@
     "royal palace/0L9A7245.JPG 2.jpg": {
       "name": "three-person-room-single-beds",
       "category": "room",
-      "gallery": 13,
+      "gallery": 14,
       "alt": {
         "ka": "სამადგილიანი ნომერი ერთადგილიანი საწოლებით, მაგიდითა და ტელევიზორით",
         "en": "Three-person room with single beds, desk and TV",
@@ -194,7 +185,7 @@
     "palasi 3/0L9A7152.JPG.jpg": {
       "name": "room-desk-mirror-tv",
       "category": "room",
-      "gallery": 14,
+      "gallery": 15,
       "alt": {
         "ka": "სამუშაო მაგიდა, დიდი სარკე და ტელევიზორი ნომერში",
         "en": "Desk, full-length mirror and TV in the room",
@@ -206,7 +197,7 @@
     "palasi 3/DJI_20261117141542_0796_D.jpg.jpg": {
       "name": "kobuleti-mountains-plain",
       "category": "kobuleti",
-      "gallery": 15,
+      "gallery": 16,
       "alt": {
         "ka": "თოვლიანი მთები ქობულეთის დაბლობის თავზე",
         "en": "Snow-capped mountains above the plain behind Kobuleti",
@@ -214,21 +205,18 @@
       }
     },
     "royal palace/0L9A7156.jpg.jpg": {
-      "name": "room-bathroom-shower",
-      "category": "room",
-      "gallery": 16,
+      "name": "room-bathroom-shower-old",
+      "category": "unsorted",
       "alt": {
         "ka": "სააბაზანო საშხაპით",
         "en": "Bathroom with a shower",
         "ru": "Ванная комната с душем"
-      },
-      "roomType": "standard-double",
-      "roomOrder": 6
+      }
     },
     "palasi 3/0L9A7241.JPG.jpg": {
       "name": "three-person-room-beds-by-window",
       "category": "room",
-      "gallery": 17,
+      "gallery": 18,
       "alt": {
         "ka": "ერთადგილიანი საწოლები ფანჯარასთან სამადგილიან ნომერში",
         "en": "Single beds by the window in a three-person room",
@@ -237,8 +225,7 @@
     },
     "palasi2/0L9A6879.jpg.jpg": {
       "name": "pool-from-balcony",
-      "category": "pool",
-      "gallery": 18,
+      "category": "unsorted",
       "alt": {
         "ka": "აუზის ხედი ზედა სართულის აივნიდან",
         "en": "The pool seen from an upper-floor balcony",
@@ -248,7 +235,7 @@
     "royal palace/0L9A7264.jpg copy.jpg": {
       "name": "room-wardrobe-bathrobe-mirror",
       "category": "room",
-      "gallery": 19,
+      "gallery": 20,
       "alt": {
         "ka": "ღია კარადა ხალათითა და ჩუსტებით, საკიდები და სარკე",
         "en": "Open wardrobe with a bathrobe and slippers, coat hooks and a mirror",
@@ -260,7 +247,7 @@
     "palasi2/0L9A7010.jpg.jpg": {
       "name": "hotel-facade-balconies",
       "category": "exterior",
-      "gallery": 20,
+      "gallery": 21,
       "alt": {
         "ka": "სასტუმროს ფასადი აივნებით ყველა სართულზე, ხედი ქუჩიდან",
         "en": "Hotel façade with balconies on every floor, seen from the street",
@@ -269,8 +256,7 @@
     },
     "palasi2/0L9A6757.jpg.jpg": {
       "name": "room-for-three-linen-bathrobe",
-      "category": "room",
-      "gallery": 21,
+      "category": "unsorted",
       "alt": {
         "ka": "სამადგილიანი ნომერი სუფთა თეთრეულით და ხალათით საწოლზე",
         "en": "Room for three with fresh linen and a bathrobe on the bed",
@@ -280,7 +266,7 @@
     "palasi2/0L9A6773.jpg.jpg": {
       "name": "window-view-trees",
       "category": "view",
-      "gallery": 22,
+      "gallery": 23,
       "alt": {
         "ka": "ხედი ხეებზე ნომრის ფანჯრიდან",
         "en": "View of the trees from a room window",
@@ -290,7 +276,7 @@
     "palasi2/0L9A6749.jpg.jpg": {
       "name": "bathrobe-rph-emblem",
       "category": "room",
-      "gallery": 23,
+      "gallery": 24,
       "alt": {
         "ka": "ხალათი სასტუმროს RPH ემბლემით და დახვეული პირსახოცები საწოლზე",
         "en": "Bathrobe with the hotel's RPH emblem and rolled towels on the bed",
@@ -302,7 +288,7 @@
     "palasi 3/DJI_20261117141921_0813_D.jpg.jpg": {
       "name": "kobuleti-town-park-aerial",
       "category": "kobuleti",
-      "gallery": 24,
+      "gallery": 25,
       "alt": {
         "ka": "ქობულეთი ზემოდან: პარკი და ქალაქი",
         "en": "Kobuleti from the air: the park and the town",
@@ -312,7 +298,7 @@
     "palasi 3/0L9A7249.JPG.jpg": {
       "name": "three-person-room-towards-entrance",
       "category": "room",
-      "gallery": 25,
+      "gallery": 26,
       "alt": {
         "ka": "სამადგილიანი ნომერი, ხედი შესასვლელისკენ",
         "en": "Three-person room seen towards the entrance",
@@ -322,7 +308,7 @@
     "palasi 3/0L9A7139.JPG.jpg": {
       "name": "room-desk-kettle",
       "category": "room",
-      "gallery": 26,
+      "gallery": 27,
       "alt": {
         "ka": "მაგიდა ელექტროჩაიდნით, ფინჯნებითა და წყლით",
         "en": "Desk with an electric kettle, cups and bottled water",
@@ -334,7 +320,7 @@
     "palasi 3/DJI_20261117141929_0815_D.jpg.jpg": {
       "name": "hotel-street-park-aerial",
       "category": "exterior",
-      "gallery": 27,
+      "gallery": 28,
       "alt": {
         "ka": "სასტუმრო და მისი ქუჩა პარკის პირას, ხედი ზემოდან",
         "en": "The hotel and its street at the edge of the park, from above",
@@ -344,7 +330,7 @@
     "palasi2/0L9A6747.jpg.jpg": {
       "name": "room-for-three-joined-beds-single",
       "category": "room",
-      "gallery": 28,
+      "gallery": 29,
       "alt": {
         "ka": "სამადგილიანი ნომერი: ორი შეერთებული საწოლი და მესამე ცალკე საწოლი",
         "en": "Room for three: two beds pushed together and a third single bed",
@@ -354,7 +340,7 @@
     "palasi 3/0L9A7215.JPG.jpg": {
       "name": "bathroom-shower-cabin-hairdryer",
       "category": "room",
-      "gallery": 29,
+      "gallery": 30,
       "alt": {
         "ka": "სააბაზანო საშხაპე კაბინითა და ფენით",
         "en": "Bathroom with a shower cabin and a hairdryer",
@@ -364,7 +350,7 @@
     "palasi 3/0L9A7135.JPG.jpg": {
       "name": "room-807-doorway",
       "category": "room",
-      "gallery": 30,
+      "gallery": 31,
       "alt": {
         "ka": "807-ე ნომრის ღია კარი და ხედი ოთახში",
         "en": "Open door of room 807 with a view into the room",
@@ -516,6 +502,54 @@
         "ka": "განათებული რაბათის ციხე ახალციხეში საღამოს",
         "en": "Rabati fortress in Akhaltsikhe lit up in the evening",
         "ru": "Подсвеченная крепость Рабат в Ахалцихе вечером"
+      }
+    },
+    "royal palace/royal-palace-lobby-reception.png": {
+      "name": "royal-palace-lobby-reception",
+      "category": "lobby",
+      "gallery": 4,
+      "alt": {
+        "ka": "სასტუმრო Royal Palace-ის ლობი: მიმღები განათებული ლოგოთი და ლურჯი დივანი",
+        "en": "Royal Palace hotel lobby: the reception desk with the lit logo and a blue sofa",
+        "ru": "Лобби отеля Royal Palace: стойка ресепшен с подсвеченным логотипом и синий диван"
+      }
+    },
+    "royal palace/pool-sunbeds-umbrellas.png": {
+      "name": "outdoor-pool-sunbeds-umbrellas",
+      "category": "pool",
+      "gallery": 2,
+      "alt": {
+        "ka": "ღია საცურაო აუზი შეზლონგებითა და ქოლგებით, ხედი ზემოდან",
+        "en": "Outdoor swimming pool with sunbeds and umbrellas, seen from above",
+        "ru": "Открытый бассейн с шезлонгами и зонтами, вид сверху"
+      },
+      "services": [
+        "pool"
+      ],
+      "offers": [
+        "early-summer"
+      ]
+    },
+    "royal palace/bathroom-shower-new.png": {
+      "name": "room-bathroom-shower",
+      "category": "room",
+      "gallery": 17,
+      "alt": {
+        "ka": "სააბაზანო საშხაპით",
+        "en": "Bathroom with a shower",
+        "ru": "Ванная комната с душем"
+      },
+      "roomType": "standard-double",
+      "roomOrder": 6
+    },
+    "royal palace/double-bed-towels-bathrobes.png": {
+      "name": "double-bed-towels-bathrobes",
+      "category": "room",
+      "gallery": 32,
+      "alt": {
+        "ka": "ორადგილიანი საწოლი თეთრი თეთრეულით, პირსახოცებითა და ხალათებით",
+        "en": "Double bed with white linen, towels and bathrobes",
+        "ru": "Двуспальная кровать с белым бельём, полотенцами и халатами"
       }
     }
   }

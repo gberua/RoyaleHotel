@@ -76,7 +76,7 @@ export default async function HomePage() {
       <section className="container-x grid items-center gap-12 py-20 sm:py-28 lg:grid-cols-2 lg:gap-20">
         <div className="reveal relative order-2 grid grid-cols-5 gap-3 lg:order-1">
           <div className="relative col-span-3 aspect-[3/4] overflow-hidden rounded-[var(--radius-card)]">
-            <Picture image={gallery.find((g) => g.category === "lobby") ?? gallery[0] ?? hero} locale={locale} fill sizes="(min-width:1024px) 30vw, 60vw" className="object-cover" />
+            <Picture image={gallery[0] ?? hero} locale={locale} fill sizes="(min-width:1024px) 30vw, 60vw" className="object-cover" />
           </div>
           <div className="col-span-2 flex flex-col gap-3 pt-16">
             <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)]">

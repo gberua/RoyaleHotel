@@ -37,8 +37,8 @@ export const settingsSchema = z.object({
       phone2: z.string().default(""),
       email: z.string().default("corporate@royalpalacehotel.ge"),
       bookingEmail: z.string().default("corporate@royalpalacehotel.ge"),
-      whatsapp: z.string().default("995592441115"), // digits only, with country code
-      viber: z.string().default("+995592441115"),
+      whatsapp: z.string().default("995591055588"), // digits only, with country code
+      viber: z.string().default("+995591055588"),
       telegram: z.string().default(""), // username without @ — hidden when empty
       instagram: z.string().default(""),
       facebook: z.string().default(""),

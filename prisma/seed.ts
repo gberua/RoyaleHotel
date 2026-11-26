@@ -90,8 +90,8 @@ async function main() {
     phone: "+995 591 05 55 88",
     email: "corporate@royalpalacehotel.ge",
     bookingEmail: "corporate@royalpalacehotel.ge",
-    whatsapp: "995592441115",
-    viber: "+995592441115",
+    whatsapp: "995591055588",
+    viber: "+995591055588",
     telegram: "",
     receptionHours: {},
   });
