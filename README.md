@@ -70,6 +70,8 @@ A catalog that names a missing file, room type, service or offer stops the run b
 ## Real room list
 
 `npm run rooms:real` sets up the hotel's 59 rooms: 43 two-person, 6 three-person, 10 four-person (`scripts/lib/room-plan.ts`).
+For now only the two-person rooms are offered: the three- and four-person types are archived with their rooms
+(`active: false` in the list) — hidden from the site and the calendar, restorable in Admin → Rooms.
 It removes the demo room types, keeps existing prices, and gives a new type a starting price. Still provisional until
 the hotel confirms them: prices, the room numbers on floors 3–4, and photos of a four-person room.
 After running it against the live database, redeploy (pages are cached).
@@ -130,6 +132,8 @@ behind Nginx/Caddy with HTTPS. Media lives in `./storage/media` — back it up t
 **Vercel** (live: https://royale-hotel-eta.vercel.app) — Hobby plan, functions in Frankfurt (`fra1`):
 - Database: Neon (Vercel Marketplace, Frankfurt) → `DATABASE_URL` / `DATABASE_URL_UNPOOLED` are set by the integration.
 - Photos: Vercel Blob store (public) → `STORAGE_DRIVER=blob` + `BLOB_READ_WRITE_TOKEN`.
+- Only `main` is built: `ignoreCommand` in vercel.json skips preview builds of other branches (the database settings
+  exist for Production only, so a preview build cannot work).
 - Build command `node scripts/vercel-build.mjs` (vercel.json): runs migrations on every deploy. The first deploy ran with
   `SETUP_DATA=1` (seed + DEMO photos to Blob + pay-at-hotel only); that flag was removed afterwards — never set it again on a live site.
 - Background job: every 15 minutes through GitHub Actions (`.github/workflows/maintenance.yml`; set the `CRON_SECRET` secret

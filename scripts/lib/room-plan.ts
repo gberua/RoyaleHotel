@@ -1,5 +1,7 @@
 /**
  * The hotel's real room list: 59 rooms — 43 two-person, 6 three-person, 10 four-person.
+ * For now only the two-person rooms are offered: the other two types are archived (`active: false`), so they
+ * and their rooms are hidden from the site, the booking flow and the calendar but keep their texts and photos.
  * Used by scripts/live-rooms.ts. Prices here are only used when a type is created; after that prices are
  * managed in Admin → Rooms and Rates.
  */
@@ -13,6 +15,8 @@ export type PlannedType = {
   /** GEL, used only when the type does not exist yet */
   price: number;
   featured: boolean;
+  /** false = archived: the type and its rooms are kept but not offered */
+  active: boolean;
   name: L;
   beds: L;
   short: L;
@@ -23,7 +27,7 @@ export type PlannedType = {
 
 export const ROOM_TYPES: PlannedType[] = [
   {
-    slug: "standard-double", sortOrder: 1, guests: 2, price: 180, featured: true,
+    slug: "standard-double", sortOrder: 1, guests: 2, price: 270, featured: true, active: true,
     name: t("ორადგილიანი ნომერი", "Double Room", "Двухместный номер"),
     beds: t("1 ორადგილიანი საწოლი", "1 double bed", "1 двуспальная кровать"),
     short: t("მყუდრო ნომერი ორი სტუმრისთვის.", "A comfortable room for two guests.", "Уютный номер для двух гостей."),
@@ -35,7 +39,7 @@ export const ROOM_TYPES: PlannedType[] = [
     photos: [],
   },
   {
-    slug: "triple", sortOrder: 2, guests: 3, price: 240, featured: true,
+    slug: "triple", sortOrder: 2, guests: 3, price: 240, featured: true, active: false,
     name: t("სამადგილიანი ნომერი", "Triple Room", "Трёхместный номер"),
     beds: t("3 ერთადგილიანი საწოლი", "3 single beds", "3 односпальные кровати"),
     short: t("ნომერი სამი სტუმრისთვის, სამი ცალკე საწოლით.", "A room for three guests with three single beds.", "Номер для трёх гостей с тремя отдельными кроватями."),
@@ -47,7 +51,7 @@ export const ROOM_TYPES: PlannedType[] = [
     photos: ["0L9A7245.JPG 2.jpg", "0L9A6747.jpg.jpg", "0L9A6757.jpg.jpg", "0L9A7241.JPG.jpg", "0L9A7249.JPG.jpg", "0L9A7215.JPG.jpg"],
   },
   {
-    slug: "family-room", sortOrder: 3, guests: 4, price: 320, featured: true,
+    slug: "family-room", sortOrder: 3, guests: 4, price: 320, featured: true, active: false,
     name: t("ოთხადგილიანი საოჯახო ნომერი", "Four-Person Family Room", "Четырёхместный семейный номер"),
     beds: t("საწოლები 4 სტუმრისთვის", "Beds for 4 guests", "Кровати для 4 гостей"),
     short: t("ფართო ნომერი ოთხი სტუმრისთვის — ოჯახისთვის ან მეგობრებისთვის.", "A larger room for four guests — for a family or a group of friends.", "Просторный номер для четырёх гостей — для семьи или компании друзей."),

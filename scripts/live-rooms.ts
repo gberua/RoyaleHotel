@@ -1,13 +1,14 @@
 /**
  * npm run rooms:real — replaces the demo rooms with the hotel's real list (scripts/lib/room-plan.ts):
- * 59 rooms — 43 two-person, 6 three-person, 10 four-person.
+ * 59 rooms — 43 two-person, 6 three-person, 10 four-person. Types marked `active: false` in the list are
+ * archived together with their rooms: kept in the database, not shown or bookable.
  *
  * - Room types that are not in the list are removed together with their rooms.
  * - Prices are never changed: a new type gets a starting price, and its season prices follow the
  *   two-person room's season uplift. Set the real prices in Admin → Rooms and Rates.
  * - Names, texts and capacity of the listed types are reset to the list on every run; size and view are
  *   cleared and the equipment list is taken from the two-person room.
- * - Refuses to run while a room that would be removed still has a booking, hold or block.
+ * - Refuses to run while a room that would be removed or archived still has a booking, hold or block.
  *
  * Pages are cached: redeploy (or save any room in the admin) after running this against the live database.
  */
@@ -27,8 +28,12 @@ export async function rebuildRooms(db: Db) {
   const keep = new Set(rooms.map((r) => r.number));
   const slugs = ROOM_TYPES.map((r) => r.slug);
 
-  const busy = await db.room.findMany({ where: { number: { notIn: [...keep] }, allocations: { some: {} } }, select: { number: true } });
-  if (busy.length) throw new Error(`Rooms with bookings, holds or blocks would be removed: ${busy.map((r) => r.number).join(", ")}. Move or cancel them first.`);
+  const archived = rooms.filter((r) => !ROOM_TYPES.find((t) => t.slug === r.slug)!.active).map((r) => r.number);
+  const busy = await db.room.findMany({
+    where: { OR: [{ number: { notIn: [...keep] }, allocations: { some: {} } }, { number: { in: archived }, allocations: { some: { active: true } } }] },
+    select: { number: true },
+  });
+  if (busy.length) throw new Error(`Rooms with bookings, holds or blocks would be removed or archived: ${busy.map((r) => r.number).join(", ")}. Move or cancel them first.`);
 
   return db.$transaction(
     async (tx) => {
@@ -40,7 +45,7 @@ export async function rebuildRooms(db: Db) {
           name: r.name, beds: r.beds, shortDescription: r.short, description: r.description,
           maxAdults: r.guests, maxChildren: r.guests - 1, maxOccupancy: r.guests, baseOccupancy: r.guests, extraBeds: 0,
           // size and view are not known yet: nothing is shown rather than the demo values
-          sizeM2: null, view: null, sortOrder: r.sortOrder, featured: r.featured, active: true,
+          sizeM2: null, view: null, sortOrder: r.sortOrder, featured: r.featured, active: r.active,
         };
         const existing = await tx.roomType.findUnique({ where: { slug: r.slug } });
         if (existing) {
@@ -77,12 +82,13 @@ export async function rebuildRooms(db: Db) {
         await tx.roomTypePhoto.createMany({ data: found.map((mediaId, sortOrder) => ({ roomTypeId: ids[r.slug], mediaId, sortOrder })) });
       }
 
+      const offered = new Set(ROOM_TYPES.filter((r) => r.active).map((r) => r.slug));
       const removedRooms = await tx.room.deleteMany({ where: { number: { notIn: [...keep] } } });
       for (const r of rooms)
         await tx.room.upsert({
           where: { number: r.number },
-          update: { floor: r.floor, roomTypeId: ids[r.slug], active: true },
-          create: { number: r.number, floor: r.floor, roomTypeId: ids[r.slug] },
+          update: { floor: r.floor, roomTypeId: ids[r.slug], active: offered.has(r.slug) },
+          create: { number: r.number, floor: r.floor, roomTypeId: ids[r.slug], active: offered.has(r.slug) },
         });
 
       const gone = await tx.roomType.findMany({ where: { slug: { notIn: slugs } }, select: { id: true, slug: true } });

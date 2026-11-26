@@ -47,6 +47,10 @@ describe("real room list", () => {
     expect([double.basePrice, double.maxOccupancy, (double.name as { en: string }).en]).toEqual([20000, 2, "Double Room"]);
 
     const triple = await db.roomType.findUniqueOrThrow({ where: { slug: "triple" }, include: { amenities: true, seasonRates: true, photos: { orderBy: { sortOrder: "asc" }, include: { media: true } } } });
+    // only the two-person rooms are offered for now: the other types and their rooms are archived, not deleted
+    expect((await db.roomType.findMany({ where: { active: true } })).map((r) => r.slug)).toEqual(["standard-double"]);
+    expect(await db.room.count({ where: { active: true } })).toBe(43);
+    expect(await db.room.count({ where: { active: true, roomType: { slug: { not: "standard-double" } } } })).toBe(0);
     expect([triple.basePrice, triple.maxAdults, triple.maxOccupancy, triple.baseOccupancy]).toEqual([24000, 3, 3, 3]);
     expect(triple.amenities).toHaveLength(1);
     // season price follows the two-person room's season uplift (300 / 200 = 1.5)
@@ -76,5 +80,12 @@ describe("real room list", () => {
     await db.roomAllocation.create({ data: { roomId: room.id, checkIn: new Date("2027-07-01"), checkOut: new Date("2027-07-03"), kind: "MAINTENANCE" } });
     await expect(rebuildRooms(db)).rejects.toThrow(/101/);
     expect(await counts()).toEqual({ "standard-double": 1, twin: 1, "family-room": 0 });
+  });
+
+  it("refuses to archive a room that has a live booking or block", async () => {
+    await rebuildRooms(db);
+    const room = await db.room.findUniqueOrThrow({ where: { number: "808" } });
+    await db.roomAllocation.create({ data: { roomId: room.id, checkIn: new Date("2027-07-01"), checkOut: new Date("2027-07-03"), kind: "MAINTENANCE" } });
+    await expect(rebuildRooms(db)).rejects.toThrow(/808/);
   });
 });
